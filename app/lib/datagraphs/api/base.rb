@@ -65,9 +65,11 @@ module Datagraphs
         # TODO - if this has already expired, get a new on here.
         token = OAuthAccessToken.first
 
-        if token.blank? || token.expires_in > Time.now
-          GetOAuthToken.new.process
+        if token.blank? || token.expires_in < Time.now
+          ap "Token has expired"
+          token = GetOAuthToken.new.process
         end
+        token.token
       end
 
       def project_id

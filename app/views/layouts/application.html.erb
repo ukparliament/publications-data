@@ -1,28 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Datagraphs" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Datagraphs">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+    <%= render 'library_design/head/head' %>
+    <%= tag('base', href: ENV['BASE_URL']) if Rails.env.production? %>
 
-    <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app %>
+    <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="brand-bicameral">
+    <%= render 'library_design/header/header' do %>
+      <%= link_to 'Datasets', datasets_path %>&middot;
+    <% end %>
+    <main class="block block-page" id="main-content">
+      <div class="inner-content container">
+        <h1><%= @multiline_page_title || @page_title || $PRODUCT_TITLE %></h1>
+        <%= yield %>
+      </div>
+    </main>
+    <%= render 'layouts/custom_fat_footer' do %>
+    <% end %>
   </body>
 </html>
