@@ -1,37 +1,28 @@
 module Datagraphs
   module Api
     class GetDatasets < Base
-      def call(body = default_body, params = default_params)
-        request = Typhoeus::Request.new(
-          url,
-          method: method_type,
-          body: body,
-          params: params,
-          headers: headers
-        )
-        request.run
+      def process
+        response = call
+        process_response(response.body)
       end
 
-      def method_type
-        :get
-      end
+      def process_response(response)
+        json_response = JSON.parse(response)
 
-      def default_body
-        {}
-      end
+        results = json_response["results"].each do |result|
+          Dataset.where(
+            name: result["name"],
+            namespace: result["namespace"],
+            is_private: result["isPrivate"],
+            datagraphs_id: result["id"],
+            total_concepts: result["totalConcepts"],
+            concept_types: result["conceptTypes"],
+            link_to_self: result["_links"]["_self"]
+          ).first_or_create!
+        end
 
-      def default_params
-        {}
-      end
+        ap Dataset.all
 
-      def headers
-        api_key = ENV.fetch('DATAGRAPHS_API_KEY')
-        {
-          ContentType: 'application/json',
-          Accept: "application/json",
-          'x-api-key': api_key,
-          Authorization: "Bearer #{oauth_token}"
-        }
       end
 
       def url
@@ -40,20 +31,6 @@ module Datagraphs
 
       def project_id
         "subject-specialist-finder"
-      end
-
-      private
-
-      def api_key
-        ENV.fetch('DATAGRAPHS_API_KEY')
-      end
-
-      def oauth_token
-        ENV.fetch('DATAGRAPHS_OAUTH_TOKEN')
-      end
-
-      def base_url
-        ENV.fetch('DATAGRAPHS_API_BASE_URL', 'https://api.datagraphs.io/')
       end
     end
   end

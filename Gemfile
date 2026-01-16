@@ -21,6 +21,7 @@ gem "library_design", github: "ukparliament/design-assets", glob: "library_desig
 gem "irb"
 gem "dotenv-rails"
 gem "lograge"
+gem "awesome_print"
 
 # For API calls
 gem "typhoeus"
