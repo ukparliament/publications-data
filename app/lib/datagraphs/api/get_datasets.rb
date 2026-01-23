@@ -30,7 +30,7 @@ module Datagraphs
       end
 
       def project_id
-        "subject-specialist-finder"
+        $PROJECT_ID
       end
     end
   end

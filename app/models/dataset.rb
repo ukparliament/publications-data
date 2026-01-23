@@ -14,4 +14,7 @@
 #  datagraphs_id  :text
 #
 class Dataset < ApplicationRecord
+  def self.all_concept_types
+    all.map(&:concept_types).flatten.uniq
+  end
 end

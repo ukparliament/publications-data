@@ -17,7 +17,11 @@
         <td><%= dataset.namespace %></td>
         <td><%= dataset.datagraphs_id %></td>
         <td><%= dataset.total_concepts %></td>
-        <td><%= dataset.concept_types.join(', ') %></td>
+        <td>
+          <% dataset.concept_types.each do |concept_type| %>
+            <%= link_to concept_type.underscore.humanize, concepts_path(concept_type: concept_type) %>
+          <% end %>
+        </td>
       </tr>
     <% end %>
   </tbody>

@@ -10,8 +10,8 @@
   <body class="brand-bicameral">
     <%= render 'library_design/header/header' do %>
       <%= link_to 'Datasets', datasets_path %>&middot;
-      <% Dataset.all.map(&:name).each do |d| %>
-         <%= d %>&middot;
+      <% Dataset.all_concept_types.each do |d| %>
+         <%= link_to d.underscore.humanize.capitalize.pluralize, "/#{d.underscore.tr('_', '-').pluralize}" %>&middot;
       <% end %>
     <% end %>
     <main class="block block-page" id="main-content">
