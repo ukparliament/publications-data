@@ -15,7 +15,7 @@ module Datagraphs
             # hell yeah
           elsif response.timed_out?
             # aw hell no
-            Rails.logger.warning("got a time out")
+            Rails.logger.warn("got a time out")
           elsif response.code == 0
             # Could not get an http response, something's wrong.
             Rails.logger.error(response.return_message)
@@ -24,7 +24,7 @@ module Datagraphs
             OAuthAccessToken.delete_all
           else
             # Received a non-successful http response.
-            Rails.logger.warning("got an error")
+            Rails.logger.warn("got an error")
             Rails.logger.error(response.return_message)
             Rails.logger.error(response.code.to_s)
           end
@@ -64,6 +64,9 @@ module Datagraphs
       def oauth_token
         # TODO - if this has already expired, get a new on here.
         token = OAuthAccessToken.first
+
+        ap "Token is blank" if token.blank?
+        ap "Token has expired" if token.expires_in < Time.now
 
         if token.blank? || token.expires_in < Time.now
           ap "Token has expired"

@@ -1,4 +1,4 @@
-<h1>Datasets</h1>
+<h1>Concepts</h1>
 
 <table class="table table-bordered">
   <thead>
@@ -11,13 +11,13 @@
     </tr>
   </thead>
   <tbody>
-    <% @datasets.each do |dataset| %>
+    <% @concepts.each do |concept| %>
       <tr>
-        <th scope="row"><%= dataset.name %></th>
-        <td><%= dataset.namespace %></td>
-        <td><%= dataset.datagraphs_id %></td>
-        <td><%= dataset.total_concepts %></td>
-        <td><%= dataset.concept_types.join(', ') %></td>
+        <th scope="row"><%= concept.name %></th>
+        <td><%#= dataset.namespace %></td>
+        <td><%#= dataset.datagraphs_id %></td>
+        <td><%#= dataset.total_concepts %></td>
+        <td><%#= dataset.concept_types.join(', ') %></td>
       </tr>
     <% end %>
   </tbody>

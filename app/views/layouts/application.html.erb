@@ -4,12 +4,15 @@
     <%= render 'library_design/head/head' %>
     <%= tag('base', href: ENV['BASE_URL']) if Rails.env.production? %>
 
-    <%= javascript_importmap_tags %>
+    <%#= javascript_importmap_tags %>
   </head>
 
   <body class="brand-bicameral">
     <%= render 'library_design/header/header' do %>
       <%= link_to 'Datasets', datasets_path %>&middot;
+      <% Dataset.all.map(&:name).each do |d| %>
+         <%= d %>&middot;
+      <% end %>
     <% end %>
     <main class="block block-page" id="main-content">
       <div class="inner-content container">
@@ -17,7 +20,9 @@
         <%= yield %>
       </div>
     </main>
-    <%= render 'layouts/custom_fat_footer' do %>
+    <%= render 'library_design/footer/fat_footer' do %>
+      <%#= content_tag( 'li', link_to( 'About this website', meta_list_url ) ) %>
+      <%= content_tag( 'li', link_to( 'Contact us', 'mailto:RIIDMSMailbox@parliament.uk' ) ) %>
     <% end %>
   </body>
 </html>

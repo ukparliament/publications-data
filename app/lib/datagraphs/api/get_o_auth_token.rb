@@ -36,6 +36,17 @@ module Datagraphs
       def client_id
         ENV.fetch('DATAGRAPHS_CLIENT_ID')
       end
+
+      # Override as we don't have a token!
+      def headers
+        api_key = ENV.fetch('DATAGRAPHS_API_KEY')
+
+        {
+          ContentType: 'application/json',
+          Accept: "application/json",
+          'x-api-key': api_key
+        }
+      end
     end
   end
 end
