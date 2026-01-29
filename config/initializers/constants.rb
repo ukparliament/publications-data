@@ -1,3 +1,3 @@
-$SITE_TITLE = 'Specialist subject finder'
+$SITE_TITLE = ENV.fetch("SITE_TITLE")
 $TOGGLE_PORTCULLIS = ENV.fetch( "TOGGLE_PORTCULLIS", 'off' )
-$PROJECT_ID='subject-specialist-finder'
+$PROJECT_ID = ENV.fetch("PROJECT_ID")

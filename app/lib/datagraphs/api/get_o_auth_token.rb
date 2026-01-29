@@ -14,12 +14,16 @@ module Datagraphs
       end
 
       def process_response(response)
+        ap "Processing new token response"
         json_response = JSON.parse(response)
 
         expires_in = Time.now + json_response["expires_in"].seconds
 
+        ap "Deleting any we have"
         OAuthAccessToken.delete_all
-        OAuthAccessToken.create(
+
+        ap "Create new one"
+        OAuthAccessToken.create!(
           token: json_response["access_token"],
           expires_in: expires_in
         )

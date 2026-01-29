@@ -74,16 +74,10 @@ module Datagraphs
             took: pagination_response["took"]
           )
         end
-
-
       end
 
       def url
         "#{base_url}#{project_id}/#{@dataset_label}"
-      end
-
-      def project_id
-        "subject-specialist-finder"
       end
     end
   end

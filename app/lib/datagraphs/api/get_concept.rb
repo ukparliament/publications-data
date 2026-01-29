@@ -34,10 +34,6 @@ module Datagraphs
       def url
         "#{base_url}#{project_id}/#{@type_or_class_name}"
       end
-
-      def project_id
-        "subject-specialist-finder"
-      end
     end
   end
 end

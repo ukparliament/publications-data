@@ -26,7 +26,8 @@ module ApplicationHelper
     end
   end
 
-  #{ }"urn:subject-specialist-finder:Section:67716"
+  # Example reference
+  # "urn:subject-specialist-finder:Section:67716"
   def convert_reference_to_link(reference)
     ref_array = reference.split(':')
 
@@ -36,7 +37,7 @@ module ApplicationHelper
     concept = Concept.find_by(datagraphs_id: reference)
 
     if concept
-      label = concept.label
+      label = concept.label || concept.title
 
       if label
         link_to label, send("#{type_thing.underscore.downcase.singularize}_path", id: thing_id)

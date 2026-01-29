@@ -11,4 +11,5 @@
 #  datagraphs_id   :text
 #
 class Concept < ApplicationRecord
+  store_accessor :properties,  :title
 end

@@ -66,17 +66,18 @@ module Datagraphs
         token = OAuthAccessToken.first
 
         ap "Token is blank" if token.blank?
-        ap "Token has expired" if token.expires_in < Time.now
+        ap "Token is not blank, but has expired" if (token && token.expires_in < Time.now)
 
         if token.blank? || token.expires_in < Time.now
-          ap "Token has expired"
           token = GetOAuthToken.new.process
+          ap "Hopefully we now have a new token"
+          ap token
         end
         token.token
       end
 
       def project_id
-        "subject-specialist-finder"
+        $PROJECT_ID
       end
 
       def url

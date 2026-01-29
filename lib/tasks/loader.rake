@@ -1,4 +1,26 @@
 namespace :load do
+  desc "load datasets"
+  task datasets: :environment do
+    ap "Datasets count #{Dataset.count}"
+    Dataset.delete_all
+    Datagraphs::Api::GetDatasets.new.process
+    ap "Datasets count afterwards #{Dataset.count}"
+  end
+
+  desc "load all concepts"
+  task concepts: :environment do
+    Concept.delete_all
+    ap "Concept count #{Concept.count} for "
+    Dataset.all.each do |dataset|
+      Datagraphs::Api::SearchForConcepts.new.process(dataset.name.downcase)
+    end
+    ap "Concept count afterwards #{Concept.count}"
+  end
+
+  task routes: :environment do
+    Rails.application.reload_routes!
+  end
+
   desc "Debug concepts"
   task debug_concepts: :environment do
     Concept.all.each do |c|
@@ -8,15 +30,6 @@ namespace :load do
         end
       end
     end
-
-  end
-
-
-  desc "load datasets"
-  task datasets: :environment do
-    ap "Datasets count #{Dataset.count}"
-    Datagraphs::Api::GetDatasets.new.process
-    ap "Datasets count afterwards #{Dataset.count}"
   end
 
   desc "load concept - specialisms"
@@ -40,16 +53,5 @@ namespace :load do
     ap "Concept count afterwards #{Concept.count}"
   end
 
-  desc "load all concepts"
-  task concepts: :environment do
-    ap "Concept count #{Concept.count} for "
-    Dataset.all.each do |dataset|
-      Datagraphs::Api::SearchForConcepts.new.process(dataset.name.downcase)
-    end
-    ap "Concept count afterwards #{Concept.count}"
-  end
 
-  task routes: :environment do
-    Rails.application.reload_routes!
-  end
 end
