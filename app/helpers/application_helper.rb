@@ -3,7 +3,7 @@ module ApplicationHelper
     concept.label || concept.properties["name"]
   end
 
-  def process(property_value)
+  def process_property_value(key, property_value)
     return "" unless property_value.present?
 
     if property_value.is_a?(Array)
@@ -11,9 +11,16 @@ module ApplicationHelper
       property_value.map do |value|
         process_individual_thing(value)
       end.join(', ')
+    elsif key == "publishedAt"
+      time = Time.zone.parse(property_value)
+      time.strftime('%B %d, %Y at %I:%M %p')
     else
       process_individual_thing(property_value)
     end
+  end
+
+  def process_key(key)
+    key.underscore.humanize.capitalize
   end
 
   def process_individual_thing(value)

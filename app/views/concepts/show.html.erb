@@ -5,7 +5,7 @@
 <h3>Properties</h3>
 <dl class="row">
   <% @concept.properties.each do |key, value| %>
-    <dt class="col-sm-3"><%= key %></dt>
-    <dd class="col-sm-9"><%= process(value).html_safe %></dd>
+    <dt class="col-sm-3"><%= process_key(key) %></dt>
+    <dd class="col-sm-9"><%= process_property_value(key, value).html_safe %></dd>
   <% end %>
 </dl>

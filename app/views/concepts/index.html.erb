@@ -6,7 +6,7 @@
   <thead>
     <tr>
       <th scope="col">Label</th>
-      <th scope="col">Type</th>
+      <th scope="col">Datagraphs Type</th>
       <th scope="col">Datagraphs id</th>
       <th scope="col">Properties</th>
     </tr>
@@ -14,20 +14,19 @@
   <tbody>
     <% @concepts.each do |concept| %>
       <tr>
-        <th scope="row"><%= process(concept.datagraphs_id) %></th>
+        <th scope="row"><%= process_property_value(nil, concept.datagraphs_id) %></th>
         <td><%= concept.datagraphs_type %></td>
         <td><%= concept.datagraphs_id %></td>
         <td>
           <% concept.properties.each do |key, value| %>
-            <b><%= key %>:</b>
+            <b><%= process_key(key) %>:</b>
             <% if key == "brandColour" %>
               <span style="color: white; background-color: #<%= value %>"><%= value %></span>
             <% else %>
-              <%= process(value).html_safe %>
+              <%= process_property_value(key, value).html_safe %>
             <% end %>
             </br>
           <% end %>
-
         </td>
       </tr>
     <% end %>
