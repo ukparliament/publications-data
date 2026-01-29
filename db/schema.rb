@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_16_171954) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_29_155359) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_16_171954) do
     t.text "label"
     t.jsonb "properties"
     t.datetime "updated_at", null: false
+    t.index ["datagraphs_id"], name: "index_concepts_on_datagraphs_id"
   end
 
   create_table "datasets", force: :cascade do |t|
