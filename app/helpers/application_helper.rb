@@ -3,6 +3,14 @@ module ApplicationHelper
     concept.label || concept.properties["name"]
   end
 
+  def concept_type_conversion(concept_type)
+    if concept_type.in?(Constants::CONCEPT_TITLE_MAP.keys)
+      Constants::CONCEPT_TITLE_MAP[concept_type]
+    else
+      concept_type.underscore.humanize.pluralize
+    end
+  end
+
   def process_property_value(key, property_value)
     return "" unless property_value.present?
 
@@ -39,6 +47,9 @@ module ApplicationHelper
     ref_array = reference.split(':')
 
     type_thing = ref_array[-2]
+
+    type_thing = concept_type_conversion(type_thing)
+
     thing_id = ref_array[-1]
 
     concept = Concept.find_by(datagraphs_id: reference)
@@ -47,10 +58,10 @@ module ApplicationHelper
       label = concept.label || concept.title
 
       if label
-        link_to label, send("#{type_thing.underscore.downcase.singularize}_path", id: thing_id)
+        link_to label, send("#{type_thing.parameterize.underscore.downcase.singularize}_path", id: thing_id)
       else
         name = concept.properties["name"]
-        link_to name, send("#{type_thing.underscore.downcase.singularize}_path", id: thing_id)
+        link_to name, send("#{type_thing.parameterize.underscore.downcase.singularize}_path", id: thing_id)
       end
     else
       reference

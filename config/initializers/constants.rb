@@ -1,3 +1,8 @@
 $SITE_TITLE = ENV.fetch("SITE_TITLE")
 $TOGGLE_PORTCULLIS = ENV.fetch( "TOGGLE_PORTCULLIS", 'off' )
 $PROJECT_ID = ENV.fetch("PROJECT_ID")
+
+class Constants
+  CONCEPT_TITLE_MAP = {}
+  ROUTE_OVERRIDES= []
+end

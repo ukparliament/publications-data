@@ -1,5 +1,5 @@
 <% if @concept_type %>
-  <h1><%= @concept_type.underscore.humanize.pluralize %></h1>
+  <h1><%= concept_type_conversion(@concept_type) %></h1>
 <% end %>
 
 <table class="table table-bordered">
