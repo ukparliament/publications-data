@@ -2,6 +2,7 @@ module Datagraphs
   module Api
     class SearchForConcepts < Base
 
+      # This is a simple data model to help us with pagination
       PaginationResults = Data.define(:total_results, :next_page_token, :previous_page_token, :took)
 
       def process(dataset_label = "specialisms")
@@ -14,10 +15,10 @@ module Datagraphs
         if pagination_response
           total_results = pagination_response.total_results
 
-          ap "First call, total results: #{total_results}"
+          logger.debug "First call, total results: #{total_results}"
 
           while @total_count < total_results
-            ap "In loop"
+            logger.debug "In loop"
             params = default_query_params.merge({ nextPageToken: pagination_response.next_page_token })
 
             response = call(params: params)
@@ -64,8 +65,6 @@ module Datagraphs
           pagination_response = json_response["search"]
 
           @total_count = @total_count + results.size
-
-          ap pagination_response
 
           PaginationResults.new(
             total_results: pagination_response["totalResults"],

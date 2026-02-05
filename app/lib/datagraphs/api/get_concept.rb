@@ -1,5 +1,6 @@
 module Datagraphs
   module Api
+    # Note - we don't currently use this att he moment.
     class GetConcept < Base
       def process(type_or_class_name)
         @type_or_class_name = type_or_class_name
@@ -11,9 +12,7 @@ module Datagraphs
         json_response = JSON.parse(response)
 
         normal_keys = ["label", "type", "id"]
-
-
-        results = json_response["results"].each do |result|
+        json_response["results"].each do |result|
 
           label = result["label"]
           datagraphs_type = result["type"]

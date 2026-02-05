@@ -2,6 +2,7 @@ module Datagraphs
   module Api
     class GetDatasets < Base
       def process
+        # Note - this is a subclass, call can be found in the super class Base
         response = call
         process_response(response.body)
       end
@@ -9,7 +10,7 @@ module Datagraphs
       def process_response(response)
         json_response = JSON.parse(response)
 
-        results = json_response["results"].each do |result|
+        json_response["results"].each do |result|
           Dataset.where(
             name: result["name"],
             namespace: result["namespace"],
@@ -20,9 +21,6 @@ module Datagraphs
             link_to_self: result["_links"]["_self"]
           ).first_or_create!
         end
-
-        ap Dataset.all
-
       end
 
       def url

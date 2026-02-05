@@ -1,7 +1,11 @@
 module Datagraphs
   module Api
     class Base
-      def call(body: default_body, params: default_params, method_type: default_method_type)
+      attr_reader :logger
+
+      def call(body: default_body, params: default_params, method_type: default_method_type, logger: Rails.logger)
+        @logger = logger
+
         request = Typhoeus::Request.new(
           url,
           method: method_type,
@@ -10,26 +14,10 @@ module Datagraphs
           headers: headers
         )
 
-        request.on_complete do |response|
-          if response.success?
-            # hell yeah
-          elsif response.timed_out?
-            # aw hell no
-            Rails.logger.warn("got a time out")
-          elsif response.code == 0
-            # Could not get an http response, something's wrong.
-            Rails.logger.error(response.return_message)
-          elsif response.code == 401 || response.code == 403
-            Rails.logger.info("Access token has expired")
-            OAuthAccessToken.delete_all
-          else
-            # Received a non-successful http response.
-            Rails.logger.warn("got an error")
-            Rails.logger.error(response.return_message)
-            Rails.logger.error(response.code.to_s)
-          end
-        end
+        # This is setting up a call back base on what might go wrong
+        request.on_complete { |response| handle(response) }
 
+        # This actually runs the request
         request.run
       end
 
@@ -56,23 +44,41 @@ module Datagraphs
 
       private
 
+      def handle(response)
+        if response.success?
+          logger.debug("Success")
+        elsif response.timed_out?
+          logger.warn("Request timed out")
+        elsif response.code == 0
+          logger.error(response.return_message)
+        elsif response.code == 401 || response.code == 403
+          logger.info("Access token has expired, delete tokens in database to trigger a fresh one")
+          OAuthAccessToken.delete_all
+        else
+          # Received a non-successful http response.
+          logger.warn("got an error")
+          logger.error(response.return_message)
+          logger.error(response.code.to_s)
+        end
+      end
+
       def api_key
         ENV.fetch('DATAGRAPHS_API_KEY')
       end
 
       def oauth_token
-        # TODO - if this has already expired, get a new on here.
         token = OAuthAccessToken.first
 
-        ap "Token is blank" if token.blank?
-        ap "Token is not blank, but has expired" if (token && token.expires_in < Time.now)
-
-        if token.blank? || token.expires_in < Time.now
+        if token_needs_a_refresh?(token)
+          logger.debug("Token is blank or has expired")
           token = GetOAuthToken.new.process
-          ap "Hopefully we now have a new token"
-          ap token
+          logger.debug("We should now have a new token, expiring #{token.expires_in}")
         end
         token.token
+      end
+
+      def token_needs_a_refresh?(token)
+        token.blank? || token.expires_in < Time.now
       end
 
       def project_id
