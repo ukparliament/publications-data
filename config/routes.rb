@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
   get 'houses/:house/james-service' => 'concepts#index'
 
-  Dataset.all_concept_types.each do |ct|
+  Dataset.all_concept_types.each do |concept_types|
     get "/#{concept_types}",      to: 'concepts#index', defaults: { concept_type: concept_types.underscore.camelize.singularize }
     get "/#{concept_types}/:id",  to: 'concepts#show',  defaults: { concept_type: concept_types.underscore.camelize.singularize }, as: concept_types.singularize.underscore.to_sym
   end
