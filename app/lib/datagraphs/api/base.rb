@@ -46,7 +46,6 @@ module Datagraphs
       end
 
       def headers
-        api_key = ENV.fetch('DATAGRAPHS_API_KEY')
         {
           ContentType: 'application/json',
           Accept: "application/json",
