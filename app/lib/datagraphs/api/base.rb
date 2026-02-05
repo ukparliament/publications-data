@@ -1,7 +1,11 @@
 module Datagraphs
   module Api
     class Base
-      def call(body: default_body, params: default_params, method_type: default_method_type)
+      attr_reader :logger
+
+      def call(body: default_body, params: default_params, method_type: default_method_type, logger: Rails.logger)
+        @logger = logger
+
         request = Typhoeus::Request.new(
           url,
           method: method_type,
