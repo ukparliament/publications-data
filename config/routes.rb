@@ -22,7 +22,6 @@ Rails.application.routes.draw do
 
   Dataset.all_concept_types.each do |ct|
     concept_types = ct.pluralize.underscore.downcase.dasherize
-    concept_type = ct.underscore.downcase.dasherize
 
     get "/#{concept_types}", to: 'concepts#index', defaults: { concept_type: concept_types.underscore.camelize.singularize }
     get "/#{concept_types}/:id", to: 'concepts#show', defaults: { concept_type: concept_types.underscore.camelize.singularize }, as: concept_types.singularize.underscore.to_sym
