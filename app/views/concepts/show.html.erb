@@ -9,3 +9,39 @@
     <dd class="col-sm-9"><%= process_property_value(key, value).html_safe %></dd>
   <% end %>
 </dl>
+
+<hr/>
+
+<% if @concepts.any? %>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Label</th>
+        <th scope="col">Datagraphs Type</th>
+        <th scope="col">Datagraphs id</th>
+        <th scope="col">Properties</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @concepts.each do |concept| %>
+        <tr>
+          <th scope="row"><%= process_property_value(nil, concept.datagraphs_id) %></th>
+          <td><%= concept.datagraphs_type %></td>
+          <td><%= concept.datagraphs_id %></td>
+          <td>
+            <% concept.properties.each do |key, value| %>
+              <b><%= process_key(key) %>:</b>
+              <% if key == "brandColour" %>
+                <span style="color: white; background-color: #<%= value %>"><%= value %></span>
+              <% else %>
+                <%= process_property_value(key, value).html_safe %>
+              <% end %>
+              </br>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+<% end %>

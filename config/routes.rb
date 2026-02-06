@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   end
 
   Constants::ROUTE_OVERRIDES.each do |special|
-    get special[:route], to: special[:to], defaults: { concept_type: special[:concept_type], property: special[:property] }, as: special[:as]
+    get special[:route], to: special[:to], defaults: { concept_type: special[:concept_type], property: special[:property], title: special[:title] }, as: special[:as]
   end
 end
 

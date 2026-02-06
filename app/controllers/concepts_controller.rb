@@ -9,7 +9,16 @@ class ConceptsController < ApplicationController
     @id = params[:id]
     @datagraphs_id = "urn:#{$PROJECT_ID}:#{@concept_type}:#{@id}"
 
-    @concept = Concept.find_by(datagraphs_id:  @datagraphs_id)
+    @concept = Concept.find_by(datagraphs_id: @datagraphs_id)
+
+    property = params["property"]
+
+    if property
+      # Load extras
+      @concepts = Concept.where(datagraphs_id: @concept.properties[property])
+    else
+      ap "No property"
+    end
   end
 
   private
