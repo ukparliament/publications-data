@@ -12,11 +12,15 @@ class ConceptsController < ApplicationController
     @concept = Concept.find_by(datagraphs_id: @datagraphs_id)
 
     property = params["property"]
+    @title = params["title"]
 
     if property
-      # Load extras
-      @concepts = Concept.where(datagraphs_id: @concept.properties[property])
+      @title = @title % { main_concept: @concept.display_title }
+      # Load extras - these are the thingds we want to display, filtered by the concept
+      # i.e. the main concept is House, but the filtered concepts are the Research Services for the house
+      @filtered_concepts = Concept.where(datagraphs_id: @concept.properties[property])
     else
+      @filtered_concepts = []
       ap "No property"
     end
   end

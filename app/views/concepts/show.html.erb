@@ -1,18 +1,9 @@
 <h1><%= concept_type_conversion(@concept_type)  %></h1>
-<h2><%= @concept.label %></h2>
 
-
-<h3>Properties</h3>
-<dl class="row">
-  <% @concept.properties.each do |key, value| %>
-    <dt class="col-sm-3"><%= process_key(key) %></dt>
-    <dd class="col-sm-9"><%= process_property_value(key, value).html_safe %></dd>
+<% if @filtered_concepts.any? %>
+  <% if @title %>
+    <h2><%= @title %></h2>
   <% end %>
-</dl>
-
-<hr/>
-
-<% if @concepts.any? %>
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -23,7 +14,7 @@
       </tr>
     </thead>
     <tbody>
-      <% @concepts.each do |concept| %>
+      <% @filtered_concepts.each do |concept| %>
         <tr>
           <th scope="row"><%= process_property_value(nil, concept.datagraphs_id) %></th>
           <td><%= concept.datagraphs_type %></td>
@@ -43,5 +34,15 @@
       <% end %>
     </tbody>
   </table>
+<% else %>
+  <h2><%= @concept.display_title %></h2>
+
+  <h3>Properties</h3>
+  <dl class="row">
+    <% @concept.properties.each do |key, value| %>
+      <dt class="col-sm-3"><%= process_key(key) %></dt>
+      <dd class="col-sm-9"><%= process_property_value(key, value).html_safe %></dd>
+    <% end %>
+  </dl>
 
 <% end %>
