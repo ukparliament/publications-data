@@ -12,9 +12,9 @@ Rails.application.routes.draw do
 
   get 'meta/cookies' => 'meta#cookies', as: :meta_cookies
 
-  Dataset.all_concept_types.each do |concept_types|
-    get "/#{concept_types.underscore.tr('_', '-').pluralize}",      to: 'concepts#index', defaults: { concept_type: concept_types.underscore.camelize.singularize }
-    get "/#{concept_types.underscore.tr('_', '-').pluralize}/:id",  to: 'concepts#show',  defaults: { concept_type: concept_types.underscore.camelize.singularize }, as: concept_types.singularize.underscore.to_sym
+  Dataset.all_concept_type_routes.each do |concept_type_route|
+    get concept_type_route.nice_url_index_path, to: CONCEPTS_INDEX, defaults: { concept_type: concept_type_route.concept_type_for_defaults }
+    get concept_type_route.nice_url_show_path,  to: CONCEPTS_SHOW,  defaults: { concept_type: concept_type_route.concept_type_for_defaults }, as: concept_type_route.show_route_name
   end
 
   Constants::ROUTE_OVERRIDES.each do |special|

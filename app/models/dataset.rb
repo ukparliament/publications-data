@@ -17,4 +17,8 @@ class Dataset < ApplicationRecord
   def self.all_concept_types
     all.map(&:concept_types).flatten.uniq
   end
+
+  def self.all_concept_type_routes
+    all_concept_types.map { |concept_type| ConceptTypeRoute.new(concept_type) }
+  end
 end
