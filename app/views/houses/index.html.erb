@@ -15,7 +15,6 @@
         <td><%= house.shortName %></td>
         <td><%= house.properties['hasResearchService'].map { |reference| new_reference_to_link(reference) }.join(', ').html_safe %></td>
         <td><%= link_to 'Publications', publications_house_path(house.datagraphs_id) %></td>
-        <td><%= house.datagraphs_id %></td>
       </tr>
     <% end %>
   </tbody>
