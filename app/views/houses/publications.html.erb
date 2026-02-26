@@ -1,0 +1,36 @@
+<h2>Research services</h2>
+
+<ol>
+  <% @research_services.each do |reference| %>
+    <li><%= convert_reference_to_link(reference) %></li>
+  <% end %>
+</ol>
+
+<p><%= link_to 'Publications (unpublished)', publications_unpublished_house_path(@house.datagraphs_id) %></p>
+
+<% if @publications.any? %>
+  <h2>Publications</h2>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col" class="col-4">Title</th>
+        <th scope="col" class="col-3">Synopsis</th>
+        <th scope="col">Published at</th>
+        <th scope="col">Published by</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @publications.each do |publication| %>
+        <tr>
+          <th scope="row"><%= publication.display_title %></th>
+          <td><%= publication.synopsis %></td>
+          <td><%= Time.parse(publication.published_at).strftime("%d/%m/%Y") if publication.published_at %></td>
+          <td><%= new_reference_to_link(publication.published_by.first) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <h2>No publications</h2>
+<% end %>

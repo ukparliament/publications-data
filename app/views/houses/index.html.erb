@@ -1,0 +1,22 @@
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Short name</th>
+      <th scope="col">Research services</th>
+      <th scope="col">Publications</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @houses.each do |house| %>
+      <tr>
+        <th scope="row"><%= link_to house.properties['name'], house_path(house.datagraphs_id) %></th>
+        <td><%= house.shortName %></td>
+        <td><%= house.properties['hasResearchService'].map { |reference| new_reference_to_link(reference) }.join(', ').html_safe %></td>
+        <td><%= link_to 'Publications', publications_house_path(house.datagraphs_id) %></td>
+        <td><%= house.datagraphs_id %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

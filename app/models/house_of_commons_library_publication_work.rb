@@ -14,12 +14,4 @@
 #
 #  index_concepts_on_datagraphs_id  (datagraphs_id)
 #
-class Concept < ApplicationRecord
-  store_accessor :properties,  :title, :name
-
-  self.inheritance_column = "datagraphs_type"
-
-  def display_title
-    name || title || label
-  end
-end
+class HouseOfCommonsLibraryPublicationWork < PublicationWork; end

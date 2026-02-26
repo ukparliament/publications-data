@@ -1,0 +1,10 @@
+<h2>Research services</h2>
+
+<p><%= link_to 'Publications', publications_house_path(@house.datagraphs_id) %></p>
+<p><%= link_to 'Publications (unpublished)', publications_unpublished_house_path(@house.datagraphs_id) %></p>
+
+<ol>
+  <% @research_services.each do |reference| %>
+    <li><%= convert_reference_to_link(reference) %></li>
+  <% end %>
+</ol>
