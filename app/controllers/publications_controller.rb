@@ -1,11 +1,9 @@
-class HousesController < ApplicationController
-  before_action :set_house, only: [:show, :publications, :unpublished]
-  before_action :set_research_services, only: [:show, :publications, :unpublished]
+class PublicationsController < ApplicationController
 
   def index
-    @houses = Concept.where(datagraphs_type: "House")
-    @crumb << { label: 'Houses', url: nil }
-    @page_title = "Houses"
+    @publications = Concept.where(datagraphs_type: "PublicationWorks")
+    @crumb << { label: 'Publications', url: nil }
+    @page_title = "Publications"
   end
 
   def show
@@ -16,9 +14,9 @@ class HousesController < ApplicationController
 
   # Published
   def publications
-    @publications = @research_services.map do |research_service_datagraphs_id|
-      get_published_publications(research_service_datagraphs_id)
-    end.flatten
+    research_service_datagraphs_id = @research_services.first
+
+    @publications = get_published_publications(research_service_datagraphs_id)
 
     @crumb << { label: 'Houses', url: houses_path }
     @crumb << { label: @house.display_title, url: house_path }
@@ -28,9 +26,9 @@ class HousesController < ApplicationController
   end
 
   def unpublished
-    @publications = @research_services.map do |research_service_datagraphs_id|
-      get_unpublished_publications(research_service_datagraphs_id)
-    end.flatten
+    research_service_datagraphs_id = @research_services.first
+
+    @publications = get_unpublished_publications(research_service_datagraphs_id)
 
     @crumb << { label: 'Houses', url: houses_path }
     @crumb << { label: @house.display_title, url: house_path }
@@ -41,14 +39,6 @@ class HousesController < ApplicationController
   end
 
   private
-
-  def set_house
-    @house = Concept.find_by(datagraphs_id: params[:id])
-  end
-
-  def set_research_services
-    @research_services = @house.properties['hasResearchService']
-  end
 
   def get_published_publications(research_service_datagraphs_id)
     get_publications(research_service_datagraphs_id).where("properties->>'publishedAt' IS NOT NULL")
