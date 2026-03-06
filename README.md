@@ -37,6 +37,28 @@ Then, once the datasets have been imported, you can import all the concepts
 ```
 rake load:concepts
 ```
+### API Endpoints
+
+We use the following three Datagraphs API endpoints:
+
+1. Get Access token - https://support.datagraphs.io/api-docs/overview#get-access-token
+2. List datasets - https://support.datagraphs.io/api-docs/overview#list-datasets
+3. Search for concepts within a Dataset - https://support.datagraphs.io/api-docs/overview#search-for-concepts-within-a-dataset
+
+So for an initial database population we:
+
+1. Ensure we have an access token, get a fresh one if required
+2. List and persist all of the datasets available for the project - in this case:
+    1. Collections
+    2. Contributions
+    3. Disclaimers
+    4. Organisations
+    5. People
+    6. PublicationExpressionStatus
+    7. Publications
+    8. Withdrawls
+
+4. Each dataset lists the concept types associated with the dataset, we then iterate through those to retrieve all of the concept types and persist them
 
 ### Running the application
 
