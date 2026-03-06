@@ -3,6 +3,8 @@
 class ApplicationController < ActionController::Base
   include LibraryDesign::Crumbs
 
+  http_basic_authenticate_with name: "green", password: "goddess"
+
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
   rescue_from ActionController::UnknownFormat, with: :unsupported_media_type
 
