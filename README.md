@@ -60,6 +60,32 @@ So for an initial database population we:
 
 4. Each dataset lists the concept types associated with the dataset, we then iterate through those to retrieve all of the concept types and persist them
 
+### API Endpoints
+
+We use the following three Datagraphs API endpoints:
+
+1) Get Access token - https://support.datagraphs.io/api-docs/overview#get-access-token
+2) List datasets - https://support.datagraphs.io/api-docs/overview#list-datasets
+3) Search for concepts within a Dataset - https://support.datagraphs.io/api-docs/overview#search-for-concepts-within-a-dataset
+
+So for an initial database population we:
+
+1) Ensure we have an access token, get a fresh one if required
+2) List and persist all of the datasets available for the project - in this case:
+
+    a) Collections
+    b) Contributions
+    c) Disclaimers
+    d) Organisations
+    e) People
+    f) PublicationExpressionStatus
+    g) Publications
+    h) Withdrawls
+
+3) Each dataset lists the concept types associated with the dataset, we then iterate through those to retrieve all of the concept types and persist them
+
+
+
 ### Running the application
 
 Use `bin/dev` to fire up the app and navigate to it at https://localhost:3000

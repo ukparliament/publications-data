@@ -1,0 +1,29 @@
+<%= @publications.count %>
+
+<p><%#= link_to 'Publications (unpublished)', publications_unpublished_house_path(@house.datagraphs_id) %></p>
+
+<% if @publications.any? %>
+  <h2>Publications</h2>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col" class="col-4">Title</th>
+        <th scope="col">Created at</th>
+        <th scope="col">Published by</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @publications.each do |publication| %>
+        <tr>
+          <th scope="row"><%= link_to publication.display_title, publication_path(publication.datagraphs_id) %></th>
+          <td><%= Time.parse(publication.created_at).strftime("%d/%m/%Y") if publication.created_at %></td>
+          <td><%= new_reference_to_link(publication.published_by.first) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <h2>No publications</h2>
+<% end %>
+

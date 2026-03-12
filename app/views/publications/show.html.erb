@@ -1,0 +1,7 @@
+
+<p><%#= link_to 'Publications (unpublished)', publications_unpublished_house_path(@house.datagraphs_id) %></p>
+
+<%= (ap @publication).html_safe %>
+
+<p>Published by: <%= new_reference_to_link(@publication.published_by.first) %></p>
+<p>Created at: <%= Time.parse(@publication.created_at).strftime("%d/%m/%Y") if @publication.created_at %></p>

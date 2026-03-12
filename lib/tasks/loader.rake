@@ -12,10 +12,26 @@ namespace :load do
     Concept.delete_all
     ap "Concept count #{Concept.count} for "
     Dataset.all.each do |dataset|
-      Datagraphs::Api::SearchForConcepts.new.process(dataset.name.downcase)
+      ap "Looking for #{dataset.name.parameterize} in the API"
+      Datagraphs::Api::SearchForConcepts.new.process(dataset.name.parameterize)
     end
     ap "Concept count afterwards #{Concept.count}"
   end
+
+  # desc "load all concepts"
+  # task expression_statuses: :environment do
+  #   # Concept.delete_all
+  #   ap "Concept count #{Concept.count} for "
+  #   Datagraphs::Api::SearchForConcepts.new.process("publication-expression-statuses")
+
+  #   ap "Concept count afterwards #{Concept.count}"
+  # end
+
+
+
+#   Publication expression statuses
+# Publications
+# Withdrawals
 
   task routes: :environment do
     Rails.application.reload_routes!
@@ -30,6 +46,21 @@ namespace :load do
         end
       end
     end
+  end
+
+  desc "load concept - PublicationExpression"
+  task publications: :environment do
+    ap "Publication count #{Publication.count}"
+    Datagraphs::Api::SearchForConcepts.new.process("publications")
+    ap "Concept count afterwards #{Publication.count}"
+  end
+
+
+  desc "load concept - PublicationExpression"
+  task all: :environment do
+    ap "Publication count #{Publication.count}"
+    Datagraphs::Api::SearchForConcepts.new.process("_all")
+    ap "Concept count afterwards #{Publication.count}"
   end
 
   desc "load concept - specialisms"

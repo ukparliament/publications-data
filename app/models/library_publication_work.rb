@@ -14,19 +14,6 @@
 #
 #  index_concepts_on_datagraphs_id  (datagraphs_id)
 #
-class PublicationWork < Concept
-  store_accessor :properties, :title, :synopsis, :publishedAt, :publishedBy, :createdAt
-
-  def published_at
-    publishedAt
-  end
-
-  def published_by
-    publishedBy
-  end
-
-  def created_at
-    createdAt
-  end
+class LibraryPublicationWork < PublicationWork
 end
 

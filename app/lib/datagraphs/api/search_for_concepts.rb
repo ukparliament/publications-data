@@ -5,6 +5,8 @@ module Datagraphs
       # This is a simple data model to help us with pagination
       PaginationResults = Data.define(:total_results, :next_page_token, :previous_page_token, :took)
 
+      STANDARD_KEYS = ["label", "type", "id"]
+
       def process(dataset_label = "specialisms")
         @dataset_label = dataset_label
         @total_count = 0
@@ -36,29 +38,10 @@ module Datagraphs
       def process_response(response)
         json_response = JSON.parse(response)
 
-        normal_keys = ["label", "type", "id"]
-
         results = json_response["results"]
 
         if results
-          results.each do |result|
-
-            # We are going to save any other attributes as properties, so we
-            # pull these out and then we don't duplicate them as properties
-            label = result["label"]
-            datagraphs_type = result["type"]
-            datagraphs_id = result["id"]
-
-            normal_keys.each { |key| result.delete(key) }
-
-            Concept.where(
-              label: label,
-              datagraphs_type: datagraphs_type,
-              datagraphs_id: datagraphs_id,
-              properties: result
-
-            ).first_or_create!
-          end
+          results.each { |result| process_single_record(single_record) }
 
           @total_count = @total_count + results.size
 
@@ -77,6 +60,26 @@ module Datagraphs
 
       def url
         "#{base_url}#{project_id}/#{@dataset_label}"
+      end
+
+      def process_single_record(single_record)
+        # We are going to save any other attributes as properties, so we
+        # pull these out and then we don't duplicate them as properties
+        label = single_record["label"]
+        datagraphs_type = single_record["type"]
+        datagraphs_id = single_record["id"]
+
+        STANDARD_KEYS.each { |key| single_record.delete(key) }
+
+        #ap datagraphs_type
+
+        Concept.where(
+          label: label,
+          datagraphs_type: datagraphs_type,
+          datagraphs_id: datagraphs_id,
+          properties: single_record
+
+        ).first_or_create!
       end
     end
   end

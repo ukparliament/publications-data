@@ -1,15 +1,18 @@
 class PublicationsController < ApplicationController
 
   def index
-    @publications = Concept.where(datagraphs_type: "PublicationWorks")
+    @publications = get_publications
+
     @crumb << { label: 'Publications', url: nil }
     @page_title = "Publications"
   end
 
   def show
-    @crumb << { label: 'Houses', url: houses_path }
-    @crumb << { label: @house.display_title, url: nil }
-    @page_title =  @house.display_title
+    @publication = PublicationWork.find_by(datagraphs_id: params[:id])
+
+    @crumb << { label: 'Publications', url: houses_path }
+    @crumb << { label: @publication.display_title, url: nil }
+    @page_title =  @publication.display_title
   end
 
   # Published
@@ -40,15 +43,15 @@ class PublicationsController < ApplicationController
 
   private
 
-  def get_published_publications(research_service_datagraphs_id)
-    get_publications(research_service_datagraphs_id).where("properties->>'publishedAt' IS NOT NULL")
+  def get_published_publications
+    get_publications.where("properties->>'publishedAt' IS NOT NULL")
   end
 
-  def get_publications(research_service_datagraphs_id)
-    Concept.where("properties->'publishedBy' @> :value::text::jsonb", value: research_service_datagraphs_id.to_json)
+  def get_publications
+    PublicationWork.order(Arel.sql("properties->>'createdAt' DESC"))
   end
 
   def get_unpublished_publications(research_service_datagraphs_id)
-    get_publications(research_service_datagraphs_id).where("properties->>'publishedAt' IS NULL")
+    get_publications.where("properties->>'publishedAt' IS NULL")
   end
 end

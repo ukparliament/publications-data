@@ -14,4 +14,4 @@
 #
 #  index_concepts_on_datagraphs_id  (datagraphs_id)
 #
-class HouseOfCommonsLibraryPublicationWork < PublicationWork; end
+class HouseOfCommonsLibraryPublicationWork < LibraryPublicationWork; end
