@@ -1,7 +1,11 @@
 
+<p><%= @publication.teaser_text %></p>
 <p><%#= link_to 'Publications (unpublished)', publications_unpublished_house_path(@house.datagraphs_id) %></p>
 
-<%= (ap @publication).html_safe %>
+<p>Authored by <b><%= @publication.contributions.map { |c| new_reference_to_link(c.contribution_by) }.join(', ').html_safe %></b></p>
 
-<p>Published by: <%= new_reference_to_link(@publication.published_by.first) %></p>
-<p>Created at: <%= Time.parse(@publication.created_at).strftime("%d/%m/%Y") if @publication.created_at %></p>
+<p>Status <b><%= @publication.status %></b></p>
+<p>Number <b><%= @publication.number %></b></p>
+
+<p>Created at <b><%= @publication.display_created_at  %></b></p>
+<p>Published at <b><%= @publication.display_published_at  %></b></p>

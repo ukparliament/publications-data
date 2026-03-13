@@ -1,24 +1,32 @@
-<%= @publications.count %>
-
 <p><%#= link_to 'Publications (unpublished)', publications_unpublished_house_path(@house.datagraphs_id) %></p>
 
 <% if @publications.any? %>
-  <h2>Publications</h2>
+  <%== @pagy.series_nav(:bootstrap) %>
 
   <table class="table table-bordered">
     <thead>
       <tr>
         <th scope="col" class="col-4">Title</th>
         <th scope="col">Created at</th>
-        <th scope="col">Published by</th>
+        <th scope="col">Status</th>
+        <th scope="col">Published at</th>
+        <th scope="col">Teaser (extract)</th>
       </tr>
     </thead>
     <tbody>
-      <% @publications.each do |publication| %>
+      <% @publications.limit(100).each do |publication| %>
         <tr>
-          <th scope="row"><%= link_to publication.display_title, publication_path(publication.datagraphs_id) %></th>
-          <td><%= Time.parse(publication.created_at).strftime("%d/%m/%Y") if publication.created_at %></td>
-          <td><%= new_reference_to_link(publication.published_by.first) %></td>
+          <th scope="row">
+            <%= title_of_publication_work_but_link_to_expression(
+                  publication_expression_datagraphs_id: publication.datagraphs_id,
+                  publication_work_datagraphs_id: publication.expression_of,
+                  publication_expression_title: publication.display_title
+                ) %>
+          </th>
+          <td><%= publication.display_created_at %></td>
+          <td><%= publication.status %></td>
+          <td><%= publication.display_published_at %></td>
+          <td><%= truncate(publication.teaser_text, length: 20) %></td>
         </tr>
       <% end %>
     </tbody>
@@ -26,4 +34,3 @@
 <% else %>
   <h2>No publications</h2>
 <% end %>
-

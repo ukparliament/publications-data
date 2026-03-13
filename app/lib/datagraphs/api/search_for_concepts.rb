@@ -7,11 +7,11 @@ module Datagraphs
 
       STANDARD_KEYS = ["label", "type", "id"]
 
-      def process(dataset_label = "specialisms")
+      def process(dataset_label = "specialisms", concept_type)
         @dataset_label = dataset_label
         @total_count = 0
 
-        response = call(params: default_query_params)
+        response = call(params: default_query_params(concept_type))
         pagination_response = process_response(response.body)
 
         if pagination_response
@@ -21,7 +21,7 @@ module Datagraphs
 
           while @total_count < total_results
             logger.debug "In loop"
-            params = default_query_params.merge({ nextPageToken: pagination_response.next_page_token })
+            params = default_query_params(concept_type).merge({ nextPageToken: pagination_response.next_page_token })
 
             response = call(params: params)
             pagination_response = process_response(response.body)
@@ -29,9 +29,10 @@ module Datagraphs
         end
       end
 
-      def default_query_params
+      def default_query_params(concept_type)
         {
-          pageSize: 500
+          pageSize: 500,
+          filter: "type:#{concept_type}"
         }
       end
 
@@ -41,7 +42,7 @@ module Datagraphs
         results = json_response["results"]
 
         if results
-          results.each { |result| process_single_record(single_record) }
+          results.each { |result| process_single_record(result) }
 
           @total_count = @total_count + results.size
 

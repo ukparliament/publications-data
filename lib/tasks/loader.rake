@@ -13,7 +13,10 @@ namespace :load do
     ap "Concept count #{Concept.count} for "
     Dataset.all.each do |dataset|
       ap "Looking for #{dataset.name.parameterize} in the API"
-      Datagraphs::Api::SearchForConcepts.new.process(dataset.name.parameterize)
+      dataset.concept_types.each do |concept_type|
+        ap "Loading up for #{concept_type} using the API"
+        Datagraphs::Api::SearchForConcepts.new.process(dataset.name.parameterize, concept_type)
+      end
     end
     ap "Concept count afterwards #{Concept.count}"
   end
@@ -51,7 +54,19 @@ namespace :load do
   desc "load concept - PublicationExpression"
   task publications: :environment do
     ap "Publication count #{Publication.count}"
-    Datagraphs::Api::SearchForConcepts.new.process("publications")
+
+concepts = ["PublicationExpression",
+ "PublicationWork",
+ "RelatedLink",
+ "ResourceFile",
+ "ResourceFileLink",
+ "SectionContribution"]
+
+    concepts.each do |concept|
+      ap "Doing #{concept}"
+      Datagraphs::Api::SearchForConcepts.new.process("publications", concept)
+    end
+
     ap "Concept count afterwards #{Publication.count}"
   end
 

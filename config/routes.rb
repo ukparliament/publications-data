@@ -44,5 +44,7 @@ Rails.application.routes.draw do
       get 'expressions'
     end
   end
+
+  resources :people, only: [:index, :show]
 end
 

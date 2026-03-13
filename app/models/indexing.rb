@@ -14,6 +14,6 @@
 #
 #  index_concepts_on_datagraphs_id  (datagraphs_id)
 #
-class Collection < Concept
+class Indexing < Concept
   #store_accessor :properties, :shortName, :name, :hasResearchService
 end

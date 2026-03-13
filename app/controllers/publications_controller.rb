@@ -1,14 +1,22 @@
 class PublicationsController < ApplicationController
+  include Pagy::Method
 
   def index
-    @publications = get_publications
+    # @publications = get_publications
+
+    @pagy, @publications = pagy(:offset, get_publications) # :offset paginator
 
     @crumb << { label: 'Publications', url: nil }
     @page_title = "Publications"
   end
 
   def show
-    @publication = PublicationWork.find_by(datagraphs_id: params[:id])
+    @publication = PublicationExpression.find_by(datagraphs_id: params[:id])
+    @publication_work = PublicationWork.find_by(datagraphs_id: @publication.expression_of)
+
+
+
+    @contributions = @publication.contributions
 
     @crumb << { label: 'Publications', url: houses_path }
     @crumb << { label: @publication.display_title, url: nil }
@@ -48,7 +56,7 @@ class PublicationsController < ApplicationController
   end
 
   def get_publications
-    PublicationWork.order(Arel.sql("properties->>'createdAt' DESC"))
+    PublicationExpression.order(Arel.sql("properties->>'createdAt' DESC"))
   end
 
   def get_unpublished_publications(research_service_datagraphs_id)
