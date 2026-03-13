@@ -20,11 +20,17 @@ module ApplicationHelper
         process_individual_thing(value)
       end.join(', ')
     elsif key == "publishedAt"
-      time = Time.zone.parse(property_value)
-      time.strftime('%B %d, %Y at %I:%M %p')
+      nice_date_time(property_value)
     else
       process_individual_thing(property_value)
     end
+  end
+
+  def nice_date_time(field)
+    return "" unless field
+
+    time = Time.zone.parse(field)
+    time.strftime('%B %d, %Y at %I:%M %p')
   end
 
   def process_key(key)

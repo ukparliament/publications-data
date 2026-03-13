@@ -23,17 +23,17 @@ class Concept < ApplicationRecord
     name || title || label
   end
 
-  def self.jsonb_join(target_type, jsonb_key, local_key: :id)
-    target = Concept.arel_table.alias("#{target_type.underscore}_nodes")
+  # def self.jsonb_join(target_type, jsonb_key, local_key: :id)
+  #   target = Concept.arel_table.alias("#{target_type.underscore}_nodes")
 
-    joins(
-      arel_table.join(target).on(
-        Arel::Nodes::SqlLiteral.new(
-          "(#{target.name}.properties->>'#{jsonb_key}')::integer = #{arel_table.name}.#{local_key}
-           AND #{target.name}.type = '#{target_type}'"
-        )
-      ).join_sources
-    )
-  end
+  #   joins(
+  #     arel_table.join(target).on(
+  #       Arel::Nodes::SqlLiteral.new(
+  #         "(#{target.name}.properties->>'#{jsonb_key}')::integer = #{arel_table.name}.#{local_key}
+  #          AND #{target.name}.type = '#{target_type}'"
+  #       )
+  #     ).join_sources
+  #   )
+  # end
 
 end

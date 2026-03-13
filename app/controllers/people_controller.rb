@@ -1,3 +1,5 @@
+require 'ostruct'
+
 class PeopleController < ApplicationController
   include Pagy::Method
 
@@ -14,6 +16,9 @@ class PeopleController < ApplicationController
 
   def show
     @person = Person.find_by(datagraphs_id: params[:id])
+
+    publications = Datagraphs::Api::GetPublicationDataForAPerson.new.process(params[:id])
+    @publications = publications.map { |pub| OpenStruct.new(pub) }
 
     #
     # The problem with this way is that the whole array is loaded into memory
@@ -37,11 +42,8 @@ class PeopleController < ApplicationController
     #                         )
     # end
 
-    all_publications = PublicationExpression.where(datagraphs_id: @person.publication_datagraph_ids)
-    @pagy, @publications = pagy(:offset, all_publications)
-
     @crumb << { label: MAIN_PAGE_TITLE, url: people_path }
-    @crumb << { label: @person.label, url: nil }
+    @crumb << { label: @person.name, url: nil }
     @page_title = @person.name
   end
 
