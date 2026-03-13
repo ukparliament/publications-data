@@ -3,9 +3,9 @@ module Datagraphs
     class GetPublicationDataForAPerson < Base
 
       QUERY = <<-Q
-          MATCH path1=(p:Person)<-[r1:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)-[r4:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-          MATCH path2=(c:Contribution)-[r3:hasContributionType]->(ct:ContributionType)
-          MATCH path3=(pe:PublicationExpression)-[r5:expressionOf]->(pw:PublicationWork)
+          MATCH startWithPerson=(p:Person)<-[r1:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)-[r4:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+          MATCH getContributionType=(c:Contribution)-[r3:hasContributionType]->(ct:ContributionType)
+          MATCH getPublicationWork=(pe:PublicationExpression)-[r5:expressionOf]->(pw:PublicationWork)
           WHERE p.id='%{person_id}'
           RETURN
             p.id AS person_id,

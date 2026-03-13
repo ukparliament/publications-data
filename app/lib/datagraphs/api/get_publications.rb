@@ -3,9 +3,9 @@ module Datagraphs
     class GetPublications < Base
 
       QUERY = <<-Q
-        MATCH getPublications=(pe:PublicationExpression)-[r1:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        WHERE pes.label="Published"
-        RETURN getPublications
+        MATCH (pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
+        MATCH (pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        RETURN pe.id as publication_expression_id, pw.id as publication_work_id, pw.title as title, pes.label as status, pe.publishedAt as published_at, pe.teaserText as teaser_text, pe.createdAt as created_at, pe.number as number
         ORDER BY pe.publishedAt desc
         SKIP %{skip}
         LIMIT %{limit}
@@ -24,7 +24,7 @@ module Datagraphs
         output["results"].first["total"]
       end
 
-      def process(skip: 0, limit: 20)
+      def process(skip: 0, limit: 25)
         params = { query: QUERY % { skip: skip, limit: limit }}
         response = call(params: params)
         process_response(response.body)

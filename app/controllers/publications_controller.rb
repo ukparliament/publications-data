@@ -2,9 +2,16 @@ class PublicationsController < ApplicationController
   include Pagy::Method
 
   def index
-    # @publications = get_publications
+    @total_count = Datagraphs::Api::GetPublications.new.get_total
 
-    @pagy, @publications = pagy(:offset, get_publications) # :offset paginator
+    @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
+
+    publications = Datagraphs::Api::GetPublications.new.process(
+      skip: @pagy.offset,
+      limit: @pagy.limit
+    )
+
+    @publications = publications.map { |pub| OpenStruct.new(pub) }
 
     @crumb << { label: 'Publications', url: nil }
     @page_title = "Publications"
@@ -13,8 +20,6 @@ class PublicationsController < ApplicationController
   def show
     @publication = PublicationExpression.find_by(datagraphs_id: params[:id])
     @publication_work = PublicationWork.find_by(datagraphs_id: @publication.expression_of)
-
-
 
     @contributions = @publication.contributions
 
