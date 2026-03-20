@@ -3,7 +3,7 @@
 Rails.application.routes.draw do
   mount LibraryDesign::Engine => "/library_design"
 
-  root "datasets#index"
+  root "research_services#index"
 
   get '/' => 'home#index', as: :home
 
