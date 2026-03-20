@@ -34,6 +34,12 @@ class PublicationsController < ApplicationController
     @research_service_name = first.research_service_name
     @research_service_id = first.research_service_id
 
+    @publication_expressions.each do |publication_expression|
+      publication_expression["people"] = publication_expression["people_ids"].zip(publication_expression["people_names"]).zip(publication_expression["contribution_types"])
+   #   publication_expression["contribution_types"] = publication_expression["people_ids"].zip(publication_expression["people_names"])
+    end
+
+
 
     @crumb << { label: MAIN_PAGE_TITLE, url: houses_path }
     @crumb << { label: title, url: nil }

@@ -5,7 +5,7 @@
 
 <h2>Expressions of this publication</h2>
 
-<p>Question - do we actually just want the latest one?</p>
+<p><b>Something isn't quite right with this query - needs investigating further!</b></p>
 
 <% if @publication_expressions.any? %>
   <p>Total expressions: <%= @publication_expressions.count %></p>
@@ -18,8 +18,7 @@
           <th scope="col">Ordinality</th>
           <th scope="col">Created at</th>
           <th scope="col">Published at</th>
-          <th scope="col">Person</th>
-          <th scope="col">Role</th>
+          <th scope="col">People</th>
         </tr>
       </thead>
       <tbody>
@@ -31,8 +30,11 @@
             <td><%= nice_date_time(publication.created_at) %></td>
             <td><%= nice_date_time(publication.published_at) %></td>
 
-            <td><%= link_to publication.person_name, person_path(publication.person_id) %></td>
-            <td><%= publication.contribution_type %></td>
+            <td>
+              <% publication.people.each do |person_details, role| %>
+                <p><%= link_to "#{person_details[1]} - (#{role})", person_path(person_details[0]) %></p>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       </tbody>

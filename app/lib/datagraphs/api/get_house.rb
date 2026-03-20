@@ -12,9 +12,6 @@ module Datagraphs
 
       def process(house_id = 'urn:publications-data:House:1')
         params = { query: QUERY % { house_id: house_id }}
-
-        ap params
-
         response = call(params: params)
         process_response(response.body)
       end
