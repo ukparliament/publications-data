@@ -25,7 +25,15 @@ class PublicationsController < ApplicationController
     @publication_expressions = publication_expressions.map { |pub| OpenStruct.new(pub) }
 
     title = @publication_expressions.first ? @publication_expressions.first.title : ''
-    @teaser_text = @publication_expressions.first.teaser_text
+
+    # These are on the work
+    first = @publication_expressions.first
+
+    @reference = first.reference
+    @teaser_text = first.teaser_text
+    @research_service_name = first.research_service_name
+    @research_service_id = first.research_service_id
+
 
     @crumb << { label: MAIN_PAGE_TITLE, url: houses_path }
     @crumb << { label: title, url: nil }

@@ -1,7 +1,7 @@
 
 <p><%= @teaser_text %></p>
-
-<p>Missing bits - people and role</p>
+<p>Reference <b><%= @reference %></b>
+<p>Published by <b><%= link_to @research_service_name, research_service_path(@research_service_id) %></b>
 
 <h2>Expressions of this publication</h2>
 
@@ -16,9 +16,10 @@
           <th scope="col" class="col-4">Title</th>
           <th scope="col">Status</th>
           <th scope="col">Ordinality</th>
-          <th scope="col">Reference</th>
           <th scope="col">Created at</th>
           <th scope="col">Published at</th>
+          <th scope="col">Person</th>
+          <th scope="col">Role</th>
         </tr>
       </thead>
       <tbody>
@@ -27,9 +28,11 @@
             <td><%= publication.title %></td>
             <td><%= publication.status %></td>
             <td><%= publication.ordinality %></td>
-            <td><%= publication.reference %></td>
             <td><%= nice_date_time(publication.created_at) %></td>
             <td><%= nice_date_time(publication.published_at) %></td>
+
+            <td><%= link_to publication.person_name, person_path(publication.person_id) %></td>
+            <td><%= publication.contribution_type %></td>
           </tr>
         <% end %>
       </tbody>
@@ -37,3 +40,5 @@
 <% else %>
   <h2>No publications</h2>
 <% end %>
+
+

@@ -3,7 +3,7 @@ module Datagraphs
     class GetPublication < CypherQuery
 
       QUERY = <<-Q
-        MATCH startWithContribution=(c:Contribution)-[r4:contributionTo]->(pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
+        MATCH startWithContribution=(c:Contribution)-[r4:contributionTo]->(pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
         MATCH addPerson=(c:Contribution)-[r2:contributionBy]->(p:Person)
         MATCH addContributionType=(c:Contribution)-[r3:hasContributionType]->(ct:ContributionType)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
@@ -19,7 +19,8 @@ module Datagraphs
                   pes.label AS status,
                   ct.label AS contribution_type,
                   pw.reference AS reference,
-                  pw.publishedBy AS published_by,
+                  rs.id AS research_service_id,
+                  rs.name AS research_service_name,
                   pe.createdAt AS created_at
       Q
 
