@@ -7,7 +7,7 @@
       <thead>
         <tr>
           <th scope="col" class="col-4">Title</th>
-          <th scope="col">Status</th>
+          <!-- <th scope="col">Status</th> -->
           <th scope="col">Created at</th>
           <th scope="col">Published at</th>
           <th scope="col">Teaser (extract)</th>
@@ -17,7 +17,7 @@
         <% @publications.each do |publication| %>
           <tr>
             <td><%= link_to publication.title, publication_path(publication.publication_work_id) %></td>
-            <td><%= publication.status %></td>
+            <!-- <td><%#= publication.status %></td> -->
             <td><%= nice_date_time(publication.created_at) %></td>
             <td><%= nice_date_time(publication.published_at) %></td>
             <td><%= publication.teaser_text %></td>

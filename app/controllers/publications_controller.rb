@@ -1,6 +1,8 @@
 class PublicationsController < ApplicationController
   include Pagy::Method
 
+  MAIN_PAGE_TITLE = 'Published publications'
+
   def index
     @total_count = Datagraphs::Api::GetPublications.new.get_total
 
@@ -13,8 +15,8 @@ class PublicationsController < ApplicationController
 
     @publications = publications.map { |pub| OpenStruct.new(pub) }
 
-    @crumb << { label: 'Publications', url: nil }
-    @page_title = "Publications"
+    @crumb << { label: MAIN_PAGE_TITLE, url: nil }
+    @page_title = MAIN_PAGE_TITLE
   end
 
   def show
@@ -25,48 +27,8 @@ class PublicationsController < ApplicationController
     title = @publication_expressions.first ? @publication_expressions.first.title : ''
     @teaser_text = @publication_expressions.first.teaser_text
 
-    @crumb << { label: 'Publications', url: houses_path }
+    @crumb << { label: MAIN_PAGE_TITLE, url: houses_path }
     @crumb << { label: title, url: nil }
     @page_title =  title
-  end
-
-  # Published
-  def publications
-    research_service_datagraphs_id = @research_services.first
-
-    @publications = get_published_publications(research_service_datagraphs_id)
-
-    @crumb << { label: 'Houses', url: houses_path }
-    @crumb << { label: @house.display_title, url: house_path }
-    @crumb << { label: 'Publications', url: nil }
-
-    @page_title =  "#{@house.display_title} publications"
-  end
-
-  def unpublished
-    research_service_datagraphs_id = @research_services.first
-
-    @publications = get_unpublished_publications(research_service_datagraphs_id)
-
-    @crumb << { label: 'Houses', url: houses_path }
-    @crumb << { label: @house.display_title, url: house_path }
-    @crumb << { label: 'Publications', url: publications_house_path }
-    @crumb << { label: 'Unpublished', url: nil }
-
-    @page_title =  "Unpublished #{@house.display_title} publications"
-  end
-
-  private
-
-  def get_published_publications
-    get_publications.where("properties->>'publishedAt' IS NOT NULL")
-  end
-
-  def get_publications
-    PublicationExpression.order(Arel.sql("properties->>'createdAt' DESC"))
-  end
-
-  def get_unpublished_publications(research_service_datagraphs_id)
-    get_publications.where("properties->>'publishedAt' IS NULL")
   end
 end

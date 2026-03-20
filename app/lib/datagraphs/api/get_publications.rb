@@ -5,6 +5,7 @@ module Datagraphs
       QUERY = <<-Q
         MATCH (pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
         MATCH (pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE pes.label = 'Published'
         RETURN pe.id as publication_expression_id, pw.id as publication_work_id, pw.title as title, pes.label as status, pe.publishedAt as published_at, pe.teaserText as teaser_text, pe.createdAt as created_at, pe.number as number
         ORDER BY pe.publishedAt desc
         SKIP %{skip}
@@ -13,6 +14,8 @@ module Datagraphs
 
       COUNT = <<-Q
         MATCH (pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
+        MATCH (pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE pes.label="Published"
         RETURN count(pe) AS total
       Q
 
