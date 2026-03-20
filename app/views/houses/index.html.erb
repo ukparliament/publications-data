@@ -4,18 +4,23 @@
     <tr>
       <th scope="col">Name</th>
       <th scope="col">Short name</th>
+      <th scope="col">Defunct</th>
       <th scope="col">Research services</th>
-      <th scope="col">Publications</th>
     </tr>
   </thead>
   <tbody>
     <% @houses.each do |house| %>
       <tr>
-        <th scope="row"><%= link_to house.properties['name'], house_path(house.datagraphs_id) %></th>
-        <td><%= house.shortName %></td>
-        <td><%= house.properties['hasResearchService'].map { |reference| new_reference_to_link(reference) }.join(', ').html_safe %></td>
-        <td><%= link_to 'Publications', publications_house_path(house.datagraphs_id) %></td>
+        <th scope="row"><%= link_to house.name, house_path(house.id) %><%#= link_to house.properties['name'], house_path(house.datagraphs_id) %></th>
+        <td><%= house.short_name %></td>
+        <td><%= house.defunct ? 'Yes' : 'No' %></td>
+        <td>
+          <%= house.research_services.map do |research_service_id, research_service_name| %>
+            <% link_to research_service_name, research_service_path(research_service_id) %>
+          <% end.join(', ').html_safe %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
+

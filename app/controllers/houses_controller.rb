@@ -3,15 +3,28 @@ class HousesController < ApplicationController
   before_action :set_research_services, only: [:show, :publications, :unpublished]
 
   def index
-    @houses = Concept.where(datagraphs_type: "House")
+    houses = Datagraphs::Api::GetHouses.new.process
+    houses.each do |house|
+      house["research_services"] = house["research_service_ids"].zip(house["research_service_names"])
+    end
+
+    @houses = houses.map { |house| OpenStruct.new(house) }
+
     @crumb << { label: 'Houses', url: nil }
     @page_title = "Houses"
   end
 
   def show
+    house = Datagraphs::Api::GetHouse.new.process(params[:id]).first
+    house["research_services"] = house["research_service_ids"].zip(house["research_service_names"])
+
+    @house = OpenStruct.new(house)
+
+    @page_title =  @house.name
+
     @crumb << { label: 'Houses', url: houses_path }
-    @crumb << { label: @house.display_title, url: nil }
-    @page_title =  @house.display_title
+    @crumb << { label: @page_title, url: nil }
+
   end
 
   # Published

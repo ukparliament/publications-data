@@ -1,10 +1,20 @@
+
+<%= @house.name %>
+<p>Short name: <b><%= @house.short_name %></b></p>
+<p>Defunct: <b><%= @house.defunct ? "Yes" : "No" %></b></p>
+
+
 <h2>Research services</h2>
 
-<p><%= link_to 'Publications', publications_house_path(@house.datagraphs_id) %></p>
-<p><%= link_to 'Publications (unpublished)', publications_unpublished_house_path(@house.datagraphs_id) %></p>
+<p><%#= link_to 'Publications', publications_house_path(@house.datagraphs_id) %></p>
+<p><%#= link_to 'Publications (unpublished)', publications_unpublished_house_path(@house.datagraphs_id) %></p>
+
+
+
+
 
 <ol>
-  <% @research_services.each do |reference| %>
-    <li><%= convert_reference_to_link(reference) %></li>
+  <% @house.research_services.each do |id, name| %>
+    <li><%= link_to name, research_service_path(id) %></li>
   <% end %>
 </ol>

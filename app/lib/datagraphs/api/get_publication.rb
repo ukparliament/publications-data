@@ -1,0 +1,36 @@
+module Datagraphs
+  module Api
+    class GetPublication < CypherQuery
+
+      QUERY = <<-Q
+        MATCH startWithContribution=(c:Contribution)-[r4:contributionTo]->(pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
+        MATCH addPerson=(c:Contribution)-[r2:contributionBy]->(p:Person)
+        MATCH addContributionType=(c:Contribution)-[r3:hasContributionType]->(ct:ContributionType)
+        MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE pw.id='%{publication_work_id}'
+        RETURN    p.id AS person_id,
+                  p.name AS person_name,
+                  c.ordinality AS ordinality,
+                  c.isPublic AS is_public,
+                  pe.publishedAt AS published_at,
+                  pe.teaserText AS teaser_text,
+                  pw.title AS title,
+                  pe.id AS id,
+                  pes.label AS status,
+                  ct.label AS contribution_type,
+                  pw.reference AS reference,
+                  pw.publishedBy AS published_by,
+                  pe.createdAt AS created_at
+      Q
+
+      def process(publication_work_id = 'urn:publications-data:PublicationWork:3549')
+        params = { query: QUERY % { publication_work_id: publication_work_id }}
+
+        ap params
+
+        response = call(params: params)
+        process_response(response.body)
+      end
+    end
+  end
+end

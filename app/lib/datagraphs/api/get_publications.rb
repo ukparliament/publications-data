@@ -1,6 +1,6 @@
 module Datagraphs
   module Api
-    class GetPublications < Base
+    class GetPublications < CypherQuery
 
       QUERY = <<-Q
         MATCH (pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
@@ -12,8 +12,7 @@ module Datagraphs
       Q
 
       COUNT = <<-Q
-        MATCH (pe:PublicationExpression)-[r1:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        WHERE pes.label = "Published"
+        MATCH (pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
         RETURN count(pe) AS total
       Q
 
@@ -28,19 +27,6 @@ module Datagraphs
         params = { query: QUERY % { skip: skip, limit: limit }}
         response = call(params: params)
         process_response(response.body)
-      end
-
-      def process_response(response)
-        json_response = JSON.parse(response)
-        json_response["results"]
-      end
-
-      def url
-        "#{base_url}#{project_id}/_cypher"
-      end
-
-      def process_single_record(single_record)
-       # ap single_record
       end
     end
   end

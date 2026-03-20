@@ -1,11 +1,39 @@
 
-<p><%= @publication.teaser_text %></p>
-<p><%#= link_to 'Publications (unpublished)', publications_unpublished_house_path(@house.datagraphs_id) %></p>
+<p><%= @teaser_text %></p>
 
-<p>Authored by <b><%= @publication.contributions.map { |c| new_reference_to_link(c.contribution_by) }.join(', ').html_safe %></b></p>
+<p>Missing bits - people and role</p>
 
-<p>Status <b><%= @publication.status %></b></p>
-<p>Number <b><%= @publication.number %></b></p>
+<h2>Expressions of this publication</h2>
 
-<p>Created at <b><%= @publication.display_created_at  %></b></p>
-<p>Published at <b><%= @publication.display_published_at  %></b></p>
+<p>Question - do we actually just want the latest one?</p>
+
+<% if @publication_expressions.any? %>
+  <p>Total expressions: <%= @publication_expressions.count %></p>
+
+   <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col" class="col-4">Title</th>
+          <th scope="col">Status</th>
+          <th scope="col">Ordinality</th>
+          <th scope="col">Reference</th>
+          <th scope="col">Created at</th>
+          <th scope="col">Published at</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @publication_expressions.each do |publication| %>
+          <tr>
+            <td><%= publication.title %></td>
+            <td><%= publication.status %></td>
+            <td><%= publication.ordinality %></td>
+            <td><%= publication.reference %></td>
+            <td><%= nice_date_time(publication.created_at) %></td>
+            <td><%= nice_date_time(publication.published_at) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+<% else %>
+  <h2>No publications</h2>
+<% end %>

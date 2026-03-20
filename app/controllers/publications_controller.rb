@@ -18,14 +18,16 @@ class PublicationsController < ApplicationController
   end
 
   def show
-    @publication = PublicationExpression.find_by(datagraphs_id: params[:id])
-    @publication_work = PublicationWork.find_by(datagraphs_id: @publication.expression_of)
 
-    @contributions = @publication.contributions
+    publication_expressions = Datagraphs::Api::GetPublication.new.process(params[:id] )
+    @publication_expressions = publication_expressions.map { |pub| OpenStruct.new(pub) }
+
+    title = @publication_expressions.first ? @publication_expressions.first.title : ''
+    @teaser_text = @publication_expressions.first.teaser_text
 
     @crumb << { label: 'Publications', url: houses_path }
-    @crumb << { label: @publication.display_title, url: nil }
-    @page_title =  @publication.display_title
+    @crumb << { label: title, url: nil }
+    @page_title =  title
   end
 
   # Published
