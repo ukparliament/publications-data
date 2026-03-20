@@ -3,7 +3,7 @@
 class ApplicationController < ActionController::Base
   include LibraryDesign::Crumbs
 
-  http_basic_authenticate_with name: "green", password: "goddess" if Rails.env.production?
+  http_basic_authenticate_with name: "green-goddess", password: "knights-turnover-cheated-hiya" if Rails.env.production?
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
   rescue_from ActionController::UnknownFormat, with: :unsupported_media_type
