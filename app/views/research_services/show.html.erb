@@ -1,0 +1,12 @@
+
+<%= @research_service.name %>
+<p>Short name: <b><%= @research_service.short_name %></b></p>
+<p>Defunct: <b><%= @research_service.defunct ? "Yes" : "No" %></b></p>
+
+
+<h2>For</h2>
+
+<%= @research_service.houses.map do |house_id, house_name| %>
+  <% link_to house_name, house_path(house_id) %>
+<% end.join(', ').html_safe %>
+

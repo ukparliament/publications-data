@@ -8,9 +8,12 @@ module Datagraphs
       Q
 
       def process
+        Rails.logger.info("Calling get houses")
         params = { query: QUERY }
         response = call(params: params)
+        Rails.logger.info("Called get houses")
         process_response(response.body)
+
       end
     end
   end

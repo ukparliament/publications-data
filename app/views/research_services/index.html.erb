@@ -1,0 +1,28 @@
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Short name</th>
+      <th scope="col">Strapline</th>
+      <th scope="col">Defunct</th>
+      <th scope="col">For</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @research_services.each do |research_service| %>
+      <tr>
+        <th scope="row"><%= link_to research_service.name, research_service_path(research_service.id) %><%#= link_to house.properties['name'], house_path(house.datagraphs_id) %></th>
+        <td><%= research_service.short_name %></td>
+        <td><%= research_service.strap_line %></td>
+        <td><%= research_service.defunct ? 'Yes' : 'No' %></td>
+        <td>
+          <%= research_service.houses.map do |house_id, house_name| %>
+            <% link_to house_name, house_path(house_id) %>
+          <% end.join(', ').html_safe %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
