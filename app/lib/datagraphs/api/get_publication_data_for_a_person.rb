@@ -21,7 +21,7 @@ module Datagraphs
             pw.reference AS reference,
             pw.publishedBy AS published_by,
             pe.createdAt AS created_at
-          ORDER BY pe.publishedAt desc
+          ORDER BY pw.title, c.ordinality, pe.publishedAt desc
       Q
 
       def process(person_id = 'urn:publications-data:Person:294313')
