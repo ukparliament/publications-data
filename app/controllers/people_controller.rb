@@ -22,13 +22,12 @@ class PeopleController < ApplicationController
   end
 
   def show
-    @person = Person.find_by(datagraphs_id: params[:id])
-
     publications = Datagraphs::Api::GetPublicationDataForAPerson.new.process(params[:id])
     @publications = publications.map { |pub| OpenStruct.new(pub) }
+    @person_name = @publications.first.person_name
 
     @crumb << { label: MAIN_PAGE_TITLE, url: people_path }
-    @crumb << { label: @person.name, url: nil }
-    @page_title = @person.name
+    @crumb << { label: @person_name, url: nil }
+    @page_title = @person_name
   end
 end
