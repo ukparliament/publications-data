@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  passwordless_for :users
+
   mount LibraryDesign::Engine => "/library_design"
 
-  root "research_services#index"
+  root "home#index"
 
   get '/' => 'home#index', as: :home
 
@@ -48,5 +50,6 @@ Rails.application.routes.draw do
   end
 
   resources :people, only: [:index, :show]
+  resources :users
 end
 

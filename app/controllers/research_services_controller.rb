@@ -1,4 +1,6 @@
-class ResearchServicesController < ApplicationController
+require 'ostruct'
+
+class ResearchServicesController < AuthenticatedController
 
   def index
     @research_services = process_research_services

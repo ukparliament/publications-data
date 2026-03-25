@@ -1,0 +1,19 @@
+<%= form_with(model: @session, url: url_for(action: 'update'), scope: 'passwordless', method: 'patch', data: { turbo: false }) do |f| %>
+
+  <fieldset class="p-form__fieldset">
+    <legend class="p-form__fieldset-legend">Log in</legend>
+    <div class="p-form__form-group">
+
+      <%= f.label :token, t(".token"), class: "p-form__label" %>
+      <%= f.text_field :token,
+          required: true,
+          autofocus: true,
+          autocomplete: "one-time-code",
+          class: "p-form__input" %>
+    </div>
+  </fieldset>
+  <div class="p-form__buttons">
+    <%= f.submit t(".confirm"), class: "btn btn-primary" %>
+  </div>
+<% end %>
+

@@ -1,4 +1,6 @@
-class PublicationsController < ApplicationController
+require 'ostruct'
+
+class PublicationsController < AuthenticatedController
   include Pagy::Method
 
   MAIN_PAGE_TITLE = 'Published publications'
