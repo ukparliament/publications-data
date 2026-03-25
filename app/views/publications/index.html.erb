@@ -1,0 +1,30 @@
+<p><%#= link_to 'Publications (unpublished)', publications_unpublished_house_path(@house.datagraphs_id) %></p>
+
+<% if @publications.any? %>
+  <p>Total publications: <%= @total_count %></p>
+  <%== @pagy.series_nav(:bootstrap) %>
+   <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col" class="col-4">Title</th>
+          <!-- <th scope="col">Status</th> -->
+          <th scope="col">Created at</th>
+          <th scope="col">Published at</th>
+          <th scope="col">Teaser (extract)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @publications.each do |publication| %>
+          <tr>
+            <td><%= link_to publication.title, publication_path(publication.publication_work_id) %></td>
+            <!-- <td><%#= publication.status %></td> -->
+            <td><%= nice_date_time(publication.created_at) %></td>
+            <td><%= nice_date_time(publication.published_at) %></td>
+            <td><%= publication.teaser_text %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+<% else %>
+  <h2>No publications</h2>
+<% end %>

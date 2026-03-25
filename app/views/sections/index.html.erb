@@ -1,0 +1,23 @@
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Short name</th>
+      <th scope="col">Strapline</th>
+      <th scope="col">Defunct</th>
+      <th scope="col">Forms part of</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @sections.each do |section| %>
+      <tr>
+        <th scope="row"><%= link_to section.name, section_path(section.id) %>
+        <td><%= section.short_name %></td>
+        <td><%= section.strap_line %></td>
+        <td><%= section.is_defunct ? 'Yes' : 'No' %></td>
+        <td><%= link_to section.research_service_name, research_service_path(section.research_service_id) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

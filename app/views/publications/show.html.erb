@@ -1,0 +1,46 @@
+
+<p><%= @teaser_text %></p>
+<p>Reference <b><%= @reference %></b>
+<p>Published by <b><%= link_to @research_service_name, research_service_path(@research_service_id) %></b>
+
+<h2>Expressions of this publication</h2>
+
+<p><b>Something isn't quite right with this query - needs investigating further!</b></p>
+
+<% if @publication_expressions.any? %>
+  <p>Total expressions: <%= @publication_expressions.count %></p>
+
+   <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col" class="col-4">Title</th>
+          <th scope="col">Status</th>
+          <th scope="col">Ordinality</th>
+          <th scope="col">Created at</th>
+          <th scope="col">Published at</th>
+          <th scope="col">People</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @publication_expressions.each do |publication| %>
+          <tr>
+            <td><%= publication.title %></td>
+            <td><%= publication.status %></td>
+            <td><%= publication.ordinality %></td>
+            <td><%= nice_date_time(publication.created_at) %></td>
+            <td><%= nice_date_time(publication.published_at) %></td>
+
+            <td>
+              <% publication.people.each do |person_details, role| %>
+                <p><%= link_to "#{person_details[1]} - (#{role})", person_path(person_details[0]) %></p>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+<% else %>
+  <h2>No publications</h2>
+<% end %>
+
+

@@ -1,0 +1,32 @@
+<% if @publications.any? %>
+  <p>Total published publications: <%= @publications.count %></p>
+
+   <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col" class="col-4">Title</th>
+          <th scope="col">Contribution type</th>
+          <th scope="col">Ordinality</th>
+          <th scope="col">Reference</th>
+          <th scope="col">Public contribution</th>
+          <th scope="col">Created at</th>
+          <th scope="col">Published at</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @publications.each do |publication| %>
+          <tr>
+            <td><%= link_to publication.title, publication_path(publication.id) %></td>
+            <td><%= publication.contribution_type.join(', ') %></td>
+            <td><%= publication.ordinality.join(', ') %></td>
+            <td><%= publication.reference %></td>
+            <td><%= publication.is_public ? "Yes" : "No" %></td>
+            <td><%= nice_date_time(publication.created_at) %></td>
+            <td><%= nice_date_time(publication.published_at) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+<% else %>
+  <h2>No publications</h2>
+<% end %>

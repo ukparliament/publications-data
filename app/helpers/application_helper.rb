@@ -20,11 +20,17 @@ module ApplicationHelper
         process_individual_thing(value)
       end.join(', ')
     elsif key == "publishedAt"
-      time = Time.zone.parse(property_value)
-      time.strftime('%B %d, %Y at %I:%M %p')
+      nice_date_time(property_value)
     else
       process_individual_thing(property_value)
     end
+  end
+
+  def nice_date_time(field)
+    return "" unless field
+
+    time = Time.zone.parse(field)
+    time.strftime('%B %d, %Y at %I:%M %p')
   end
 
   def process_key(key)
@@ -39,6 +45,32 @@ module ApplicationHelper
     else
       value.to_s
     end
+  end
+
+  def new_reference_to_link(reference)
+    ref_array = reference.split(':')
+
+    type_thing = ref_array[-2]
+
+    type_thing = concept_type_conversion(type_thing)
+
+    thing_id = ref_array[-1]
+
+    concept = Concept.find_by(datagraphs_id: reference)
+
+    if concept
+      label = concept.label || concept.title
+
+      if label
+        link_to label, send("#{type_thing.parameterize.underscore.downcase.singularize}_path", id: reference)
+      else
+        name = concept.properties["name"]
+        link_to name, send("#{type_thing.parameterize.underscore.downcase.singularize}_path", id: reference)
+      end
+    else
+      reference
+    end
+
   end
 
   # Example reference

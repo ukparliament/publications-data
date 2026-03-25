@@ -1,0 +1,4 @@
+<p>Short name: <b><%= @section.short_name %></b></p>
+<p>Strap line: <b><%= @section.strap_line %></b></p>
+<p>Defunct: <b><%= @section.defunct ? "Yes" : "No" %></b></p>
+<p>Forms part of <b><%= link_to @section.research_service_name, research_service_path(@section.research_service_id) %></b></p>

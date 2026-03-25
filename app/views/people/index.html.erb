@@ -1,0 +1,19 @@
+<% if @people.any? %>
+  <%== @pagy.series_nav(:bootstrap) %>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col" class="col-4">Title</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @people.each do |person| %>
+      <tr>
+        <th scope="row"> <%= link_to person.name, person_path(person.id) %></th>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <h2>No people</h2>
+<% end %>
