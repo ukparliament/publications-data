@@ -1,6 +1,6 @@
 require 'ostruct'
 
-class PeopleController < ApplicationController
+class PeopleController < AuthenticatedController
   include Pagy::Method
 
   MAIN_PAGE_TITLE = 'People'

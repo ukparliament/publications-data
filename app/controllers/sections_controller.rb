@@ -1,4 +1,6 @@
-class SectionsController < ApplicationController
+require 'ostruct'
+
+class SectionsController < AuthenticatedController
 
   MAIN_PAGE_TITLE = 'Sections'
 

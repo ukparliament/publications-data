@@ -1,4 +1,4 @@
-class ConceptsController < ApplicationController
+class ConceptsController < AuthenticatedController
   before_action :set_concept_type
 
   def index

@@ -1,4 +1,4 @@
-class HousesController < ApplicationController
+class HousesController < AuthenticatedController
 
   MAIN_PAGE_TITLE = 'Houses'
 

@@ -1,4 +1,4 @@
-class DatasetsController < ApplicationController
+class DatasetsController < AuthenticatedController
   def index
     @datasets = Dataset.all
   end
