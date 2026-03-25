@@ -34,6 +34,13 @@ gem "pagy"
 # Openstruct
 gem "ostruct"
 
+# For Auth
+gem "passwordless"
+
+# Email
+gem "bootstrap-email", "1.8.1" # Frozen until Rails 8.1 bug fixed
+gem "postmark-rails"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -42,6 +49,7 @@ group :development, :test do
   gem "bundler-audit", require: false
   gem "byebug", platform: :mri
   gem "pry-rails"
+  gem 'letter_opener_web', '~> 3.0'
 end
 
 group :development do

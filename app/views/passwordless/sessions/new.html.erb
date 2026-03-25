@@ -1,0 +1,19 @@
+<%= form_with(model: @session, url: url_for(action: 'new'), data: { turbo: 'false' }) do |f| %>
+  <fieldset class="p-form__fieldset">
+    <legend class="p-form__fieldset-legend">Log in</legend>
+    <div class="p-form__form-group">
+      <% email_field_name = :"passwordless[#{email_field}]" %>
+      <%= f.label email_field_name,
+          t("passwordless.sessions.new.email.label"),
+          for: "passwordless_#{email_field}", class: "p-form__label" %>
+      <%= email_field_tag email_field_name,
+          params.fetch(email_field_name, nil),
+          required: true,
+          autofocus: true,
+          class: "p-form__input" %>
+    </div>
+    <div class="p-form__buttons">
+      <%= f.submit t("passwordless.sessions.new.submit"), class: "btn btn-primary" %>
+    </div>
+  </fieldset>
+<% end %>
