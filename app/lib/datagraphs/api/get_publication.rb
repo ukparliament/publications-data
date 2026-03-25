@@ -3,10 +3,12 @@ module Datagraphs
     class GetPublication < CypherQuery
 
       QUERY = <<-Q
-        MATCH startWithContribution=(c:Contribution)-[r4:contributionTo]->(pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
-        MATCH addPerson=(c:Contribution)-[r2:contributionBy]->(p:Person)
-        MATCH addContributionType=(c:Contribution)-[r3:hasContributionType]->(ct:ContributionType)
+        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH path1=(pe:PublicationExpression)-[r2:hasContribution]->(c:Contribution)
+        MATCH path2=(c:Contribution)-[r3:contributionBy]->(p:Person)
+        MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
         WHERE pw.id='%{publication_work_id}'
         RETURN    c.isPublic AS is_public,
                   pe.publishedAt AS published_at,
@@ -29,9 +31,10 @@ module Datagraphs
       Q
 
       COUNT = <<-Q
-        MATCH startWithContribution=(pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
+        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH path1=(pe:PublicationExpression)-[r2:hasContribution]->(c:Contribution)
         WHERE pw.id='%{publication_work_id}'
-        RETURN count(pe) AS total
+        RETURN COUNT(DISTINCT pe) AS total
       Q
 
       def process(publication_work_id: 'urn:publications-data:PublicationWork:3549', skip: 0, limit: 25)

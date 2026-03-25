@@ -6,7 +6,11 @@ module Datagraphs
         MATCH (pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
         MATCH (pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         WHERE pes.label = 'Published'
-        RETURN pe.id as publication_expression_id, pw.id as publication_work_id, pw.title as title, pes.label as status, pe.publishedAt as published_at, pe.teaserText as teaser_text, pe.createdAt as created_at, pe.number as number
+        RETURN pe.id as publication_expression_id,
+               pw.id as publication_work_id, pw.title as title,
+               pes.label as status, pe.publishedAt as published_at,
+               pe.teaserText as teaser_text, pe.createdAt as created_at,
+               pe.number as the_number
         ORDER BY pe.publishedAt desc
         SKIP %{skip}
         LIMIT %{limit}
@@ -28,6 +32,7 @@ module Datagraphs
 
       def process(skip: 0, limit: 25)
         params = { query: QUERY % { skip: skip, limit: limit }}
+        ap params
         response = call(params: params)
         process_response(response.body)
       end
