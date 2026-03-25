@@ -22,14 +22,24 @@ class PublicationsController < AuthenticatedController
   end
 
   def show
+    @total_count = Datagraphs::Api::GetPublication.new.get_total(publication_work_id: params[:id])
 
-    publication_expressions = Datagraphs::Api::GetPublication.new.process(params[:id] )
+    @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
+
+    publication_expressions = Datagraphs::Api::GetPublication.new.process(
+      publication_work_id: params[:id],
+      skip: @pagy.offset,
+      limit: @pagy.limit
+    )
+
     @publication_expressions = publication_expressions.map { |pub| OpenStruct.new(pub) }
 
     title = @publication_expressions.first ? @publication_expressions.first.title : ''
 
     # These are on the work
     first = @publication_expressions.first
+
+
 
     @reference = first.reference
     @teaser_text = first.teaser_text

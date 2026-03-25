@@ -5,10 +5,13 @@
 
 <h2>Expressions of this publication</h2>
 
-<p><b>Something isn't quite right with this query - needs investigating further!</b></p>
-
 <% if @publication_expressions.any? %>
-  <p>Total expressions: <%= @publication_expressions.count %></p>
+
+  <p>Total expressions: <%= @total_count %></p>
+
+  <% if @total_count > @publication_expressions.count %>
+    <%== @pagy.series_nav(:bootstrap) %>
+  <% end %>
 
    <table class="table table-bordered">
       <thead>
@@ -32,7 +35,7 @@
 
             <td>
               <% publication.people.each do |person_details, role| %>
-                <p><%= link_to "#{person_details[1]} - (#{role})", person_path(person_details[0]) %></p>
+                <p><%= person_details_and_role(person_details, role) %></p>
               <% end %>
             </td>
           </tr>

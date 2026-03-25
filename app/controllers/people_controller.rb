@@ -24,7 +24,16 @@ class PeopleController < AuthenticatedController
   end
 
   def show
-    publications = Datagraphs::Api::GetPublicationDataForAPerson.new.process(params[:id])
+    @total_count = Datagraphs::Api::GetPublicationDataForAPerson.new.get_total(person_id: params[:id])
+
+    @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
+
+    publications = Datagraphs::Api::GetPublicationDataForAPerson.new.process(
+      person_id: params[:id],
+      skip: @pagy.offset,
+      limit: @pagy.limit
+    )
+
     @publications = publications.map { |pub| OpenStruct.new(pub) }
     @person_name = @publications.first.person_name
 

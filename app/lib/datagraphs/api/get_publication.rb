@@ -23,15 +23,30 @@ module Datagraphs
                   COLLECT(DISTINCT p.name) AS people_names,
                   COLLECT(DISTINCT ct.label) AS contribution_types,
                   COLLECT(DISTINCT c.ordinality) AS ordinalities
+        ORDER BY published_at DESC
+        SKIP %{skip}
+        LIMIT %{limit}
       Q
 
-      def process(publication_work_id = 'urn:publications-data:PublicationWork:3549')
-        params = { query: QUERY % { publication_work_id: publication_work_id }}
+      COUNT = <<-Q
+        MATCH startWithContribution=(pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
+        WHERE pw.id='%{publication_work_id}'
+        RETURN count(pe) AS total
+      Q
 
-        ap params
+      def process(publication_work_id: 'urn:publications-data:PublicationWork:3549', skip: 0, limit: 25)
+        params = { query: QUERY % { publication_work_id: publication_work_id, skip: skip, limit: limit }}
 
         response = call(params: params)
         process_response(response.body)
+      end
+
+      def get_total(publication_work_id: 'urn:publications-data:PublicationWork:3549')
+        params = { query: COUNT % { publication_work_id: publication_work_id }}
+        response = call(params: params)
+        ap response.body
+        output = JSON.parse(response.body)
+        output["results"].first["total"]
       end
     end
   end

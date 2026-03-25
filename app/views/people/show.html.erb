@@ -1,5 +1,8 @@
 <% if @publications.any? %>
-  <p>Total published publications: <%= @publications.count %></p>
+  <p>Total published publications: <%= @total_count %></p>
+  <% if @total_count > @publications.count %>
+    <%== @pagy.series_nav(:bootstrap) %>
+  <% end %>
 
    <table class="table table-bordered">
       <thead>
