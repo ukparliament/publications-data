@@ -18,10 +18,10 @@ module Datagraphs
             pw.id AS id,
             pes.label AS status,
             collect(ct.label) AS contribution_type,
-            pw.reference AS reference,
+            pw.reference AS ref,
             pw.publishedBy AS published_by,
             pe.createdAt AS created_at
-          ORDER BY pw.title, c.ordinality, pe.publishedAt desc
+          ORDER BY title asc, ordinality asc, published_at desc
       Q
 
       def process(person_id = 'urn:publications-data:Person:294313')

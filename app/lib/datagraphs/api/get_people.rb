@@ -4,7 +4,7 @@ module Datagraphs
 
       QUERY = <<-Q
         MATCH (p:Person)
-        RETURN p.id AS id, p.name AS name
+        RETURN p
         ORDER BY p.name asc
         SKIP %{skip}
         LIMIT %{limit}
@@ -25,7 +25,10 @@ module Datagraphs
       def process(skip: 0, limit: 25)
         params = { query: QUERY % { skip: skip, limit: limit }}
         response = call(params: params)
-        process_response(response.body)
+        ap response.body
+        output = process_response(response.body)
+        ap output
+        output
       end
     end
   end

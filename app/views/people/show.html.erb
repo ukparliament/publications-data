@@ -19,7 +19,7 @@
             <td><%= link_to publication.title, publication_path(publication.id) %></td>
             <td><%= publication.contribution_type.join(', ') %></td>
             <td><%= publication.ordinality.join(', ') %></td>
-            <td><%= publication.reference %></td>
+            <td><%= publication.ref %></td>
             <td><%= publication.is_public ? "Yes" : "No" %></td>
             <td><%= nice_date_time(publication.created_at) %></td>
             <td><%= nice_date_time(publication.published_at) %></td>

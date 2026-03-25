@@ -15,7 +15,9 @@ class PeopleController < AuthenticatedController
       limit: @pagy.limit
     )
 
-    @people = people.map { |p| OpenStruct.new(p) }
+    ap people.first
+
+    @people = people.map { |p| OpenStruct.new(p["p"]) }
 
     @crumb << { label: MAIN_PAGE_TITLE, url: nil }
     @page_title = MAIN_PAGE_TITLE
