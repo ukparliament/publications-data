@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_29_155359) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_25_082602) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -41,5 +41,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_29_155359) do
     t.datetime "expires_in"
     t.text "token"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "passwordless_sessions", force: :cascade do |t|
+    t.integer "authenticatable_id"
+    t.string "authenticatable_type"
+    t.datetime "claimed_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", precision: nil, null: false
+    t.string "identifier", null: false
+    t.datetime "timeout_at", precision: nil, null: false
+    t.string "token_digest", null: false
+    t.datetime "updated_at", null: false
+    t.index ["authenticatable_type", "authenticatable_id"], name: "authenticatable"
+    t.index ["identifier"], name: "index_passwordless_sessions_on_identifier", unique: true
   end
 end
