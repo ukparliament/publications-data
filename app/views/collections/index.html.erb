@@ -1,0 +1,17 @@
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Number of works</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @collections.each do |collection| %>
+      <tr>
+        <th scope="row"><%= link_to collection.name, collection_path(collection.id) %>
+        <td><%= collection.pw_count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
