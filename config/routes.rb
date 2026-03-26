@@ -32,6 +32,8 @@ Rails.application.routes.draw do
   end
 
   resources :sections, only: [:index, :show]
+  resources :collections, only: [:index, :show]
+
 
   resources :research_services, path: 'research-services', only: [:index, :show] do
     member do

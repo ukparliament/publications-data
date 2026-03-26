@@ -1,0 +1,31 @@
+<p>Name: <b><%= @collection_name %></b></p>
+
+<% if @publication_works.any? %>
+  <p>Publications in collection: <%= @total_count %></p>
+  <% if @total_count > @publication_works.count %>
+    <%== @pagy.series_nav(:bootstrap) %>
+  <% end %>
+
+   <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col" class="col-4">Title</th>
+          <th scope="col">Reference</th>
+          <th scope="col">Created at</th>
+          <th scope="col">Published by</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @publication_works.each do |publication| %>
+          <tr>
+            <td><%= link_to publication.title, publication_path(publication.pw_id) %></td>
+            <td><%= publication.ref %></td>
+            <td><%= nice_date_time(publication.created_at) %></td>
+            <td><%= link_to publication.published_by, research_service_path(publication.rs_id) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+<% else %>
+  <h2>No publications</h2>
+<% end %>
