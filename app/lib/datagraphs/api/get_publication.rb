@@ -4,9 +4,8 @@ module Datagraphs
 
       QUERY = <<-Q
         MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
-        MATCH path1=(pe:PublicationExpression)-[r2:hasContribution]->(c:Contribution)
-        MATCH path2=(c:Contribution)-[r3:contributionBy]->(p:Person)
-        MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
+        MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
+        OPTIONAL MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
         WHERE pw.id='%{publication_work_id}'
@@ -30,9 +29,36 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
+      TEST_QUERY = <<-Q
+        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH startWithPerson = (p:Person)<-[r1:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
+        MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
+        MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
+        WHERE pw.id='urn:publications-data:PublicationWork:3549'
+        RETURN    c.isPublic AS is_public,
+                  pe.publishedAt AS published_at,
+                  pe.teaserText AS teaser_text,
+                  pw.title AS title,
+                  pe.id AS id,
+                  pes.label AS status,
+                  pw.reference AS ref,
+                  rs.id AS research_service_id,
+                  rs.name AS research_service_name,
+                  pe.createdAt AS created_at,
+                  COLLECT(DISTINCT pes.label) AS statuses,
+                  COLLECT(DISTINCT p.id) AS people_ids,
+                  COLLECT(DISTINCT p.name) AS people_names,
+                  COLLECT(DISTINCT ct.label) AS contribution_types,
+                  COLLECT(DISTINCT c.ordinality) AS ordinalities
+        ORDER BY published_at DESC
+        SKIP 0
+        LIMIT 25
+      Q
+
       COUNT = <<-Q
         MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
-        MATCH path1=(pe:PublicationExpression)-[r2:hasContribution]->(c:Contribution)
+        OPTIONAL MATCH path1=(pe:PublicationExpression)-[r2:hasContribution]->(c:Contribution)
         WHERE pw.id='%{publication_work_id}'
         RETURN COUNT(DISTINCT pe) AS total
       Q

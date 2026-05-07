@@ -1,7 +1,4 @@
 module ApplicationHelper
-  def concept_label(concept)
-    concept.label || concept.properties["name"]
-  end
 
   def concept_type_conversion(concept_type)
     if concept_type.in?(Constants::CONCEPT_TITLE_MAP.keys)
@@ -11,40 +8,11 @@ module ApplicationHelper
     end
   end
 
-  def process_property_value(key, property_value)
-    return "" unless property_value.present?
-
-    if property_value.is_a?(Array)
-
-      property_value.map do |value|
-        process_individual_thing(value)
-      end.join(', ')
-    elsif key == "publishedAt"
-      nice_date_time(property_value)
-    else
-      process_individual_thing(property_value)
-    end
-  end
-
   def nice_date_time(field)
     return "" unless field
 
     time = Time.zone.parse(field)
     time.strftime('%B %d, %Y at %I:%M %p')
-  end
-
-  def process_key(key)
-    key.underscore.humanize.capitalize
-  end
-
-  def process_individual_thing(value)
-    return value.to_s if value.is_a?(TrueClass) || value.is_a?(FalseClass)
-
-    if value.to_s.include?($PROJECT_ID)
-      convert_reference_to_link(value)
-    else
-      value.to_s
-    end
   end
 
   def new_reference_to_link(reference)

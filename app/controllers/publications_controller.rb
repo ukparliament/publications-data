@@ -39,8 +39,6 @@ class PublicationsController < AuthenticatedController
     # These are on the work
     first = @publication_expressions.first
 
-
-
     @reference = first.reference
     @teaser_text = first.teaser_text
     @research_service_name = first.research_service_name
@@ -53,7 +51,7 @@ class PublicationsController < AuthenticatedController
 
 
 
-    @crumb << { label: MAIN_PAGE_TITLE, url: houses_path }
+    @crumb << { label: MAIN_PAGE_TITLE, url: publications_path }
     @crumb << { label: title, url: nil }
     @page_title =  title
   end
