@@ -1,13 +1,4 @@
 module ApplicationHelper
-
-  def concept_type_conversion(concept_type)
-    if concept_type.in?(Constants::CONCEPT_TITLE_MAP.keys)
-      Constants::CONCEPT_TITLE_MAP[concept_type]
-    else
-      concept_type.underscore.humanize.pluralize
-    end
-  end
-
   def nice_date_time(field)
     return "" unless field
 
