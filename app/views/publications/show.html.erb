@@ -39,8 +39,12 @@
             <td><%= nice_date_time(publication.published_at) %></td>
 
             <td>
-              <% publication.people.each do |person_details, role| %>
-                <p><%= person_details_and_role(person_details, role) %></p>
+              <% if publication.people.any? %>
+                <% publication.people.each do |person_details, role| %>
+                  <p><%= person_details_and_role(person_details, role) %></p>
+                <% end %>
+              <% else %>
+                  Contributors are missing for this record
               <% end %>
             </td>
           </tr>

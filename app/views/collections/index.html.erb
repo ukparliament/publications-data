@@ -9,7 +9,7 @@
   <tbody>
     <% @collections.each do |collection| %>
       <tr>
-        <th scope="row"><%= link_to collection.name, collection_path(collection.id) %>
+        <th scope="row"><%= link_to collection.name, collection_path(collection.id) %></th>
         <td><%= collection.pw_count %></td>
       </tr>
     <% end %>
