@@ -22,7 +22,8 @@ class PublicationsController < AuthenticatedController
   end
 
   def show
-    @total_count = Datagraphs::Api::GetPublication.new.get_total(publication_work_id: params[:id])
+    publication_work_id = params[:id]
+    @total_count = Datagraphs::Api::GetPublication.new.get_total(publication_work_id: publication_work_id)
 
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
@@ -39,7 +40,7 @@ class PublicationsController < AuthenticatedController
     # These are on the work
     first = @publication_expressions.first
 
-    @reference = first.reference
+    @reference = first.ref
     @teaser_text = first.teaser_text
     @research_service_name = first.research_service_name
     @research_service_id = first.research_service_id
@@ -49,7 +50,9 @@ class PublicationsController < AuthenticatedController
    #   publication_expression["contribution_types"] = publication_expression["people_ids"].zip(publication_expression["people_names"])
     end
 
+    @contributors = Datagraphs::Api::GetPublication.new.get_contributors(publication_work_id: publication_work_id).uniq
 
+    @people_with_roles = @publication_expressions.map { |pe| pe["people"] }
 
     @crumb << { label: MAIN_PAGE_TITLE, url: publications_path }
     @crumb << { label: title, url: nil }

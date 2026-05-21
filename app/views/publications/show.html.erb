@@ -1,7 +1,12 @@
 
 <p><%= @teaser_text %></p>
-<p>Reference <b><%= @reference %></b>
-<p>Published by <b><%= link_to @research_service_name, research_service_path(@research_service_id) %></b>
+<p>Reference <b><%= @reference %></b></p>
+<p>Published by <b><%= link_to @research_service_name, research_service_path(@research_service_id) %></b></p>
+
+<p>Contributors:</p>
+<% @contributors.each do |contributor| %>
+  <p><%= link_to "#{contributor['person_name']} (#{contributor['contribution_types'].join(', ')})", person_path(contributor["person_id"]) %></p>
+<% end %>
 
 <h2>Expressions of this publication</h2>
 
@@ -45,5 +50,3 @@
 <% else %>
   <h2>No publications</h2>
 <% end %>
-
-
