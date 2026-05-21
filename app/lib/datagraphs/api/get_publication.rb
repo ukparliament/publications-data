@@ -4,7 +4,7 @@ module Datagraphs
 
       QUERY = <<-Q
         MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
-        MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
+        OPTIONAL MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
         OPTIONAL MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
@@ -31,7 +31,7 @@ module Datagraphs
 
       TEST_QUERY = <<-Q
         MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
-        MATCH startWithPerson = (p:Person)<-[r1:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
+        MATCH startWithPerson = (p:Person)<-[r2:contributionBy]-(c:Contribution)-[r3:contributionTo]->(pe:PublicationExpression)
         MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
@@ -63,6 +63,17 @@ module Datagraphs
         RETURN COUNT(DISTINCT pe) AS total
       Q
 
+      ALL_CONTRIBUTORS = <<-Q
+        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
+        MATCH path3 = (c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
+        WHERE pw.id='%{publication_work_id}'
+        RETURN p.id AS person_id,
+               p.name AS person_name,
+               COLLECT_LIST(DISTINCT ct.label) AS contribution_types
+        ORDER BY person_name
+      Q
+
       def process(publication_work_id: 'urn:publications-data:PublicationWork:3549', skip: 0, limit: 25)
         params = { query: QUERY % { publication_work_id: publication_work_id, skip: skip, limit: limit }}
 
@@ -76,6 +87,13 @@ module Datagraphs
         ap response.body
         output = JSON.parse(response.body)
         output["results"].first["total"]
+      end
+
+      def get_contributors(publication_work_id: 'urn:publications-data:PublicationWork:3549')
+        params = { query: ALL_CONTRIBUTORS % { publication_work_id: publication_work_id }}
+
+        response = call(params: params)
+        process_response(response.body)
       end
     end
   end
