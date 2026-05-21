@@ -56,7 +56,8 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "annotaterb"
-  gem "hotwire-livereload", group: :development
+  gem "hotwire-livereload"
+  gem "ruby-lsp"
 end
 
 group :test do
