@@ -19,11 +19,11 @@ module Datagraphs
                   rs.id AS research_service_id,
                   rs.name AS research_service_name,
                   pe.createdAt AS created_at,
-                  COLLECT(DISTINCT pes.label) AS statuses,
-                  COLLECT(DISTINCT p.id) AS people_ids,
-                  COLLECT(DISTINCT p.name) AS people_names,
-                  COLLECT(DISTINCT ct.label) AS contribution_types,
-                  COLLECT(DISTINCT c.ordinality) AS ordinalities
+                  COLLECT_LIST(DISTINCT pes.label) AS statuses,
+                  COLLECT_LIST(DISTINCT p.id) AS people_ids,
+                  COLLECT_LIST(DISTINCT p.name) AS people_names,
+                  COLLECT_LIST(DISTINCT ct.label) AS contribution_types,
+                  COLLECT_LIST(DISTINCT c.ordinality) AS ordinalities
         ORDER BY published_at DESC
         SKIP %{skip}
         LIMIT %{limit}
@@ -31,8 +31,8 @@ module Datagraphs
 
       TEST_QUERY = <<-Q
         MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
-        MATCH startWithPerson = (p:Person)<-[r2:contributionBy]-(c:Contribution)-[r3:contributionTo]->(pe:PublicationExpression)
-        MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
+        OPTIONAL MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
+        OPTIONAL MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
         WHERE pw.id='urn:publications-data:PublicationWork:3549'
@@ -46,14 +46,28 @@ module Datagraphs
                   rs.id AS research_service_id,
                   rs.name AS research_service_name,
                   pe.createdAt AS created_at,
-                  COLLECT(DISTINCT pes.label) AS statuses,
-                  COLLECT(DISTINCT p.id) AS people_ids,
-                  COLLECT(DISTINCT p.name) AS people_names,
-                  COLLECT(DISTINCT ct.label) AS contribution_types,
-                  COLLECT(DISTINCT c.ordinality) AS ordinalities
+                  COLLECT_LIST(DISTINCT pes.label) AS statuses,
+                  COLLECT_LIST(DISTINCT p.id) AS people_ids,
+                  COLLECT_LIST(DISTINCT p.name) AS people_names,
+                  COLLECT_LIST(DISTINCT ct.label) AS contribution_types,
+                  COLLECT_LIST(DISTINCT c.ordinality) AS ordinalities
         ORDER BY published_at DESC
         SKIP 0
         LIMIT 25
+      Q
+
+      TEST_QUERY_2 = <<-Q
+        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        OPTIONAL MATCH resource=(pe)-[r6:hasResourceFileLink]->(rfl:ResourceFileLink)
+        WHERE pw.id='urn:publications-data:PublicationWork:3549'
+        RETURN
+                  pw.title AS title,
+                  pe.id AS id,
+                  pes.label AS status
+        SKIP 0
+        LIMIT 25
+
       Q
 
       COUNT = <<-Q

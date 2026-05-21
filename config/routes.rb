@@ -9,9 +9,6 @@ Rails.application.routes.draw do
 
   get '/' => 'home#index', as: :home
 
-  get 'datasets' => "datasets#index", as: :datasets
-  get 'concepts' => "concepts#index", as: :concepts
-
   get 'meta/cookies' => 'meta#cookies', as: :meta_cookies
 
   resources :houses, only: [:index, :show] do
@@ -24,7 +21,7 @@ Rails.application.routes.draw do
 
   resources :sections, only: [:index, :show]
   resources :collections, only: [:index, :show]
-
+  resources :concepts, only: [:index, :show]
 
   resources :research_services, path: 'research-services', only: [:index, :show] do
     member do
