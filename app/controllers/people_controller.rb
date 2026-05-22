@@ -15,7 +15,7 @@ class PeopleController < AuthenticatedController
       limit: @pagy.limit
     )
 
-    ap people.first
+    ap people
 
     @people = people.map { |p| OpenStruct.new(p["p"]) }
 

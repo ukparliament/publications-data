@@ -9,7 +9,7 @@
     <tbody>
       <% @people.each do |person| %>
       <tr>
-        <th scope="row"> <%= link_to person.name, person_path(person.id) %></th>
+        <th scope="row"> <%= link_to person.displayName, person_path(person.id) %></th>
       </tr>
       <% end %>
     </tbody>

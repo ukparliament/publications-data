@@ -5,7 +5,7 @@ module Datagraphs
       QUERY = <<-Q
         MATCH (p:Person)
         RETURN p
-        ORDER BY p.name asc
+        ORDER BY p.sortName asc
         SKIP %{skip}
         LIMIT %{limit}
       Q
