@@ -11,9 +11,6 @@ class ConceptsController < AuthenticatedController
     @total_count = Datagraphs::Api::GetConcepts.new.get_total(letter: @letter)
 
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
-
-
-
     @concepts = process_concepts(letter: @letter, limit: @pagy.limit, offset: @pagy.offset)
 
     @crumb << { label: MAIN_PAGE_TITLE, url: nil }

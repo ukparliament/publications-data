@@ -1,19 +1,35 @@
-<% if @people.any? %>
-  <%== @pagy.series_nav(:bootstrap) %>
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th scope="col" class="col-4">Title</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @people.each do |person| %>
-      <tr>
-        <th scope="row"> <%= link_to person.displayName, person_path(person.id) %></th>
-      </tr>
+<div class="block">
+  <div class="tabs">
+    <ul class="nav-tabs" role="tablist">
+      <% @letters.each do |letter| %>
+        <li role="presentation">
+          <%= link_to letter, people_path(letter: letter), role: "tab", class: ("active" if letter == @letter) %>
+        </li>
       <% end %>
-    </tbody>
-  </table>
-<% else %>
-  <h2>No people</h2>
-<% end %>
+    </ul>
+  </div>
+</div>
+
+<div class="mt-3 mb-3">
+  <p>Count: <%= @total_count %></p>
+  <% if @total_count > @pagy.limit %>
+    <%== @pagy.series_nav(:bootstrap) %>
+  <% end %>
+</div>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col" class="col-4">Title</th>
+      <th scope="col" class="col-4">Number of contributions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @people.each do |person| %>
+    <tr>
+      <th scope="row"> <%= link_to person.name, person_path(person.id) %></th>
+      <td><%= person.number_of_contributions %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>

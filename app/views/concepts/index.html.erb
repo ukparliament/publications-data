@@ -2,11 +2,11 @@
 <div class="block">
   <div class="tabs">
     <ul class="nav-tabs" role="tablist">
-        <% @letters.each do |letter| %>
-            <li role="presentation">
-              <%= link_to letter, concepts_path(letter: letter), role: "tab", class: ("active" if letter == @letter) %>
-            </li>
-        <% end %>
+      <% @letters.each do |letter| %>
+        <li role="presentation">
+          <%= link_to letter, concepts_path(letter: letter), role: "tab", class: ("active" if letter == @letter) %>
+        </li>
+      <% end %>
     </ul>
   </div>
 </div>
