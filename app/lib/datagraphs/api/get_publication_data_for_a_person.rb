@@ -9,7 +9,7 @@ module Datagraphs
           WHERE p.id='%{person_id}' AND pes.label='Published'
           RETURN
             p.id AS person_id,
-            p.name AS person_name,
+            p.displayName AS person_name,
             collect(c.ordinality) AS ordinality,
             c.isPublic AS is_public,
             pe.publishedAt AS published_at,

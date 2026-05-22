@@ -6,18 +6,20 @@ class PeopleController < AuthenticatedController
   MAIN_PAGE_TITLE = 'People'
 
   def index
-    @total_count = Datagraphs::Api::GetPeople.new.get_total
+    get_letters
+    @letter = params[:letter] || "A"
+    @total_count = Datagraphs::Api::GetPeople.new.get_total(letter: @letter)
 
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
     people = Datagraphs::Api::GetPeople.new.process(
       skip: @pagy.offset,
-      limit: @pagy.limit
+      limit: @pagy.limit,
+      letter: @letter
     )
-
-    ap people.first
-
-    @people = people.map { |p| OpenStruct.new(p["p"]) }
+    ap "HI"
+    ap people
+    @people = people.map { |p| OpenStruct.new(p) }
 
     @crumb << { label: MAIN_PAGE_TITLE, url: nil }
     @page_title = MAIN_PAGE_TITLE
@@ -40,5 +42,11 @@ class PeopleController < AuthenticatedController
     @crumb << { label: MAIN_PAGE_TITLE, url: people_path }
     @crumb << { label: @person_name, url: nil }
     @page_title = @person_name
+  end
+
+  private
+
+  def get_letters
+    @letters = Datagraphs::Api::GetPeople.new.get_letters.first["letters"].sort
   end
 end
