@@ -93,8 +93,7 @@ module Datagraphs
         OPTIONAL MATCH opt = (pubExp)-[r:hasResourceFileLink]->(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
         WHERE pubWork.id = '%{publication_work_id}'
         AND pes.label = "Published"
-        RETURN pubWork.id as publication_id,
-              pubWork.title as publication_title,
+        RETURN
               resFileLink.title as file_title,
               resourceFile.label as file_label,
               resourceFile.fileType as file_type,
@@ -107,7 +106,7 @@ module Datagraphs
       TEST_RESOURCES_ONLY  = <<-Q
         MATCH p = (pubWork:PublicationWork)-[e:hasExpression]->(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         OPTIONAL MATCH opt = (pubExp)-[r:hasResourceFileLink]->(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
-        WHERE pubWork.id = '%{publication_work_id}'
+        WHERE pubWork.id = '15049'
         AND pes.label = "Published"
         RETURN pubWork.id as publication_id,
               pubWork.title as publication_title,
@@ -146,6 +145,7 @@ module Datagraphs
         params = { query: RESOURCES_ONLY % { publication_work_id: publication_work_id }}
 
         response = call(params: params)
+        ap response.body
         process_response(response.body)
       end
     end

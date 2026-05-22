@@ -34,9 +34,7 @@ Rails.application.routes.draw do
     collection do
       get 'unpublished'
     end
-    member do
-      get 'expressions'
-    end
+    resources :expressions, only: [:index, :show]
   end
 
   resources :people, only: [:index, :show]

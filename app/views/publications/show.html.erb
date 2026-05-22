@@ -54,7 +54,7 @@
 <% end %>
 
 <h2>Expressions of this publication</h2>
-
+<% link_to "Expressions/Versions of this publication", publication_expressions_path(@publication_work_id) %>
 <% if @publication_expressions.any? %>
 
   <p>Total expressions: <%= @total_count %></p>
