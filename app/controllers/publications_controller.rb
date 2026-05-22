@@ -52,7 +52,9 @@ class PublicationsController < AuthenticatedController
 
     @contributors = Datagraphs::Api::GetPublication.new.get_contributors(publication_work_id: publication_work_id).uniq
 
-    @resources = Datagraphs::Api::GetPublication.new.get_resources(publication_work_id: publication_work_id)
+    resources = Datagraphs::Api::GetPublication.new.get_resources(publication_work_id: publication_work_id)
+    @resources = resources.map { |resource| OpenStruct.new(resource) }
+
 
     @people_with_roles = @publication_expressions.map { |pe| pe["people"] }
 
