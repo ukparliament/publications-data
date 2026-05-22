@@ -37,7 +37,7 @@ module Datagraphs
                   pe.createdAt AS created_at,
                   COLLECT_LIST(DISTINCT pes.label) AS statuses,
                   COLLECT_LIST(DISTINCT p.id) AS people_ids,
-                  COLLECT_LIST(DISTINCT p.name) AS people_names,
+                  COLLECT_LIST(DISTINCT p.displayName) AS people_names,
                   COLLECT_LIST(DISTINCT ct.label) AS contribution_types,
                   COLLECT_LIST(DISTINCT c.ordinality) AS ordinalities
         ORDER BY published_at DESC
@@ -64,7 +64,7 @@ module Datagraphs
                   pe.createdAt AS created_at,
                   COLLECT_LIST(DISTINCT pes.label) AS statuses,
                   COLLECT_LIST(DISTINCT p.id) AS people_ids,
-                  COLLECT_LIST(DISTINCT p.name) AS people_names,
+                  COLLECT_LIST(DISTINCT p.displayName) AS people_names,
                   COLLECT_LIST(DISTINCT ct.label) AS contribution_types,
                   COLLECT_LIST(DISTINCT c.ordinality) AS ordinalities
         ORDER BY published_at DESC
@@ -88,7 +88,7 @@ module Datagraphs
 
       COUNT = <<-Q
         MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
-        OPTIONAL MATCH path1=(pe:PublicationExpression)-[r2:hasContribution]->(c:Contribution)
+        OPTIONAL MATCH path1=(pe:PublicationExpression)<-[r2:contributionTo]-(c:Contribution)
         WHERE pw.id='%{publication_work_id}'
         RETURN COUNT(DISTINCT pe) AS total
       Q
@@ -99,7 +99,7 @@ module Datagraphs
         MATCH path3 = (c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
         WHERE pw.id='%{publication_work_id}'
         RETURN p.id AS person_id,
-               p.name AS person_name,
+               p.displayName AS person_name,
                COLLECT_LIST(DISTINCT ct.label) AS contribution_types
         ORDER BY person_name
       Q

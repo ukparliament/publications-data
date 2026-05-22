@@ -17,8 +17,7 @@ class PeopleController < AuthenticatedController
       limit: @pagy.limit,
       letter: @letter
     )
-    ap "HI"
-    ap people
+
     @people = people.map { |p| OpenStruct.new(p) }
 
     @crumb << { label: MAIN_PAGE_TITLE, url: nil }
@@ -37,7 +36,7 @@ class PeopleController < AuthenticatedController
     )
 
     @publications = publications.map { |pub| OpenStruct.new(pub) }
-    @person_name = @publications.first.person_name
+    @person_name = @publications.any? ? @publications.first.person_name : "No publications"
 
     @crumb << { label: MAIN_PAGE_TITLE, url: people_path }
     @crumb << { label: @person_name, url: nil }
