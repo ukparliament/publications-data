@@ -1,15 +1,60 @@
+<p>Published by the <b><%= link_to @research_service_name, research_service_path(@research_service_id) %></b></p>
 
-<p><%= @teaser_text %></p>
+<p><i><%= @teaser_text %></i></p>
 <p>Reference <b><%= @reference %></b></p>
-<p>Published by <b><%= link_to @research_service_name, research_service_path(@research_service_id) %></b></p>
 
-<p>Contributors:</p>
-<% @contributors.each do |contributor| %>
-  <p><%= link_to "#{contributor['person_name']} (#{contributor['contribution_types'].join(', ')})", person_path(contributor["person_id"]) %></p>
+<h3>Contributors</h3>
+<% if @contributors.any? %>
+  <% @contributors.each do |contributor| %>
+    <p><%= link_to "#{contributor['person_name']} (#{contributor['contribution_types'].join(', ')})", person_path(contributor["person_id"]) %></p>
+  <% end %>
+<% else %>
+  <p>We do not have any contributors in our records for this publication.</p>
+<% end %>
+
+<h3>Resources</h3>
+<% if @resources.any? %>
+  <% @resources.each do |resource| %>
+    <%= link_to resource.public_url, class: "card" do %>
+      <div class="card-inner">
+        <div class="content">
+          <div class="primary-info"><%= resource.file_title %></div>
+          <div class="secondary-info">Label: <%= resource.file_label %></div>
+          <div class="tertiary-info">Private URL: <%= resource.private_url %></div>
+          <div class="tertiary-info">
+            <% if resource.mime_type == "application/pdf" %>
+              <details>
+                <summary>Show preview of PDF</summary>
+                <iframe src="<%= resource.public_url %>" width="80%" height="300px" type="application/pdf" title="Embedded PDF">
+                  <p>Your browser doesn't support PDF preview. <a href="<%= @pdf_url %>">Download it instead.</a></p>
+                </iframe>
+              </details>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="info">
+          <div class="info-inner">
+            <div class="indicators-left">
+              <div class="indicator indicator-label"><%= resource.mime_type %></div>
+            </div>
+            <div class="indicators-right">
+              <div class="indicator">
+                <i class="fas fa-hdd"></i>
+                <%= number_to_human_size resource.file_size_in_bytes %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+<% else %>
+  <p>We do not have any file resources linked to this publication</p>
 <% end %>
 
 <h2>Expressions of this publication</h2>
-
+<% link_to "Expressions/Versions of this publication", publication_expressions_path(@publication_work_id) %>
 <% if @publication_expressions.any? %>
 
   <p>Total expressions: <%= @total_count %></p>
