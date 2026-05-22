@@ -8,6 +8,22 @@
   <p><%= link_to "#{contributor['person_name']} (#{contributor['contribution_types'].join(', ')})", person_path(contributor["person_id"]) %></p>
 <% end %>
 
+<p>Resources:</p>
+<% @resources.each do |resource| %>
+  <p>File title: <%= resource["file_title"] %></p>
+  <p>File label: <%= resource["file_label"] %></p>
+  <p>File type: <%= resource["file_type"] %></p>
+  <p>Mime type: <%= resource["mime_type"] %></p>
+  <p>File size in bytes: <%= resource["file_size_in_bytes"] %></p>
+  <p>Public url: <%= link_to resource["public_url"], resource["public_url"] %></p>
+  <p>Private url: <%= link_to resource["private_url"], resource["private_url"] %></p>
+
+  <iframe src="<%= resource["public_url"] %>" width="80%" height="300px" type="application/pdf" title="Embedded PDF">
+    <p>Your browser doesn't support PDF preview. <a href="<%= @pdf_url %>">Download it instead.</a></p>
+  </iframe>
+
+<% end %>
+
 <h2>Expressions of this publication</h2>
 
 <% if @publication_expressions.any? %>

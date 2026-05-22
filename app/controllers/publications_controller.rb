@@ -52,6 +52,8 @@ class PublicationsController < AuthenticatedController
 
     @contributors = Datagraphs::Api::GetPublication.new.get_contributors(publication_work_id: publication_work_id).uniq
 
+    @resources = Datagraphs::Api::GetPublication.new.get_resources(publication_work_id: publication_work_id)
+
     @people_with_roles = @publication_expressions.map { |pe| pe["people"] }
 
     @crumb << { label: MAIN_PAGE_TITLE, url: publications_path }

@@ -88,6 +88,38 @@ module Datagraphs
         ORDER BY person_name
       Q
 
+      RESOURCES_ONLY = <<-Q
+        MATCH p = (pubWork:PublicationWork)-[e:hasExpression]->(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        OPTIONAL MATCH opt = (pubExp)-[r:hasResourceFileLink]->(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
+        WHERE pubWork.id = '%{publication_work_id}'
+        AND pes.label = "Published"
+        RETURN pubWork.id as publication_id,
+              pubWork.title as publication_title,
+              resFileLink.title as file_title,
+              resourceFile.label as file_label,
+              resourceFile.fileType as file_type,
+              resourceFile.mimeType as mime_type,
+              resourceFile.fileSizeInBytes as file_size_in_bytes,
+              resourceFile.publicUrl as public_url,
+              resourceFile.privateUrl as private_url
+      Q
+
+      TEST_RESOURCES_ONLY  = <<-Q
+        MATCH p = (pubWork:PublicationWork)-[e:hasExpression]->(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        OPTIONAL MATCH opt = (pubExp)-[r:hasResourceFileLink]->(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
+        WHERE pubWork.id = '%{publication_work_id}'
+        AND pes.label = "Published"
+        RETURN pubWork.id as publication_id,
+              pubWork.title as publication_title,
+              resFileLink.title as file_title,
+              resourceFile.label as file_label,
+              resourceFile.fileType as file_type,
+              resourceFile.mimeType as mime_type,
+              resourceFile.fileSizeInBytes as file_size_in_bytes,
+              resourceFile.publicUrl as public_url,
+              resourceFile.privateUrl as private_url
+      Q
+
       def process(publication_work_id: 'urn:publications-data:PublicationWork:3549', skip: 0, limit: 25)
         params = { query: QUERY % { publication_work_id: publication_work_id, skip: skip, limit: limit }}
 
@@ -105,6 +137,13 @@ module Datagraphs
 
       def get_contributors(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: ALL_CONTRIBUTORS % { publication_work_id: publication_work_id }}
+
+        response = call(params: params)
+        process_response(response.body)
+      end
+
+      def get_resources(publication_work_id: 'urn:publications-data:PublicationWork:7809')
+        params = { query: RESOURCES_ONLY % { publication_work_id: publication_work_id }}
 
         response = call(params: params)
         process_response(response.body)
