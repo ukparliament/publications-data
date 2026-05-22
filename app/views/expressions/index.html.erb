@@ -1,0 +1,49 @@
+<p><i><%= @publication.teaser_text %></i></p>
+<p><b>Reference:</b> <%= @publication.ref %></p>
+<p><b>Published:</b> <%= nice_date_time @publication.published_at %></p>
+
+<h2>Expressions</h2>
+<% if @expressions.any? %>
+
+  <p>Total expressions: <%= @total_count %></p>
+
+  <% if @total_count > @expressions.count %>
+    <%== @pagy.series_nav(:bootstrap) %>
+  <% end %>
+
+   <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col" class="col-4">Title</th>
+          <th scope="col">Status</th>
+          <th scope="col">Ordinality</th>
+          <th scope="col">Created at</th>
+          <th scope="col">Published at</th>
+          <th scope="col">People</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @expressions.each do |expression| %>
+          <tr>
+            <td><%= expression.title %></td>
+            <td><%= expression.status %></td>
+            <td><%= expression.ordinality %></td>
+            <td><%= nice_date_time(expression.created_at) %></td>
+            <td><%= nice_date_time(expression.published_at) %></td>
+
+            <td>
+              <% if expression.people&.any? %>
+                <% expression.people.each do |person_details, role| %>
+                  <p><%= person_details_and_role(person_details, role) %></p>
+                <% end %>
+              <% else %>
+                  Contributors are missing for this record
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+<% else %>
+  <h2>No publications</h2>
+<% end %>
