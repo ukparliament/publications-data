@@ -1,39 +1,21 @@
 module Datagraphs
   module Api
-    class GetPublication < CypherQuery
-      PUBLISHED_PUBLICATION_ONLY = <<-Q
-        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
-        MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
-        WHERE pw.id='%{publication_work_id}'
-        AND pes.label = 'Published'
-        RETURN    pw.title AS title,
-                  pe.teaserText AS teaser_text,
-                  pw.id AS id,
-                  pes.label AS status,
-                  pw.reference AS ref,
-                  rs.id AS research_service_id,
-                  rs.name AS research_service_name,
-                  pe.createdAt AS created_at,
-                  pe.publishedAt AS published_at
-      Q
+    class GetExpressions < CypherQuery
 
       QUERY = <<-Q
         MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
         OPTIONAL MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
         OPTIONAL MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
         WHERE pw.id='%{publication_work_id}'
         RETURN    c.isPublic AS is_public,
                   pe.publishedAt AS published_at,
                   pe.teaserText AS teaser_text,
                   pw.title AS title,
+                  pw.id AS publication_work_id,
                   pe.id AS id,
                   pes.label AS status,
                   pw.reference AS ref,
-                  rs.id AS research_service_id,
-                  rs.name AS research_service_name,
                   pe.createdAt AS created_at,
                   COLLECT_LIST(DISTINCT pes.label) AS statuses,
                   COLLECT_LIST(DISTINCT p.id) AS people_ids,
@@ -137,13 +119,6 @@ module Datagraphs
 
       def process(publication_work_id: 'urn:publications-data:PublicationWork:3549', skip: 0, limit: 25)
         params = { query: QUERY % { publication_work_id: publication_work_id, skip: skip, limit: limit }}
-
-        response = call(params: params)
-        process_response(response.body)
-      end
-
-      def get_published_publication_details(publication_work_id: 'urn:publications-data:PublicationWork:3549')
-        params = { query: PUBLISHED_PUBLICATION_ONLY % { publication_work_id: publication_work_id }}
 
         response = call(params: params)
         process_response(response.body)
