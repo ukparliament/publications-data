@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
+    return session[:user_id] if session[:user_id].present?
     @current_user ||= authenticate_by_session(User)
   end
 

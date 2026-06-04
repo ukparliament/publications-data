@@ -3,13 +3,10 @@
   <head>
     <%= render 'library_design/head/head' %>
     <%= tag('base', href: ENV['BASE_URL']) if Rails.env.production? %>
-
-    <%#= javascript_importmap_tags %>
   </head>
 
   <body class="brand-bicameral">
     <%= render 'library_design/header/header' do %>
-      <%#= link_to 'Datasets', datasets_path %>
       <%= link_to 'People', people_path %>&middot;
       <%= link_to 'Publications', publications_path %>&middot;
       <%= link_to 'Houses', houses_path %>&middot;
@@ -17,8 +14,6 @@
       <%= link_to 'Sections', sections_path %>&middot;
       <%= link_to 'Collections', collections_path %>&middot;
       <%= link_to 'Concepts', concepts_path %>
-
-      <%#= menu_item_links %>
     <% end %>
     <main class="block block-page" id="main-content">
       <div class="inner-content container">
@@ -27,10 +22,10 @@
       </div>
     </main>
     <%= render 'library_design/footer/fat_footer' do %>
-      <%#= content_tag( 'li', link_to( 'About this website', meta_list_url ) ) %>
-      <%= content_tag( 'li', link_to( 'Contact us', 'mailto:RIIDMSMailbox@parliament.uk' ) ) %>
-      <li><%= link_to 'Log out', users_sign_out_path, data: { turbo_method: :delete } %></li>
-
+      <li><%= link_to 'Contact us', 'mailto:RIIDMSMailbox@parliament.uk' %></li>
+      <li><%= link_to 'Log out', users_sign_out_path, data: { turbo_method: :delete } if current_user %></li>
+      <li><%= link_to 'SAML Log in', saml_sso_login_path unless session[:user_id] %></li>
+      <li><%= link_to 'SAML Log out', saml_sso_logout_path, data: { turbo_method: :delete } if session[:user_id] %></li>
     <% end %>
   </body>
 </html>

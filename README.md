@@ -1,12 +1,10 @@
 # Publications Data Explorer
 
-This is a rails app which is going to talk to the Datagraphs API. 
+This is a rails app which is going to talk to the Datagraphs API.
 
-Currently very much at proof of concept level, including getting the API authentication to work and download the available datasets.
+It requires a database to store the token used for getting the Datagraphs OAuth token.
 
-## Generic explorer
-
-As is, by providing the following environment variables in a `.env` file, the application can connect to a Datagraphs instance and be set up to download and locally cache the data, providing a browsable front end for it.
+## The following environment variables need to be set
 
 The environment variables are as follows:
 
@@ -14,80 +12,41 @@ The environment variables are as follows:
 DATAGRAPHS_API_KEY=<Get this from your Datagraphs project settings>
 DATAGRAPHS_CLIENT_SECRET=<Get this from your Datagraphs project settings>
 DATAGRAPHS_CLIENT_ID=<Get this from your Datagraphs project settings>
-PROJECT_ID=<This is the project ID in datagraphs, what you get in the URL, i.e. publications-data or subject-specialist-finder>
+DATAGRAPHS_PROJECT_ID=<This is the project ID in datagraphs, what you get in the URL, i.e. publications-data or subject-specialist-finder>
 SITE_TITLE=<This is the site title, i.e. Publications data explorer>
 ```
 
-Once you have these set up you can locally cache the data with a rake task.
-
 ### Initial setup
 
-Do the usual for a rails app, install the relevant ruby, then run ```bundle install```, followed by ```db:setup```. Now you should be able to load the data.
-
-### Local data load
-
-First load the datasets for the project (Note, this deletes existing ones and then refreshes via the API)
-
-```
-rake load:datasets
-```
-
-Then, once the datasets have been imported, you can import all the concepts
-
-```
-rake load:concepts
-```
-### API Endpoints
-
-We use the following three Datagraphs API endpoints:
-
-1. Get Access token - https://support.datagraphs.io/api-docs/overview#get-access-token
-2. List datasets - https://support.datagraphs.io/api-docs/overview#list-datasets
-3. Search for concepts within a Dataset - https://support.datagraphs.io/api-docs/overview#search-for-concepts-within-a-dataset
-
-So for an initial database population we:
-
-1. Ensure we have an access token, get a fresh one if required
-2. List and persist all of the datasets available for the project - in this case:
-    1. Collections
-    2. Contributions
-    3. Disclaimers
-    4. Organisations
-    5. People
-    6. PublicationExpressionStatus
-    7. Publications
-    8. Withdrawls
-
-4. Each dataset lists the concept types associated with the dataset, we then iterate through those to retrieve all of the concept types and persist them
+Do the usual for a rails app, install the relevant ruby, then run `bundle install`, followed by `db:setup`. Now you should be able to load the data.
 
 ### API Endpoints
 
-We use the following three Datagraphs API endpoints:
+We use the following two Datagraphs API endpoints:
 
-1) Get Access token - https://support.datagraphs.io/api-docs/overview#get-access-token
-2) List datasets - https://support.datagraphs.io/api-docs/overview#list-datasets
-3) Search for concepts within a Dataset - https://support.datagraphs.io/api-docs/overview#search-for-concepts-within-a-dataset
-
-So for an initial database population we:
-
-1) Ensure we have an access token, get a fresh one if required
-2) List and persist all of the datasets available for the project - in this case:
-
-    a) Collections
-    b) Contributions
-    c) Disclaimers
-    d) Organisations
-    e) People
-    f) PublicationExpressionStatus
-    g) Publications
-    h) Withdrawls
-
-3) Each dataset lists the concept types associated with the dataset, we then iterate through those to retrieve all of the concept types and persist them
-
-
+1. [Get Access token](https://support.datagraphs.io/api-docs/overview#get-access-token)
+2. [Graph Search (using Cypher)](https://support.datagraphs.io/api-docs/overview#graph-search-with-cypher)
 
 ### Running the application
 
 Use `bin/dev` to fire up the app and navigate to it at https://localhost:3000
 
+## Notes on SAML Set up
 
+### Set up on ShedCode Azure
+
+1. Log in to Azure and go to [Entra page](https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview)
+2. Open Manage menu on left and find [Enterprise applications](https://portal.azure.com/#view/Microsoft_AAD_IAM/StartboardApplicationsMenuBlade/~/AppAppsPreview/menuId~/null)
+3. Select "Local SAML SSO test app" this is already set up for local dev
+4. If creating a new app for running on local host, you can set the following:
+
+Basic SAML Configuration
+
+Identifier (Entity ID) http://localhost:3000/saml/metadata
+Reply URL (Assertion Consumer Service URL) http://localhost:3000/saml/callback
+
+5. Either way get the following environment variables and set them
+
+ENTRA_APP_FEDERATION_METADATA_URL=<You can get this from the app single sign on settings in Azure - the field is called "App Federation Metadata Url">
+ENTRA_APP_LOGIN_CALLBACK_URL=http://localhost:3000/saml/callback
+ENTRA_APP_ENTITY_ID=http://localhost:3000/saml/metadata
