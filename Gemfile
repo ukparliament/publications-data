@@ -37,6 +37,9 @@ gem "ostruct"
 # For Auth
 gem "passwordless"
 
+# For SAML SSO with Azure
+gem "ruby-saml"
+
 # Email
 gem "bootstrap-email", "1.8.1" # Frozen until Rails 8.1 bug fixed
 gem "postmark-rails"
