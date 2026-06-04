@@ -2,7 +2,7 @@ module Datagraphs
   module Api
     class GetPublication < CypherQuery
       PUBLISHED_PUBLICATION_ONLY = <<-Q
-        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
         WHERE pw.id='%{publication_work_id}'
@@ -19,7 +19,7 @@ module Datagraphs
       Q
 
       QUERY = <<-Q
-        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         OPTIONAL MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
         OPTIONAL MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
@@ -46,7 +46,7 @@ module Datagraphs
       Q
 
       TEST_QUERY = <<-Q
-        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         OPTIONAL MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
         OPTIONAL MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
@@ -73,7 +73,7 @@ module Datagraphs
       Q
 
       TEST_QUERY_2 = <<-Q
-        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         OPTIONAL MATCH resource=(pe)-[r6:hasResourceFileLink]->(rfl:ResourceFileLink)
         WHERE pw.id='urn:publications-data:PublicationWork:3549'
@@ -87,14 +87,14 @@ module Datagraphs
       Q
 
       COUNT = <<-Q
-        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH p = (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         OPTIONAL MATCH path1=(pe:PublicationExpression)<-[r2:contributionTo]-(c:Contribution)
         WHERE pw.id='%{publication_work_id}'
         RETURN COUNT(DISTINCT pe) AS total
       Q
 
       ALL_CONTRIBUTORS = <<-Q
-        MATCH (pw:PublicationWork)-[r1:hasExpression]->(pe:PublicationExpression)
+        MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
         MATCH path3 = (c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
         WHERE pw.id='%{publication_work_id}'
@@ -105,8 +105,8 @@ module Datagraphs
       Q
 
       RESOURCES_ONLY = <<-Q
-        MATCH p = (pubWork:PublicationWork)-[e:hasExpression]->(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        OPTIONAL MATCH opt = (pubExp)-[r:hasResourceFileLink]->(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
+        MATCH p = (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        OPTIONAL MATCH opt = (pubExp)<-[r:forPublicationExpression]-(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
         WHERE pubWork.id = '%{publication_work_id}'
         AND pes.label = "Published"
         RETURN
@@ -121,7 +121,7 @@ module Datagraphs
 
       TEST_RESOURCES_ONLY  = <<-Q
         MATCH p = (pubWork:PublicationWork)-[e:hasExpression]->(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        OPTIONAL MATCH opt = (pubExp)-[r:hasResourceFileLink]->(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
+        OPTIONAL MATCH opt = (pubExp)<-[r:forPublicationExpression]-(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
         WHERE pubWork.id = '15049'
         AND pes.label = "Published"
         RETURN pubWork.id as publication_id,
