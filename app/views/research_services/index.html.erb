@@ -7,12 +7,13 @@
       <th scope="col">Strapline</th>
       <th scope="col">Defunct</th>
       <th scope="col">For</th>
+      <th scope="col">Number of publications</th>
     </tr>
   </thead>
   <tbody>
     <% @research_services.each do |research_service| %>
       <tr>
-        <th scope="row"><%= link_to research_service.name, research_service_path(research_service.id) %><%#= link_to house.properties['name'], house_path(house.datagraphs_id) %></th>
+        <th scope="row"><%= link_to research_service.name, research_service_path(research_service.id) %></th>
         <td><%= research_service.short_name %></td>
         <td><%= research_service.strap_line %></td>
         <td><%= research_service.defunct ? 'Yes' : 'No' %></td>
@@ -21,8 +22,8 @@
             <% link_to house_name, house_path(house_id) %>
           <% end.join(', ').html_safe %>
         </td>
+        <td><%= research_service.publication_count %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
