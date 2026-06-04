@@ -17,8 +17,9 @@
       </div>
     </main>
     <%= render 'library_design/footer/fat_footer' do %>
-      <%#= content_tag( 'li', link_to( 'About this website', meta_list_url ) ) %>
       <%= content_tag( 'li', link_to( 'Contact us', 'mailto:RIIDMSMailbox@parliament.uk' ) ) %>
+      <li><%= link_to 'SAML Log in', saml_sso_login_path unless session[:user_id] %></li>
+      <li><%= link_to 'SAML Log out', saml_sso_logout_path, data: { turbo_method: :delete } if session[:user_id] %></li>
     <% end %>
   </body>
 </html>
