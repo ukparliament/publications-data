@@ -106,7 +106,7 @@ module Datagraphs
 
       RESOURCES_ONLY = <<-Q
         MATCH p = (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        OPTIONAL MATCH opt = (pubExp)-[r:hasResourceFileLink]->(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
+        OPTIONAL MATCH opt = (pubExp)<-[r:forPublicationExpression]-(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
         WHERE pubWork.id = '%{publication_work_id}'
         AND pes.label = "Published"
         RETURN
@@ -121,7 +121,7 @@ module Datagraphs
 
       TEST_RESOURCES_ONLY  = <<-Q
         MATCH p = (pubWork:PublicationWork)-[e:hasExpression]->(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        OPTIONAL MATCH opt = (pubExp)-[r:hasResourceFileLink]->(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
+        OPTIONAL MATCH opt = (pubExp)<-[r:forPublicationExpression]-(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
         WHERE pubWork.id = '15049'
         AND pes.label = "Published"
         RETURN pubWork.id as publication_id,
