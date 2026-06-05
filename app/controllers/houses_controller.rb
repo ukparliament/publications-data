@@ -14,8 +14,6 @@ class HousesController < AuthenticatedController
     house_id = params[:id]
 
     @total_count = Datagraphs::Api::GetHouse.new.house_with_publications_with_a_status_count
-
-
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
     @house = process_house(house_id)
