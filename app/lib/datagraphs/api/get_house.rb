@@ -15,13 +15,19 @@ module Datagraphs
       Q
 
       QUERY_WITH_PUBLICATIONS_WITH_A_STATUS = <<-Q
-        MATCH p = (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExpression:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        MATCH q = (pubWork)-[s:publishedBy]->(rs:ResearchService)-[t:for]->(house:House)
-        OPTIONAL MATCH r = (pubWork)-[d:hasWithdrawalPeriod]->(w:WithdrawalPeriod)
+        MATCH p = (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        MATCH q = (pw)-[s:publishedBy]->(rs:ResearchService)-[t:for]->(house:House)
+        OPTIONAL MATCH r = (pw)-[d:hasWithdrawalPeriod]->(w:WithdrawalPeriod)
         WHERE pes.label = '%{publication_status_label}'
         AND house.id = '%{house_id}'
-        RETURN pubExpression.publishedAt as published_at, pubExpression.title AS title, pubWork.id AS publication_work_id, w.id, pubExpression.id AS publication_expression_id, pubExpression.teaserText as teaser_text
-        ORDER BY title
+        RETURN pe.publishedAt AS published_at,
+               pe.createdAt AS created_at,
+               pe.title AS title,
+               pw.id AS publication_work_id,
+               w.id AS withdrawl_period_id,
+               pe.id AS publication_expression_id,
+               pe.teaserText AS teaser_text
+        ORDER BY published_at DESC
         SKIP %{skip}
         LIMIT %{limit}
       Q

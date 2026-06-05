@@ -1,8 +1,8 @@
+<h1><small class="text-muted"><%= @house.short_name %></small></h1>
 
-<%= @house.name %>
-<p>Short name: <b><%= @house.short_name %></b></p>
-<p>Defunct: <b><%= @house.defunct ? "Yes" : "No" %></b></p>
-
+<% if @house.defunct %>
+  <p>This house is marked as DEFUNCT.</p>
+<% end %>
 
 <h2>Research services</h2>
 
