@@ -68,6 +68,13 @@ module Datagraphs
                rl.url AS url
       Q
 
+      SECTIONS = <<-Q
+        MATCH p = (pe:PublicationExpression)<-[e:sectionContributionTo]-(b:SectionContribution)-[r:sectionContributionBy]->(s:Section)
+        WHERE pe.id = '%{expression_id}'
+        RETURN s.name AS name, s.id AS id
+        ORDER BY s.name
+      Q
+
       def process(expression_id: 'urn:publications-data:PublicationExpression:69185')
         params = { query: QUERY % { expression_id: expression_id }}
         ap params
@@ -95,6 +102,14 @@ module Datagraphs
         response = call(params: params)
         process_response(response.body)
       end
+
+      def sections(expression_id: 'urn:publications-data:PublicationExpression:69185')
+        params = { query: SECTIONS % { expression_id: expression_id }}
+        ap params
+        response = call(params: params)
+        process_response(response.body)
+      end
+
     end
   end
 end

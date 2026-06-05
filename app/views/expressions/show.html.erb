@@ -11,6 +11,14 @@
     <li><%= link_to "#{contributor.person_name} (#{contributor.contribution_types.join(', ')}) - #{contributor.is_public ? 'Public contribution' : 'Private contribution' }", person_path(contributor.person_id) %></li>
   <% end %>
 </ul>
+
+<h2>Section contributions</h2>
+<ul>
+  <% @sections.each do |section| %>
+    <li><%= link_to section.name, section_path(section.id) %></li>
+  <% end %>
+</ul>
+
 <hr>
 <h2>Related links</h2>
 <% if @related_links.any? %>

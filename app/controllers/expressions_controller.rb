@@ -41,6 +41,9 @@ class ExpressionsController < AuthenticatedController
     contributors = Datagraphs::Api::GetExpression.new.contributors(expression_id: params[:id])
     @contributors = contributors.map { |contributor| OpenStruct.new(contributor) if contributor["person_id"] }
 
+    sections = Datagraphs::Api::GetExpression.new.sections(expression_id: params[:id])
+    @sections = sections.map { |section| OpenStruct.new(section) if section["name"] }
+
     title = @expression.title
 
     @crumb << { label: "Published publications", url: publications_path }
