@@ -6,7 +6,6 @@ class ExpressionsController < AuthenticatedController
   MAIN_PAGE_TITLE = 'Publication expressions'
 
   def index
-
     publication = Datagraphs::Api::GetPublication.new.get_published_publication_details.first
     @publication = OpenStruct.new(publication)
 
@@ -18,56 +17,38 @@ class ExpressionsController < AuthenticatedController
       limit: @pagy.limit
     )
 
-#<OpenStruct title="Service industries: Economic indicators", teaser_text="The service industries include retail, finance, administration, and other areas. Find the latest data on the activity of the UK services sector.", id="urn:publications-data:PublicationExpression:69399", status="Published", ref="SN02786", research_service_id="urn:publications-data:ResearchService:1", research_service_name="House of Commons Library", created_at="2025-09-23T14:24:03.000Z", published_at="2026-02-12T10:00:30.000Z">
-
     @expressions = expressions.map { |expression| OpenStruct.new(expression) }
+    @expressions.each do |expression|
+      expression["people"] = expression["people_ids"].zip(expression["people_names"]).zip(expression["contribution_types"])
+    end
 
     @crumb << { label: "Publications", url: publications_path }
     @crumb << { label: @publication.title, url: publication_path(@publication.id) }
     @crumb << { label: "Expressions", url: nil }
     @page_title = @publication.title
-
-
   end
 
   def show
-    @publication_work_id = params[:id]
-    @total_count = Datagraphs::Api::GetPublication.new.get_total(publication_work_id: @publication_work_id)
+    expression = Datagraphs::Api::GetExpression.new.process(expression_id: params[:id]).first
+    @expression = OpenStruct.new(expression)
 
-    @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
+    resources = Datagraphs::Api::GetExpression.new.resources(expression_id: params[:id])
+    @resources = resources.map { |resource| OpenStruct.new(resource) if resource["id"] }
 
-    publication_expressions = Datagraphs::Api::GetPublication.new.process(
-      publication_work_id: params[:id],
-      skip: @pagy.offset,
-      limit: @pagy.limit
-    )
+    related_links = Datagraphs::Api::GetExpression.new.related_links(expression_id: params[:id])
+    @related_links = related_links.map { |related_link| OpenStruct.new(related_link) if related_link["id"] }
 
-    @publication_expressions = publication_expressions.map { |pub| OpenStruct.new(pub) }
+    contributors = Datagraphs::Api::GetExpression.new.contributors(expression_id: params[:id])
+    @contributors = contributors.map { |contributor| OpenStruct.new(contributor) if contributor["person_id"] }
 
-    title = @publication_expressions.first ? @publication_expressions.first.title : ''
+    title = @expression.title
 
-    # These are on the work
-    first = @publication_expressions.first
+    @crumb << { label: "Published publications", url: publications_path }
+    @crumb << { label: @expression.title, url: publications_path(@expression.publication_work_id) }
+    @crumb << { label: "Expressions", url: publication_expressions_path(@expression.publication_work_id) }
 
-    @reference = first.ref
-    @teaser_text = first.teaser_text
-    @research_service_name = first.research_service_name
-    @research_service_id = first.research_service_id
+    @crumb << { label: helpers.nice_date_time(@expression.published_at), url: nil }
 
-    @publication_expressions.each do |publication_expression|
-      publication_expression["people"] = publication_expression["people_ids"].zip(publication_expression["people_names"]).zip(publication_expression["contribution_types"])
-   #   publication_expression["contribution_types"] = publication_expression["people_ids"].zip(publication_expression["people_names"])
-    end
-
-    @contributors = Datagraphs::Api::GetPublication.new.get_contributors(publication_work_id: @publication_work_id).uniq
-
-    resources = Datagraphs::Api::GetPublication.new.get_resources(publication_work_id: @publication_work_id)
-    @resources = resources.map { |resource| OpenStruct.new(resource) if resource["file_title"].present? }
-
-    @people_with_roles = @publication_expressions.map { |pe| pe["people"] }
-
-    @crumb << { label: MAIN_PAGE_TITLE, url: publications_path }
-    @crumb << { label: title, url: nil }
     @page_title =  title
   end
 end

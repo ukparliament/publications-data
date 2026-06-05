@@ -25,16 +25,15 @@
       <tbody>
         <% @expressions.each do |expression| %>
           <tr>
-            <td><%= expression.title %></td>
+            <td><%= link_to expression.title, publication_expression_path(expression.publication_work_id, expression.id) %></td>
             <td><%= expression.status %></td>
-            <td><%= expression.ordinality %></td>
+            <td><%= expression.ordinalities.join(', ') %></td>
             <td><%= nice_date_time(expression.created_at) %></td>
             <td><%= nice_date_time(expression.published_at) %></td>
-
             <td>
               <% if expression.people&.any? %>
-                <% expression.people.each do |person_details, role| %>
-                  <p><%= person_details_and_role(person_details, role) %></p>
+                <% expression.people.each do |(id, name), role| %>
+                  <p><%= link_to "#{name} - #{role}", person_path(id) %></p>
                 <% end %>
               <% else %>
                   Contributors are missing for this record

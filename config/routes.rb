@@ -1,36 +1,14 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  passwordless_for :users
-
   mount LibraryDesign::Engine => "/library_design"
 
+  # These will go when we remove passwordless
+  passwordless_for :users
+  resources :users
+
   root "home#index"
-
   get '/' => 'home#index', as: :home
-
-  #
-  # Single sign on routes
-  #
-  get 'saml/login', to: "saml_sso/authentication#new", as: :saml_sso_login
-
-  # For ShedCode, we return with a post, but PDS seem to return a get
-  # So we need to cater for both
-  get 'saml/callback', to: "saml_sso/authentication#create"
-  post 'saml/callback', to: "saml_sso/authentication#create"
-
-  # This just returns an empty page at the moment
-  get 'saml/metadata', to: "saml_sso/authentication#metadata"
-
-  # These come back from Entra if the user has logged out
-  get 'saml/logout', to: "saml_sso/authentication#saml_logout", as: :entra_logout_callback
-  post 'saml/logout', to: "saml_sso/authentication#saml_logout"
-
-  # This is if the user has logged out
-  get '/logout', to: "saml_sso/authentication#destroy", as: :saml_sso_logout
-  delete '/logout', to: "saml_sso/authentication#destroy"
-
-  get 'meta/cookies' => 'meta#cookies', as: :meta_cookies
 
   resources :houses, only: [:index, :show] do
     member do
@@ -59,5 +37,28 @@ Rails.application.routes.draw do
   end
 
   resources :people, only: [:index, :show]
-  resources :users
+
+
+  #
+  # Single sign on routes
+  #
+  get 'saml/login', to: "saml_sso/authentication#new", as: :saml_sso_login
+
+  # For ShedCode, we return with a post, but PDS seem to return a get
+  # So we need to cater for both
+  get 'saml/callback', to: "saml_sso/authentication#create"
+  post 'saml/callback', to: "saml_sso/authentication#create"
+
+  # This just returns an empty page at the moment
+  get 'saml/metadata', to: "saml_sso/authentication#metadata"
+
+  # These come back from Entra if the user has logged out
+  get 'saml/logout', to: "saml_sso/authentication#saml_logout", as: :entra_logout_callback
+  post 'saml/logout', to: "saml_sso/authentication#saml_logout"
+
+  # This is if the user has logged out
+  get '/logout', to: "saml_sso/authentication#destroy", as: :saml_sso_logout
+  delete '/logout', to: "saml_sso/authentication#destroy"
+
+  get 'meta/cookies' => 'meta#cookies', as: :meta_cookies
 end
