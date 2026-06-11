@@ -18,11 +18,6 @@ class ApplicationController < ActionController::Base
     return session[:user_id] if session[:user_id].present?
   end
 
-  def require_user!
-    return if current_user
-    redirect_to root_path, alert: "Access denied"
-  end
-
   def unsupported_media_type
     render plain: 'Not supported', status: :unsupported_media_type
   end

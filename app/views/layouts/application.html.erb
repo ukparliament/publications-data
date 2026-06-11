@@ -7,6 +7,7 @@
 
   <body class="brand-bicameral">
     <%= render 'library_design/header/header' do %>
+      <%= render 'layouts/login_in_out' if $DISABLE_AUTHENTICATION %>
       <%= link_to 'People', people_path %>&middot;
       <%= link_to 'Publications', publications_path %>&middot;
       <%= link_to 'Houses', houses_path %>&middot;
@@ -16,6 +17,14 @@
       <%= link_to 'Concepts', concepts_path %>
     <% end %>
     <main class="block block-page" id="main-content">
+      <% if alert.present? %>
+      <div class="attention-banner">
+        <div class="container">
+          <%= alert %>
+        </div>
+      </div>
+      <% end %>
+
       <div class="inner-content container">
         <h1><%= @multiline_page_title || @page_title || $PRODUCT_TITLE %></h1>
         <%= yield %>
