@@ -3,14 +3,19 @@
 <p><i><%= @teaser_text %></i></p>
 <p>Reference <b><%= @reference %></b></p>
 
-<h3>Contributors</h3>
-<% if @contributors.any? %>
-  <% @contributors.each do |contributor| %>
-    <p><%= link_to "#{contributor['person_name']} (#{contributor['contribution_types'].join(', ')})", person_path(contributor["person_id"]) %></p>
+<h3>Contributions</h3>
+<% if @contributions.any? %>
+  <% @contributions.each do |contribution| %>
+    <p><%= link_to "#{contribution['person_name']} as #{contribution['contribution_type']} - #{contribution['is_contribution_public'] ? "public" : "private" } contribution", person_path(contribution["person_id"]) %></p>
   <% end %>
 <% else %>
   <p>We do not have any contributors in our records for this publication.</p>
 <% end %>
+
+ct.label AS contribution_type,
+c.isPublic AS is_contribution_public,
+c.ordinality AS contribution_ordinality,
+c.label AS contribution_label
 
 <h3>Resources</h3>
 <% if @resources.any? %>
