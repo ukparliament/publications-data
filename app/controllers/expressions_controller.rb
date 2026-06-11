@@ -6,13 +6,16 @@ class ExpressionsController < AuthenticatedController
   MAIN_PAGE_TITLE = 'Publication expressions'
 
   def index
-    publication = Datagraphs::Api::GetPublication.new.get_published_publication_details.first
+    @publication_work_id = params[:publication_id]
+
+    publication = Datagraphs::Api::GetPublication.new.get_published_publication_details(publication_work_id: @publication_work_id).first
     @publication = OpenStruct.new(publication)
 
-    @total_count = Datagraphs::Api::GetExpressions.new.get_total
+    @total_count = Datagraphs::Api::GetExpressions.new.get_total(publication_work_id: @publication_work_id)
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
     expressions = Datagraphs::Api::GetExpressions.new.process(
+      publication_work_id: @publication_work_id,
       skip: @pagy.offset,
       limit: @pagy.limit
     )
