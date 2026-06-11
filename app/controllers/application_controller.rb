@@ -20,15 +20,6 @@ class ApplicationController < ActionController::Base
     @current_user ||= authenticate_by_session(User)
   end
 
-<<<<<<< Updated upstream
-  def require_user!
-    return if current_user
-    save_passwordless_redirect_location!(User) # <-- optional, see below
-    redirect_to root_path, alert: "You are not worthy!"
-  end
-
-=======
->>>>>>> Stashed changes
   def unsupported_media_type
     render plain: 'Not supported', status: :unsupported_media_type
   end
