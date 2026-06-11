@@ -67,7 +67,7 @@ module SamlSso
         delete_session
       else
         logout_request = OneLogin::RubySaml::Logoutrequest.new
-        logger.info "New SP SLO for userid '#{session[:userid]}' transactionid '#{logout_request.uuid}'"
+        logger.info "New SP SLO"
 
         if settings.name_identifier_value.nil?
           settings.name_identifier_value = session[:user_id]
@@ -75,7 +75,7 @@ module SamlSso
 
         # Ensure user is logged out before redirect to IdP, in case anything goes wrong during single logout process (as recommended by saml2int [SDP-SP34])
         logged_user = session[:user_id]
-        logger.info "Delete session for '#{session[:user_id]}'"
+        logger.info "Delete session"
         delete_session
 
         # Save the transaction_id to compare it with the response we get back
@@ -89,7 +89,6 @@ module SamlSso
 
     # Handle the response back from Entra
     def saml_logout
-      ap "We should come back here, but maybe we are not?"
       if session.has_key? :transaction_id
         logout_response = OneLogin::RubySaml::Logoutresponse.new(params[:SAMLResponse], saml_settings, :matches_request_id => session[:transaction_id])
       else
@@ -103,7 +102,7 @@ module SamlSso
         logger.error "The SAML Logout Response is invalid"
       else
         # Actually log out this session
-        logger.info "SLO completed for '#{session[:logged_out_user]}'"
+        logger.info "SLO completed"
         delete_session
       end
 
