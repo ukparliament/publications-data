@@ -26,7 +26,10 @@ module Datagraphs
                pw.id AS publication_work_id,
                w.id AS withdrawl_period_id,
                pe.id AS publication_expression_id,
-               pe.teaserText AS teaser_text
+               pe.teaserText AS teaser_text,
+               rs.name AS research_service_name,
+               rs.shortName AS research_service_short_name,
+               rs.id AS research_service_id
         ORDER BY published_at DESC
         SKIP %{skip}
         LIMIT %{limit}
