@@ -1,0 +1,7 @@
+<% if current_user %>
+  <p>You are logged in as <%= session[:user_id].split('_').first.capitalize %></p>
+  <p><%= link_to "Log out", saml_sso_logout_path, method: :delete %></p>
+<% else %>
+  <p>Please log-in using your Parliament credentials.</p>
+  <p><%= link_to "Log in", saml_sso_login_path, class: "btn btn-white-regular" %></p>
+<% end %>

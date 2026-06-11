@@ -1,3 +1,21 @@
-<p>Welcome to the Publications data explorer.</p>
 
-<p>Explanatory about what this is can go here.</p>
+<div class="brand-commons">
+  <div class="hero-banner hero-banner-brand">
+    <div class="container">
+      <h1><%= yield :title %></h1>
+
+      <div class="reading-width">
+        <p>Welcome to the Research publications explorer.</p>
+
+        <%= render 'layouts/login_in_out_hero' if $DISABLE_AUTHENTICATION %>
+
+        <h2>About this website</h2>
+        <p>Explanatory about what this is can go here.</p>
+
+        <h3>Feedback</h3>
+
+        <p>This website is in development.</p>
+      </div>
+    </div>
+  </div>
+</div>
