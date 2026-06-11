@@ -2,7 +2,6 @@
 
 class ApplicationController < ActionController::Base
   include LibraryDesign::Crumbs
-  include Passwordless::ControllerHelpers
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
   rescue_from ActionController::UnknownFormat, with: :unsupported_media_type
@@ -17,13 +16,11 @@ class ApplicationController < ActionController::Base
 
   def current_user
     return session[:user_id] if session[:user_id].present?
-    @current_user ||= authenticate_by_session(User)
   end
 
   def require_user!
     return if current_user
-    save_passwordless_redirect_location!(User) # <-- optional, see below
-    redirect_to root_path, alert: "You are not worthy!"
+    redirect_to root_path, alert: "Access denied"
   end
 
   def unsupported_media_type

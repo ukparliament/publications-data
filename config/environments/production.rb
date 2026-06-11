@@ -65,14 +65,6 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  config.action_mailer.default_url_options = { host: 'publications.shedcode.co.uk' }
-  config.action_mailer.perform_caching = false
-
-  ActionMailer::Base.delivery_method = :postmark
-  config.action_mailer.postmark_settings = { api_token: ENV.fetch("POSTMARK_API_KEY") }
-
-  routes.default_url_options[:host] ||= "publications.shedcode.co.uk"
-
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
 
