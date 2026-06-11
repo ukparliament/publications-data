@@ -3,10 +3,6 @@
 Rails.application.routes.draw do
   mount LibraryDesign::Engine => "/library_design"
 
-  # These will go when we remove passwordless
-  passwordless_for :users
-  resources :users
-
   root "home#index"
   get '/' => 'home#index', as: :home
 

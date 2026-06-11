@@ -2,7 +2,6 @@
 
 class ApplicationController < ActionController::Base
   include LibraryDesign::Crumbs
-  include Passwordless::ControllerHelpers
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
   rescue_from ActionController::UnknownFormat, with: :unsupported_media_type
@@ -17,7 +16,6 @@ class ApplicationController < ActionController::Base
 
   def current_user
     return session[:user_id] if session[:user_id].present?
-    @current_user ||= authenticate_by_session(User)
   end
 
   def unsupported_media_type
