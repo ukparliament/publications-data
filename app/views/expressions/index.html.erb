@@ -28,7 +28,7 @@
             <td><%= nice_date_time(expression.published_at) %></td>
             <td>
               <% if expression.contributions.any? %>
-                <% expression.contributions.sort_by { |cont| cont[1]}.each do |(((id, name), role), public), _ordinality| %>
+                <% expression.contributions.sort_by { |cont| cont[1] || 1}.each do |(((id, name), role), public), _ordinality| %>
                   <p><%= link_to name, person_path(id) %> - as <%= role %> - <%= public ? "Public" : "Private" %> contribution</p>
                 <% end %>
               <% else %>
