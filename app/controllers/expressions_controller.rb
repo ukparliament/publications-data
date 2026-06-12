@@ -6,7 +6,6 @@ class ExpressionsController < AuthenticatedController
   MAIN_PAGE_TITLE = 'Publication expressions'
 
   def index
-    ap params
     @publication_work_id = params[:publication_id]
     @statuses = Datagraphs::Api::GetExpressions.new.get_statuses(publication_work_id: @publication_work_id).first["statuses"]
     @selected_statuses = params["statuses"]
@@ -23,12 +22,6 @@ class ExpressionsController < AuthenticatedController
 
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    # expressions = Datagraphs::Api::GetExpressions.new.process(
-    #   publication_work_id: @publication_work_id,
-    #   skip: @pagy.offset,
-    #   limit: @pagy.limit
-    # )
-
     expressions  = Datagraphs::Api::GetExpressions.new.dynamic_expressions(
       publication_work_id: @publication_work_id,
       skip: @pagy.offset,
@@ -41,7 +34,6 @@ class ExpressionsController < AuthenticatedController
     end
 
     @expressions = expressions.map { |expression| OpenStruct.new(expression) }
-
 
     @crumb << { label: "Publications", url: publications_path }
     @crumb << { label: @publication.title, url: publication_path(@publication.id) }
