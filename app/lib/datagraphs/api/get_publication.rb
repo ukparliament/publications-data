@@ -100,7 +100,10 @@ module Datagraphs
         WHERE pw.id='%{publication_work_id}'
         RETURN p.id AS person_id,
                p.displayName AS person_name,
-               COLLECT_LIST(DISTINCT ct.label) AS contribution_types
+               ct.label AS contribution_type,
+               c.isPublic AS is_contribution_public,
+               c.ordinality AS contribution_ordinality,
+               c.label AS contribution_label
         ORDER BY person_name
       Q
 
