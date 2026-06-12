@@ -50,7 +50,8 @@ class PublicationsController < AuthenticatedController
    #   publication_expression["contribution_types"] = publication_expression["people_ids"].zip(publication_expression["people_names"])
     end
 
-    @contributions = Datagraphs::Api::GetPublication.new.get_contributors(publication_work_id: @publication_work_id).uniq
+    contributions = Datagraphs::Api::GetPublication.new.get_contributors(publication_work_id: @publication_work_id).uniq
+    @contributions = contributions.map { |contribution| OpenStruct.new(contribution) }
 
     resources = Datagraphs::Api::GetPublication.new.get_resources(publication_work_id: @publication_work_id)
     @resources = resources.map { |resource| OpenStruct.new(resource) if resource["file_title"].present? }
