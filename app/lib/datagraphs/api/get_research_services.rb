@@ -4,13 +4,15 @@ module Datagraphs
 
       QUERY = <<-Q
       MATCH path1 = (rs:ResearchService)-[r1:for]->(h:House)
-      MATCH path2 = (pub:PublicationWork)-[p:publishedBy]->(rs)
+      MATCH path2 = (pe:PublicationExpression)-[r2:expressionOf]->(pw:PublicationWork)-[r3:publishedBy]->(rs)
+      MATCH path3 = (pe)-[r4:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+      WHERE pes.label = "Published"
       RETURN rs.id AS id,
              rs.name AS name,
              rs.shortName AS short_name,
              rs.strapLine AS strap_line,
              rs.isDefunct AS is_defunct,
-             COUNT(pub) AS publication_count,
+             COUNT(DISTINCT pw) AS publication_count,
              COLLECT_LIST(DISTINCT h.id) AS house_ids,
              COLLECT_LIST(DISTINCT h.name) AS house_names
       ORDER BY name ASC
