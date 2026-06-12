@@ -6,26 +6,42 @@ class ExpressionsController < AuthenticatedController
   MAIN_PAGE_TITLE = 'Publication expressions'
 
   def index
+    ap params
     @publication_work_id = params[:publication_id]
+    @statuses = Datagraphs::Api::GetExpressions.new.get_statuses(publication_work_id: @publication_work_id).first["statuses"]
+    @selected_statuses = params["statuses"]
+
+    if @selected_statuses.blank?
+      @selected_statuses = @statuses
+    end
+
+    filter = @selected_statuses.map { |s| "pes.label = '#{s}'" }.join(" OR ")
+    @total_count = Datagraphs::Api::GetExpressions.new.get_dynamic_status_count(publication_work_id: @publication_work_id, statuses: filter)
 
     publication = Datagraphs::Api::GetPublication.new.get_published_publication_details(publication_work_id: @publication_work_id).first
     @publication = OpenStruct.new(publication)
 
-    @total_count = Datagraphs::Api::GetExpressions.new.get_total(publication_work_id: @publication_work_id)
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    expressions = Datagraphs::Api::GetExpressions.new.process(
+    # expressions = Datagraphs::Api::GetExpressions.new.process(
+    #   publication_work_id: @publication_work_id,
+    #   skip: @pagy.offset,
+    #   limit: @pagy.limit
+    # )
+
+    expressions  = Datagraphs::Api::GetExpressions.new.dynamic_expressions(
       publication_work_id: @publication_work_id,
       skip: @pagy.offset,
-      limit: @pagy.limit
+      limit: @pagy.limit,
+      statuses: filter
     )
-
 
     expressions.each do |expression|
       expression["contributions"] = expression["people_ids"].zip(expression["people_names"]).zip(expression["contribution_types"]).zip(expression["public"]).zip(expression["ordinalities"])
     end
 
     @expressions = expressions.map { |expression| OpenStruct.new(expression) }
+
 
     @crumb << { label: "Publications", url: publications_path }
     @crumb << { label: @publication.title, url: publication_path(@publication.id) }
