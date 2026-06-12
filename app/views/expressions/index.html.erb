@@ -2,10 +2,35 @@
 <p><b>Reference:</b> <%= @publication.ref %></p>
 <p><b>Published:</b> <%= nice_date_time @publication.published_at %></p>
 
+<%= form_for(:expressions, method: :get, include_hidden: false) do |f| %>
+  <fieldset class="p-form__fieldset">
+    <legend class="p-form__fieldset-legend">Status selector</legend>
+    <div class="p-form__checkbox-group">
+      <% @statuses.each_with_index do |status, index| %>
+        <div class="p-form__checkbox-item">
+          <input
+            type="checkbox"
+            name="statuses[]"
+            id="checkbox-standard-<%= status %>"
+            value="<%= status %>"
+            <% if @selected_statuses.include?(status) %>
+              checked
+            <% end %>
+          >
+          <label for="checkbox-standard-<%= status %>" class="p-form__checkbox-item-label">
+            <%= status %>
+          </label>
+        </div>
+      <% end %>
+    </div>
+  </fieldset>
+  <%= f.submit value: "Filter expressions", class: "btn btn-primary mt-3 mb-3" %>
+<% end %>
+
 <h2>Expressions</h2>
 <% if @expressions.any? %>
 
-  <p>Total expressions: <%= @total_count %></p>
+  <p>Total expressions, for statuses - <i><%= @selected_statuses.join(', ') %></i>: <b><%= @total_count %></b></p>
 
   <% if @total_count > @expressions.count %>
     <%== @pagy.series_nav(:bootstrap) %>
