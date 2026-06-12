@@ -18,12 +18,52 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
+      FOR_A_RESEARCH_SERVICE = <<-Q
+        MATCH (pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)-[r3:publishedBy]->(rs:ResearchService)
+        MATCH (pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE pes.label = 'Published'
+        AND rs.id = '%{research_service_id}'
+        RETURN pe.id as publication_expression_id,
+               pw.id as publication_work_id, pw.title as title,
+               pes.label as status, pe.publishedAt as published_at,
+               pe.teaserText as teaser_text, pe.createdAt as created_at,
+               pe.number as the_number,
+               rs.shortName AS short_research_service_name,
+               rs.id AS research_service_id
+        ORDER BY pe.publishedAt desc
+        SKIP %{skip}
+        LIMIT %{limit}
+      Q
+
+      COUNT_FOR_RESEARCH_SERVICE = <<-Q
+        MATCH (pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)-[r3:publishedBy]->(rs:ResearchService)
+        MATCH (pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE pes.label="Published"
+        AND rs.id = '%{research_service_id}'
+        RETURN count(pw) AS total
+      Q
+
       COUNT = <<-Q
         MATCH (pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
         MATCH (pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         WHERE pes.label="Published"
-        RETURN count(pe) AS total
+        RETURN count(pw) AS total
       Q
+
+      def get_for_a_research_service(research_service_id:, skip: 0, limit: 25)
+        params = { query: FOR_A_RESEARCH_SERVICE % { skip: skip, limit: limit, research_service_id: research_service_id }}
+        ap params
+        response = call(params: params)
+        process_response(response.body)
+      end
+
+      def get_count_for_a_research_service(research_service_id)
+        params = { query: COUNT_FOR_RESEARCH_SERVICE % {  research_service_id: research_service_id }}
+        ap params
+        response = call(params: params)
+        output = JSON.parse(response.body)
+        output["results"].first["total"]
+      end
 
       def get_total
         params = { query: COUNT }
