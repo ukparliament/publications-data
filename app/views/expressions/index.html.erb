@@ -16,10 +16,8 @@
         <tr>
           <th scope="col" class="col-4">Title</th>
           <th scope="col">Status</th>
-          <th scope="col">Ordinality</th>
-          <th scope="col">Created at</th>
           <th scope="col">Published at</th>
-          <th scope="col">People</th>
+          <th scope="col">Contributions</th>
         </tr>
       </thead>
       <tbody>
@@ -27,16 +25,14 @@
           <tr>
             <td><%= link_to expression.title, publication_expression_path(expression.publication_work_id, expression.id) %></td>
             <td><%= expression.status %></td>
-            <td><%= expression.ordinalities.join(', ') %></td>
-            <td><%= nice_date_time(expression.created_at) %></td>
             <td><%= nice_date_time(expression.published_at) %></td>
             <td>
-              <% if expression.people&.any? %>
-                <% expression.people.each do |(id, name), role| %>
-                  <p><%= link_to "#{name} - #{role}", person_path(id) %></p>
+              <% if expression.contributions.any? %>
+                <% expression.contributions.sort_by { |cont| cont[1]}.each do |(((id, name), role), public), _ordinality| %>
+                  <p><%= link_to name, person_path(id) %> - as <%= role %> - <%= public ? "Public" : "Private" %> contribution</p>
                 <% end %>
               <% else %>
-                  Contributors are missing for this record
+                  Contributions are missing for this record
               <% end %>
             </td>
           </tr>

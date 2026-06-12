@@ -20,10 +20,12 @@ class ExpressionsController < AuthenticatedController
       limit: @pagy.limit
     )
 
-    @expressions = expressions.map { |expression| OpenStruct.new(expression) }
-    @expressions.each do |expression|
-      expression["people"] = expression["people_ids"].zip(expression["people_names"]).zip(expression["contribution_types"])
+
+    expressions.each do |expression|
+      expression["contributions"] = expression["people_ids"].zip(expression["people_names"]).zip(expression["contribution_types"]).zip(expression["public"]).zip(expression["ordinalities"])
     end
+
+    @expressions = expressions.map { |expression| OpenStruct.new(expression) }
 
     @crumb << { label: "Publications", url: publications_path }
     @crumb << { label: @publication.title, url: publication_path(@publication.id) }

@@ -17,11 +17,13 @@ module Datagraphs
                   pes.label AS status,
                   pw.reference AS ref,
                   pe.createdAt AS created_at,
-                  COLLECT_LIST(DISTINCT pes.label) AS statuses,
+                  pes.label AS status,
                   COLLECT_LIST(DISTINCT p.id) AS people_ids,
                   COLLECT_LIST(DISTINCT p.displayName) AS people_names,
                   COLLECT_LIST(DISTINCT ct.label) AS contribution_types,
-                  COLLECT_LIST(DISTINCT c.ordinality) AS ordinalities
+                  COLLECT_LIST(DISTINCT c.ordinality) AS ordinalities,
+                  COLLECT_LIST(DISTINCT c.id) AS contribution_ids,
+                  COLLECT_LIST(DISTINCT c.isPublic) AS public
         ORDER BY published_at DESC
         SKIP %{skip}
         LIMIT %{limit}
