@@ -1,6 +1,6 @@
 require 'ostruct'
 
-class ConceptsController < AuthenticatedController
+class FullConceptsController < AuthenticatedController
   include Pagy::Method
 
   MAIN_PAGE_TITLE = 'Concepts'
