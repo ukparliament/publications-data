@@ -12,7 +12,7 @@ class ConceptsController < AuthenticatedController
     broader_term = params[:broader_term] || 'Concept'
     concepts = Datagraphs::Api::GetConcepts.new.get_concepts_based_on_broader_term(broader_term: broader_term, skip: 0, limit: 200)
     @concepts = concepts.map { |concept| OpenStruct.new(concept) }
-    @sub_title = broader_term
+    @sub_title = broader_term == 'Concept' ? 'Top level concepts' : broader_term
 
     @crumb << { label: MAIN_PAGE_TITLE, url: nil }
     @page_title = MAIN_PAGE_TITLE
