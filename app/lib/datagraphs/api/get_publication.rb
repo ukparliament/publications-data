@@ -5,6 +5,7 @@ module Datagraphs
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
+        MATCH path5=(pw)-[r7:subject]->(c:Concept)
         WHERE pw.id='%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN    pw.title AS title,
@@ -15,7 +16,29 @@ module Datagraphs
                   rs.id AS research_service_id,
                   rs.name AS research_service_name,
                   pe.createdAt AS created_at,
-                  pe.publishedAt AS published_at
+                  pe.publishedAt AS published_at,
+                  COLLECT_LIST(c.label) AS concepts,
+                  COLLECT_LIST(c.id) AS concept_ids
+      Q
+
+      NEW_PUBLICATION_ONLY = <<-Q
+        MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
+        MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
+        MATCH path5=(pw)-[r7:subject]->(c:Concept)
+        WHERE pw.id='%{publication_work_id}'
+        AND pes.label = 'Published'
+        RETURN    pw.title AS title,
+                  pe.teaserText AS teaser_text,
+                  pw.id AS id,
+                  pes.label AS status,
+                  pw.reference AS ref,
+                  rs.id AS research_service_id,
+                  rs.name AS research_service_name,
+                  pe.createdAt AS created_at,
+                  pe.publishedAt AS published_at,
+                  COLLECT_LIST(c.label) AS concepts,
+                  COLLECT_LIST(c.id) AS concept_ids
       Q
 
       QUERY = <<-Q
