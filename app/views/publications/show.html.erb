@@ -32,7 +32,7 @@
           <div class="secondary-info">Label: <%= resource.file_label %></div>
           <div class="tertiary-info">Private URL: <%= resource.private_url %></div>
           <div class="tertiary-info">
-            <% if resource.mime_type == "application/pdf" %>
+            <% if resource.mime_type == "application/pdf" && resource.public_url %>
               <details>
                 <summary>Show preview of PDF</summary>
                 <iframe src="<%= resource.public_url %>" width="80%" height="300px" type="application/pdf" title="Embedded PDF">
