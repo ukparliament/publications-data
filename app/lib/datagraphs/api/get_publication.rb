@@ -120,7 +120,9 @@ module Datagraphs
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
         MATCH path3 = (c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
+        MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         WHERE pw.id='%{publication_work_id}'
+        AND pes.label='Published'
         RETURN p.id AS person_id,
                p.displayName AS person_name,
                ct.label AS contribution_type,
