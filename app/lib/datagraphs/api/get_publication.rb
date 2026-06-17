@@ -5,7 +5,7 @@ module Datagraphs
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
-        MATCH path5=(pw)-[r7:subject]->(c:Concept)
+        OPTIONAL MATCH path5=(pw)-[r7:subject]->(c:Concept)
         WHERE pw.id='%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN    pw.title AS title,
