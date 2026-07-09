@@ -9,7 +9,7 @@ module Datagraphs
                rs.name AS name,
                rs.shortName AS short_name,
                rs.strapLine AS strap_line,
-               rs.isDefunct AS is_Defunct,
+               rs.isDefunct AS is_defunct,
                COLLECT_LIST(DISTINCT h.id) AS house_ids,
                COLLECT_LIST(DISTINCT h.name) AS house_names
         LIMIT 1
