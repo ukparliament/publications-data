@@ -14,7 +14,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :sections, only: [:index, :show]
+  resources :sections, only: [:index, :show] do
+    member do
+      get 'publications'
+    end
+  end
   resources :collections, only: [:index, :show]
   resources :concepts, only: [:index, :show]
 

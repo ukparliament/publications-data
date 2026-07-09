@@ -12,7 +12,7 @@
   <tbody>
     <% @sections.each do |section| %>
       <tr>
-        <th scope="row"><%= link_to section.name, section_path(section.id) %>
+        <th scope="row"><%= link_to section.name, section_path(section.id) %></th>
         <td><%= section.short_name %></td>
         <td><%= section.strap_line %></td>
         <td><%= section.is_defunct ? 'Yes' : 'No' %></td>
