@@ -17,7 +17,7 @@ class ExpressionsController < AuthenticatedController
     filter = @selected_statuses.map { |s| "pes.label = '#{s}'" }.join(" OR ")
     @total_count = Datagraphs::Api::GetExpressions.new.get_dynamic_status_count(publication_work_id: @publication_work_id, statuses: filter)
 
-    publication = Datagraphs::Api::GetPublication.new.get_published_publication_details(publication_work_id: @publication_work_id).first
+    publication = Datagraphs::Api::GetPublication.new.details(publication_work_id: @publication_work_id).first
     @publication = OpenStruct.new(publication)
 
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
@@ -35,10 +35,12 @@ class ExpressionsController < AuthenticatedController
 
     @expressions = expressions.map { |expression| OpenStruct.new(expression) }
 
+    @page_title = @publication.title == 'Untitled' ? @expressions.first.title : @publication.title
+
     @crumb << { label: "Publications", url: publications_path }
-    @crumb << { label: @publication.title, url: publication_path(@publication.id) }
+    @crumb << { label: @page_title, url: publication_path(@publication.id) }
     @crumb << { label: "Expressions", url: nil }
-    @page_title = @publication.title
+
   end
 
   def show
