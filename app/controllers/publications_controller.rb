@@ -27,7 +27,7 @@ class PublicationsController < AuthenticatedController
     publication = Datagraphs::Api::GetPublication.new.get_published_publication_details(publication_work_id: @publication_work_id).first
     @publication = OpenStruct.new(publication)
 
-    @concepts = @publication.concepts.zip(@publication.concept_ids)
+    @concepts = @publication.concepts ? @publication.concepts.zip(@publication.concept_ids) : []
 
     title = @publication.title
 
