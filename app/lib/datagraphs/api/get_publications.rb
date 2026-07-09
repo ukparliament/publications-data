@@ -50,6 +50,34 @@ module Datagraphs
         RETURN count(pw) AS total
       Q
 
+      UNPUBLISHED_FOR_A_HOUSE_COUNT = <<-Q.squish
+        OPTIONAL MATCH (pw:PublicationWork)<-[e:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        MATCH (pw:PublicationWork)-[s:publishedBy]->(d:ResearchService)-[f:for]->(h:House)
+        WHERE pes.label = 'Published'
+        AND h.id = '%{house_id}'
+        RETURN pw, count(pe) AS expression_count
+        NEXT YIELD pw, expression_count
+        FILTER expression_count = 0
+        RETURN COUNT(DISTINCT pw.id) AS total
+      Q
+
+      UNPUBLISHED_FOR_A_HOUSE = <<-Q.squish
+        OPTIONAL MATCH (pw:PublicationWork)<-[e:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        MATCH (pw:PublicationWork)-[s:publishedBy]->(d:ResearchService)-[f:for]->(h:House)
+        WHERE pes.label = 'Published'
+        AND h.id = '%{house_id}'
+        RETURN pw, count(pe) AS expression_count
+        NEXT YIELD pw, expression_count
+        FILTER expression_count = 0
+        MATCH (pw:PublicationWork)<-[e:expressionOf]-(pe:PublicationExpression)
+        RETURN
+               pw.id as publication_work_id,
+               pw.title as work_title,
+               COLLECT_LIST(pe.id) AS expression_ids,
+               COLLECT_LIST(pe.title) AS expression_titles
+        ORDER BY expression_titles
+      Q
+
       def get_for_a_research_service(research_service_id:, skip: 0, limit: 25)
         params = { query: FOR_A_RESEARCH_SERVICE % { skip: skip, limit: limit, research_service_id: research_service_id }}
         ap params
@@ -77,6 +105,19 @@ module Datagraphs
         ap params
         response = call(params: params)
         process_response(response.body)
+      end
+
+      def unpublished_for_a_house(house_id:, skip: 0, limit: 25)
+        params = { query: UNPUBLISHED_FOR_A_HOUSE % { house_id: house_id, skip: skip, limit: limit }}
+        response = call(params: params)
+        process_response(response.body)
+      end
+
+      def unpublished_for_a_house_count(house_id:)
+        params = { query: UNPUBLISHED_FOR_A_HOUSE_COUNT % { house_id: house_id }}
+        response = call(params: params)
+        output = JSON.parse(response.body)
+        output["results"].first["total"]
       end
     end
   end

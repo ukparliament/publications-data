@@ -1,7 +1,21 @@
-<p>Published by the <b><%= link_to @publication.research_service_name, research_service_path(@publication.research_service_id) %></b></p>
+
+<p>
+  <% if @publication.research_service_id %>
+    Published by the <b><%= link_to @publication.research_service_name, research_service_path(@publication.research_service_id) %></b>
+  <% else %>
+    We do not have information about who was to have published this publication.
+  <% end %>
+</p>
 
 <p><i><%= @publication.teaser_text %></i></p>
-<p>Reference <b><%= @publication.ref %></b></p>
+
+<p>
+  <% if @publication.ref %>
+    Reference <b><%= @publication.ref %></b>
+  <% else %>
+    We do not have a reference for this publication.
+  <% end %>
+</p>
 
 <h3>Associated concepts</h3>
 <% if @concepts.any? %>

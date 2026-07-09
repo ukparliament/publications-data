@@ -1,0 +1,35 @@
+<h1><small class="text-muted"><%= @house.short_name %></small></h1>
+
+<% if @house.defunct %>
+  <p>This house is marked as DEFUNCT.</p>
+<% end %>
+
+<h2>Research services</h2>
+
+<ol>
+  <% @house.research_services.each do |id, name| %>
+    <li><%= link_to name, research_service_path(id) %></li>
+  <% end %>
+</ol>
+
+<% if @publications.any? %>
+  <h2>Unpublished publications</h2>
+  <p>Total publications: <%= @total_count %></p>
+  <%== @pagy.series_nav(:bootstrap) %>
+
+  <table class="table table-bordered">
+     <thead>
+       <tr>
+         <th scope="col" class="col-4">Title</th>
+       </tr>
+     </thead>
+     <tbody>
+       <% @publications.each do |publication| %>
+         <tr>
+           <td><%= link_to publication.expression_titles.uniq.join(', '), publication_path(publication.publication_work_id) %></td>
+         </tr>
+       <% end %>
+     </tbody>
+   </table>
+
+<% end %>

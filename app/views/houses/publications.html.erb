@@ -13,7 +13,8 @@
 </ol>
 
 <% if @publications.any? %>
-  <h2>Publications</h2>
+  <h2>Published publications</h2>
+  <p><%= link_to 'Unpublished', publications_unpublished_house_path %></p>
   <p>Total publications: <%= @total_count %></p>
   <%== @pagy.series_nav(:bootstrap) %>
 
