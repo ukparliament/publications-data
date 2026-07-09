@@ -11,10 +11,10 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
-      CHILD_QUERY = <<-Q
+      CHILD_QUERY = <<-Q.squish
         MATCH path0 = (parent:Concept)<-[r:broaderTerm]-(child:Concept)
         MATCH path1 = (child)<-[s:subject]-(pw:PublicationWork)
-        WHERE parent.label = '%{broader_term}'
+        WHERE parent.label = "%{broader_term}"
         RETURN child.label AS name,
                child.id AS id,
                COUNT(DISTINCT pw.id) AS publication_count
