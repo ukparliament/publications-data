@@ -1,32 +1,34 @@
 <p>Short name: <b><%= @section.short_name %></b></p>
-<p>Strap line: <b><%= @section.strap_line %></b></p>
+<p>Strap line: <b><%= @section.strap_line.presence || "No strap line set" %></b></p>
 <p>Defunct: <b><%= @section.defunct ? "Yes" : "No" %></b></p>
 <p>Forms part of <b><%= link_to @section.research_service_name, research_service_path(@section.research_service_id) %></b></p>
 
 
 <% if @publications.any? %>
   <p>Total publications: <%= @total_count %></p>
-  <%== @pagy.series_nav(:bootstrap) %>
-   <table class="table table-bordered">
-      <thead>
+
+  <%== @pagy.series_nav(:bootstrap) if @total_count > @pagy.limit %>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col" class="col-4">Title</th>
+        <th scope="col">Reference</th>
+        <th scope="col">Created at</th>
+        <th scope="col">Published at</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @publications.each do |publication| %>
         <tr>
-          <th scope="col" class="col-4">Title</th>
-          <th scope="col">Reference</th>
-          <th scope="col">Created at</th>
-          <th scope="col">Published at</th>
+          <td><%= link_to publication.title, publication_path(publication.publication_work_id) %></td>
+          <td><%= publication.ref %></td>
+          <td><%= nice_date_time(publication.created_at) %></td>
+          <td><%= nice_date_time(publication.published_at) %></td>
         </tr>
-      </thead>
-      <tbody>
-        <% @publications.each do |publication| %>
-          <tr>
-            <td><%= link_to publication.title, publication_path(publication.publication_work_id) %></td>
-            <td><%= publication.ref %></td>
-            <td><%= nice_date_time(publication.created_at) %></td>
-            <td><%= nice_date_time(publication.published_at) %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+      <% end %>
+    </tbody>
+  </table>
 <% else %>
   <h2>No publications</h2>
 <% end %>
