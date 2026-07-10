@@ -15,6 +15,10 @@ class PublicationsController < AuthenticatedController
       limit: @pagy.limit
     )
 
+    publications.each do |pub|
+      pub["contributors"] = pub["contributor_ids"].zip(pub["contributor_names"])
+    end
+
     @publications = publications.map { |pub| OpenStruct.new(pub) }
 
     @crumb << { label: MAIN_PAGE_TITLE, url: nil }
