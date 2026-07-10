@@ -1,3 +1,13 @@
+<% if @superseded_by.any? %>
+  <div class="highlight highlight-warning">
+  This work is superseded by:
+  <% @superseded_by.each do |id, title| %>
+    <%= link_to title, publication_path(id) %>
+  <% end %>
+  </div>
+<% else %>
+  <p>No disclaimers</p>
+<% end %>
 
 <p>
   <% if @publication.research_service_id %>
@@ -32,7 +42,6 @@
 <% else %>
   <p>No disclaimers</p>
 <% end %>
-
 
 <h3>Associated concepts</h3>
 <% if @concepts.any? %>
