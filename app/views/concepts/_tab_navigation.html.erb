@@ -1,0 +1,30 @@
+<%# locals: (concept: nil, labelled_by: nil) %>
+
+<div class="block">
+  <div class="tabs">
+    <ul class="nav-tabs" role="tablist">
+      <li role="presentation">
+        <%= link_to publications_concept_path(concept.id), role: "tab", class: "#{'active' if current_page?(publications_concept_path(concept.id))}" do %>
+          Publications <span class="badge badge-primary badge-small mr-1 badge-success"><%= concept.publications_count %></span>
+        <% end %>
+      </li>
+      <li role="presentation">
+        <%= link_to broader_terms_concept_path(concept.id), role: "tab", class: "#{'active' if current_page?(broader_terms_concept_path(concept.id))}" do %>
+          Broader terms <span class="badge badge-primary badge-small mr-1 badge-success"><%= concept.broader_terms_count %></span>
+        <% end %>
+      </li>
+      <% if concept.narrower_terms_count > 0 %>
+        <li role="presentation">
+          <%= link_to narrower_terms_concept_path(concept.id), role: "tab", class: "#{'active' if current_page?(narrower_terms_concept_path(concept.id))}" do %>
+            Narrower subjects <span class="badge badge-primary badge-small mr-1 badge-success"><%= concept.narrower_terms_count %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" role="tabpanel" aria-labelledby="<%= labelled_by.to_s %>">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -2,11 +2,16 @@ module Datagraphs
   module Api
     class GetConcepts < CypherQuery
 
-      QUERY = <<-Q
-        MATCH p = (a:Concept)<-[e:broaderTerm]-(b:Concept)
-        WHERE a.alphabetisationLetter = '%{letter}'
-        RETURN DISTINCT(a.id) AS concept_id, DISTINCT(a.label) AS concept_name, DISTINCT(a.label) AS broader_term
-        ORDER BY a.label
+      QUERY = <<-Q.squish
+        MATCH p = (broaderTerms:Concept)<-[r1:broaderTerm]-(concept:Concept)<-[r2:broaderTerm]-(narrowerTerms:Concept)
+        MATCH (concept)<-[s:subject]-(pw:PublicationWork)<-[r3:expressionOf]-(pe:PublicationExpression)-[r4:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE concept.alphabetisationLetter = '%{letter}'
+        RETURN  DISTINCT(concept.id) AS id,
+                concept.label AS concept_name,
+                COUNT(DISTINCT narrowerTerms.id) AS narrower_terms_count,
+                COUNT(DISTINCT pw.id) AS publications_count,
+                COUNT(DISTINCT broaderTerms.id) AS broader_terms_count
+                ORDER BY concept_name ASC
         SKIP %{skip}
         LIMIT %{limit}
       Q
@@ -23,13 +28,13 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
-      COUNT = <<-Q
+      COUNT = <<-Q.squish
         MATCH p = (a:Concept)<-[e:broaderTerm]-(b:Concept)
         WHERE a.alphabetisationLetter = '%{letter}'
         RETURN count(a) AS total
       Q
 
-      LETTERS = <<-Q
+      LETTERS = <<-Q.squish
         MATCH p = (a:Concept)<-[e:broaderTerm]-(b:Concept)
         RETURN COLLECT(DISTINCT a.alphabetisationLetter) AS letters
         ORDER BY letters asc

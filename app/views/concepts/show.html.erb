@@ -1,0 +1,23 @@
+<%= render 'common_concept_info', concept: @concept %>
+
+<%= render 'tab_navigation', labelled_by: :publications, concept: @concept do %>
+  <% if @publications.present? || @broader_term_with_publications.present? %>
+    <% if @total_count > @pagy.limit %>
+      <%== @pagy.series_nav(:bootstrap) %>
+    <% end %>
+
+    <% if @broader_term_with_publications.present? %>
+      <div class="highlight highlight-info">
+        <p>The Library has no publications specifically on <%= @concept.label %>. These publications are being suggested because of a focus on
+          <%= subject_links_from_array(@broader_term_with_publications) %>
+        </p>
+      </div>
+    <% end %>
+
+    <div class="card-list card-list-3-col">
+      <% @publications.each do |publication| %>
+        <%= render 'layouts/publication_card', publication: publication %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

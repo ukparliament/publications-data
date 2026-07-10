@@ -1,0 +1,9 @@
+<%= render 'common_concept_info', concept: @concept %>
+
+<%= render 'tab_navigation', labelled_by: :broader_terms, concept: @concept do %>
+  <div class="card-list card-list-3-col">
+    <% @broader_terms.each do |concept| %>
+      <%= render 'concept_card', concept: concept %>
+    <% end %>
+  </div>
+<% end %>

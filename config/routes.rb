@@ -20,7 +20,14 @@ Rails.application.routes.draw do
     end
   end
   resources :collections, only: [:index, :show]
-  resources :concepts, only: [:index, :show]
+  resources :concepts, only: [:index, :show] do
+    member do
+      get 'publications'
+      get 'broader-terms'
+      get 'narrower-terms'
+    end
+
+  end
 
   resources :research_services, path: 'research-services', only: [:index, :show] do
     member do

@@ -1,0 +1,7 @@
+<%# locals: (concept:) %>
+
+<p><%= concept.scope_note if concept.scope_note? %></p>
+
+<% if concept.synonyms.present? %>
+  <p>Synonyms: <%= concept.synonyms.to_sentence %></p>
+<% end %>

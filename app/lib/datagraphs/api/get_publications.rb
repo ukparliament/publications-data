@@ -77,6 +77,33 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
+      COUNT_FOR_A_CONCEPT = <<-Q
+        MATCH (pw:PublicationWork)-[r1:subject]->(c:Concept)
+        MATCH (pw)<-[r2:expressionOf]-(pe:PublicationExpression)-[r3:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE c.id = '%{concept_id}'
+        AND pes.label = 'Published'
+        RETURN COUNT(pw) AS total
+      Q
+
+      FOR_A_CONCEPT = <<-Q.squish
+        MATCH (pw:PublicationWork)-[r1:subject]->(c:Concept)
+        MATCH (pw)<-[r2:expressionOf]-(pe:PublicationExpression)-[r3:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE c.id = '%{concept_id}'
+        AND pes.label = 'Published'
+        RETURN pe.id as publication_expression_id,
+               pw.id as publication_work_id,
+               pw.reference as ref,
+               pw.title as title,
+               pes.label as status,
+               pe.publishedAt as published_at,
+               pe.teaserText as teaser_text,
+               pe.createdAt as created_at,
+               pe.number as the_number
+        ORDER BY title
+        SKIP %{skip}
+        LIMIT %{limit}
+      Q
+
       UNPUBLISHED_FOR_A_HOUSE_COUNT = <<-Q.squish
         OPTIONAL MATCH (pw:PublicationWork)<-[e:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH (pw:PublicationWork)-[s:publishedBy]->(d:ResearchService)-[f:for]->(h:House)
@@ -132,6 +159,27 @@ module Datagraphs
         response = call(params: params)
         output = JSON.parse(response.body)
         output["results"].first["total"]
+      end
+
+      def for_a_section(section_id:, skip: 0, limit: 25)
+        params = { query: FOR_A_SECTION % { section_id: section_id, skip: skip, limit: limit }}
+        ap params
+        response = call(params: params)
+        process_response(response.body)
+      end
+
+      def for_a_concept_count(concept_id:)
+        params = { query: COUNT_FOR_A_CONCEPT % {  concept_id: concept_id }}
+        response = call(params: params)
+        output = JSON.parse(response.body)
+        output["results"].first["total"]
+      end
+
+      def for_a_concept(concept_id:, skip: 0, limit: 25)
+        params = { query: FOR_A_CONCEPT % { concept_id: concept_id, skip: skip, limit: limit }}
+        ap params
+        response = call(params: params)
+        process_response(response.body)
       end
 
       def for_a_section(section_id:, skip: 0, limit: 25)
