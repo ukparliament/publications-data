@@ -8,11 +8,13 @@
           Publications <span class="badge badge-primary badge-small mr-1 badge-success"><%= concept.publications_count %></span>
         <% end %>
       </li>
+      <% if concept.broader_terms_count > 0 %>
       <li role="presentation">
         <%= link_to broader_terms_concept_path(concept.id), role: "tab", class: "#{'active' if current_page?(broader_terms_concept_path(concept.id))}" do %>
           Broader terms <span class="badge badge-primary badge-small mr-1 badge-success"><%= concept.broader_terms_count %></span>
         <% end %>
       </li>
+      <% end %>
       <% if concept.narrower_terms_count > 0 %>
         <li role="presentation">
           <%= link_to narrower_terms_concept_path(concept.id), role: "tab", class: "#{'active' if current_page?(narrower_terms_concept_path(concept.id))}" do %>

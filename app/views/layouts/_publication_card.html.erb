@@ -1,23 +1,19 @@
 <%# locals: (publication:) %>
 
-<%= link_to publication.url, class: "card" do %>
+<%= link_to publication_path(publication.id), class: "card" do %>
   <div class="card h-100">
     <div class="card-inner">
       <div class="content">
-        <div class="secondary-info mb-4"><span class="badge badge-primary"><%= publication.work_type %></span></div>
         <div class="primary-info">
           <%= publication.title %>
-          <% if publication.ref %>
-            (<%= publication.ref %>)
-          <% end %>
         </div>
-        <div class="secondary-info"><%= publication.teaser_summary %></div>
+        <div class="secondary-info"></div>
       </div>
 
       <div class="info">
         <div class="info-inner">
           <div class="indicators-left">
-            <span class="badge badge-warning"><%= publication.section_name %></span>
+            <%= publication.ref %>
           </div>
           <div class="indicators-right">
             <div class="indicator">

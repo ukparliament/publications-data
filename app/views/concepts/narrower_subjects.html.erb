@@ -1,9 +1,0 @@
-<%= render 'common_subject_info', subject: @subject %>
-
-<%= render 'tab_navigation', labelled_by: :narrower_subjects, subject: @subject do %>
-  <div class="card-list card-list-3-col">
-    <% @narrower_subjects.each do |subject| %>
-      <%= render 'subject_card', subject: subject %>
-    <% end %>
-  </div>
-<% end %>

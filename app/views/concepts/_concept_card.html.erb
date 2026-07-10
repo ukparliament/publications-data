@@ -8,7 +8,7 @@
       <div class="info-inner">
         <div class="indicators-left">
           <div class="indicator indicator-label">
-            <%= concept.publications_count %>
+            <%= concept.publications_count > 0 ? concept.publications_count : "No publications" %>
           </div>
           <div class="indicator indicator-label">
             <i class="fa fa-file-alt" aria-hidden="true"></i>

@@ -91,7 +91,7 @@ module Datagraphs
         WHERE c.id = '%{concept_id}'
         AND pes.label = 'Published'
         RETURN pe.id as publication_expression_id,
-               pw.id as publication_work_id,
+               pw.id as id,
                pw.reference as ref,
                pw.title as title,
                pes.label as status,

@@ -20,7 +20,7 @@
 <h3>Associated concepts</h3>
 <% if @concepts.any? %>
   <% @concepts.each do |name, id| %>
-    <span class="badge badge-primary"><%= link_to name, concepts_path(broader_term: name), class: "text-white" %></span>
+    <span class="badge badge-primary"><%= link_to name, concept_path(id), class: "text-white" %></span>
   <% end %>
 <% else %>
   <p>We do not have any associated concepts for this publication</p>

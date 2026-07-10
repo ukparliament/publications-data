@@ -1,7 +1,13 @@
 <%# locals: (concept:) %>
 
-<p><%= concept.scope_note if concept.scope_note? %></p>
+<p>Scope note: <%= concept.scope_note.presence || "No scope note" %></p>
+<p>Indexer note: <%= concept.indexer_note || "No indexer note" %></p>
+<p>Class type: <%= concept.class_type || "No class type" %></p>
 
-<% if concept.synonyms.present? %>
-  <p>Synonyms: <%= concept.synonyms.to_sentence %></p>
-<% end %>
+<p>
+  <% if concept.synonyms.present? %>
+    Synonyms: <%= concept.synonyms.to_sentence %>
+  <% else %>
+    No synonyms
+  <% end %>
+</p>
