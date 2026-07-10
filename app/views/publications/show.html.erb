@@ -20,7 +20,7 @@
 <% end %>
 
 <p>Reference: <b><%= @publication.ref.presence || "We do not have a reference for this publication." %></b></p>
-
+<p>Created on: <b><%= nice_date @publication.created_at %></b></p>
 <h3>Associated concepts</h3>
 <% if @concepts.any? %>
   <% @concepts.each do |name, id| %>

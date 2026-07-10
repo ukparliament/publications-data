@@ -16,7 +16,7 @@ module Datagraphs
                   pw.reference AS ref,
                   rs.id AS research_service_id,
                   rs.name AS research_service_name,
-                  pe.createdAt AS created_at,
+                  pw.createdAt AS created_at,
                   pe.publishedAt AS published_at,
                   COLLECT_LIST(DISTINCT c.label) AS concepts,
                   COLLECT_LIST(DISTINCT c.id) AS concept_ids,
