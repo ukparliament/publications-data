@@ -1,0 +1,20 @@
+<%= link_to concept_path(concept.id), class: "card" do %>
+  <div class="card-inner">
+    <div class="content">
+      <div class="primary-info"><%= concept.label %></div>
+      <div class="secondary-info"></div>
+    </div>
+    <div class="info">
+      <div class="info-inner">
+        <div class="indicators-left">
+          <div class="indicator indicator-label">
+            <%= concept.publications_count > 0 ? concept.publications_count : "No publications" %>
+          </div>
+          <div class="indicator indicator-label">
+            <i class="fa fa-file-alt" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

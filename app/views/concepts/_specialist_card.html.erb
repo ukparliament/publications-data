@@ -1,0 +1,32 @@
+<%= link_to specialist_path(specialist.person_id), class: "card" do %>
+  <div class="card-inner">
+    <div class="content">
+      <div class="primary-info"><%= specialist.name %></div>
+      <div class="secondary-info"><%= specialist.section_names.join(', ') %></div>
+    </div>
+    <div class="info">
+      <div class="info-inner">
+        <div class="indicators-left">
+          <span class="icon fas fa-envelope" aria-hidden="true"></span>
+        </div>
+        <div class="indicators-right">
+          <div class="indicator">
+            <div class="indicator indicator-label"><%= specialist.email || "No email" %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info">
+      <div class="info-inner">
+        <div class="indicators-left">
+          <span class="icon fas fa-phone" aria-hidden="true"></span>
+        </div>
+        <div class="indicators-right">
+          <div class="indicator">
+            <div class="indicator indicator-label"><%= specialist.phone_number || "No phone number" %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

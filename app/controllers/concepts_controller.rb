@@ -5,39 +5,83 @@ class ConceptsController < AuthenticatedController
 
   MAIN_PAGE_TITLE = 'Concepts'
 
-  # OK - we are reworking this to provide a tree structure - every time we drill down, we can provide a list to the publications for that
-  # concept and also links to children and parents
-
   def index
-    broader_term = params[:broader_term] || 'Concept'
-    concepts = Datagraphs::Api::GetConcepts.new.get_concepts_based_on_broader_term(broader_term: broader_term, skip: 0, limit: 200)
-    @concepts = concepts.map { |concept| OpenStruct.new(concept) }
-    @sub_title = broader_term == 'Concept' ? 'Top level concepts' : broader_term
+    get_letters
+
+    @letter = params[:letter] || "A"
+    @total_count = Datagraphs::Api::GetConcepts.new.get_total(letter: @letter)
+    @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 99)
+
+    concepts = Datagraphs::Api::GetConcepts.new.process(
+      letter: @letter,
+      skip: @pagy.offset,
+      limit: @pagy.limit
+    )
+
+    @concepts = concepts.map { |c| OpenStruct.new(c) }
 
     @crumb << { label: MAIN_PAGE_TITLE, url: nil }
     @page_title = MAIN_PAGE_TITLE
   end
 
-  # def show
+  def show
+    concept_id = params[:id]
+    redirect_to publications_concept_path(concept_id)
+  end
 
-  #   #@total_count = Datagraphs::Api::GetConcept.new.get_total(concept_id: params[:id])
+  def publications
+    concept_id = params[:id]
 
-  #   @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
+    concept = Datagraphs::Api::GetConcept.new.process(concept_id: concept_id).first
+    @concept = OpenStruct.new(concept)
 
-  #   collection_and_publication_works = Datagraphs::Api::GetConcept.new.process(
-  #     concept_id: params[:id],
-  #     skip: @pagy.offset,
-  #     limit: @pagy.limit
-  #   )
+    @total_count = Datagraphs::Api::GetPublications.new.for_a_concept_count(concept_id: concept_id)
 
-  #   @publication_works = collection_and_publication_works.map { |publication_works| OpenStruct.new(publication_works) }
+    @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-  #   @concept_name = @publication_works.first.concept_name
-  #   @page_title =  @concept_name
+    publications = Datagraphs::Api::GetPublications.new.for_a_concept(
+      concept_id: concept_id,
+      skip: @pagy.offset,
+      limit: @pagy.limit
+    )
 
-  #   @crumb << { label: MAIN_PAGE_TITLE, url: concepts_path }
-  #   @crumb << { label: @page_title, url: nil }
-  # end
+    @publications = publications.map { |publication| OpenStruct.new(publication) }
+    @page_title =  @concept.label
+
+    @crumb << { label: MAIN_PAGE_TITLE, url: concepts_path }
+    @crumb << { label: @page_title, url: concept_path(concept_id) }
+    @crumb << { label: "Publications", url: nil }
+  end
+
+  def broader_terms
+    concept_id = params[:id]
+    concept = Datagraphs::Api::GetConcept.new.process(concept_id: concept_id).first
+    @concept = OpenStruct.new(concept)
+
+    bt = Datagraphs::Api::GetConcept.new.and_broader_terms(concept_id: concept_id)
+    @broader_terms = bt.map { |s| OpenStruct.new(s) }
+
+    @page_title = @concept.label
+
+    @crumb << { label: MAIN_PAGE_TITLE, url: concepts_path }
+    @crumb << { label: @concept.label, url: concept_path(concept_id) }
+    @crumb << { label: "Broader terms", url: nil }
+  end
+
+  def narrower_terms
+    concept_id = params[:id]
+    concept = Datagraphs::Api::GetConcept.new.process(concept_id: concept_id).first
+    @concept = OpenStruct.new(concept)
+
+    ns = Datagraphs::Api::GetConcept.new.and_narrower_terms(concept_id: concept_id)
+    @narrower_terms = ns.map { |s| OpenStruct.new(s) }
+
+    @page_title = @concept.label
+
+    @crumb << { label: MAIN_PAGE_TITLE, url: concepts_path }
+    @crumb << { label: @concept.label, url: concept_path(concept_id) }
+    @crumb << { label: "Narrower subjects", url: nil }
+  end
 
   private
 
@@ -45,17 +89,9 @@ class ConceptsController < AuthenticatedController
     @letters = Datagraphs::Api::GetConcepts.new.get_letters.first["letters"].sort
   end
 
-  def process_concepts(letter:, limit:, offset:)
-
-  end
 
   def process_collection
     collection_and_publication_works = Datagraphs::Api::GetCollection.new.process(params[:id])
     collection_and_publication_works.map { |publication_works| OpenStruct.new(publication_works) }
   end
 end
-
-
-
-
- #{"results":[{"s":{"id":"urn:publications-data:Section:16849","type":"Section","name":"Business and Transport Section","shortName":"BTS","strapLine":"The Business and Transport Section covers topics including transport, pensions, taxation, financial systems and institutions, corporate matters, and employment.","isDefunct":false,"formsPartOf":"urn:publications-data:ResearchService:1"}},{"s":{"id":"urn:publications-data:Section:17113","type":"Section","name":"Economic Policy and Statistics Section","shortName":"EPAS","strapLine":"The Economic Policy and Statistics Section covers policy on topics including the economy, trade and public spending, as well as statistics on a wider range of policy areas, including businesses, employment and poverty.","isDefunct":false,"formsPartOf":"urn:publications-data:ResearchService:1"}},{"s":{"id":"urn:publications-data:Section:25036","type":"Section","name":"Home Affairs Section","shortName":"HAS","strapLine":"The Home Affairs Section covers topics including policing and criminal justice, immigration, civil law, national security, media, equality and human rights.","isDefunct":false,"formsPartOf":"urn:publications-data:ResearchService:1"}},{"s":{"id":"urn:publications-data:Section:298694",       ORDER BY section.name

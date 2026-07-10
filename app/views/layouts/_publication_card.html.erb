@@ -1,0 +1,26 @@
+<%# locals: (publication:) %>
+
+<%= link_to publication_path(publication.id), class: "card" do %>
+  <div class="card h-100">
+    <div class="card-inner">
+      <div class="content">
+        <div class="primary-info">
+          <%= publication.title %>
+        </div>
+        <div class="secondary-info"></div>
+      </div>
+
+      <div class="info">
+        <div class="info-inner">
+          <div class="indicators-left">
+            <%= publication.ref %>
+          </div>
+          <div class="indicators-right">
+            <div class="indicator">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
