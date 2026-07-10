@@ -5,8 +5,6 @@
     <%= link_to title, publication_path(id) %>
   <% end %>
   </div>
-<% else %>
-  <p>No disclaimers</p>
 <% end %>
 
 <p>
@@ -39,8 +37,12 @@
     <%= link_to title, publication_path(id) %>
   <% end %>
   </div>
-<% else %>
-  <p>No disclaimers</p>
+<% end %>
+
+<% if @merged_from.any? %>
+  <div class="highlight highlight-info">
+  This work is merged from: <%= publication_links_from_array(@merged_from) %>
+  </div>
 <% end %>
 
 <h3>Associated concepts</h3>
@@ -56,7 +58,6 @@
 <% if @contributions.any? %>
   <% @contributions.each do |contribution| %>
     <p><%= link_to contribution.person_name, person_path(contribution.person_id ) %> as <%= contribution.contribution_type %> - a <%= contribution.is_contribution_public ? "public" : "private" %> contribution</p>
-
   <% end %>
 <% else %>
   <p>We do not have any contributors in our records for this publication.</p>

@@ -18,4 +18,10 @@ module ApplicationHelper
       link_to name, person_path(id)
     end.to_sentence.html_safe
   end
+
+  def publication_links_from_array(array_of_publications)
+    array_of_publications.map do |id, name|
+      link_to name, publication_path(id)
+    end.to_sentence.html_safe
+  end
 end
