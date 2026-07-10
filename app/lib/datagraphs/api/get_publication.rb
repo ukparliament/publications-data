@@ -7,6 +7,8 @@ module Datagraphs
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
         OPTIONAL MATCH path5=(pw)-[r7:subject]->(c:Concept)
         OPTIONAL MATCH (pw)-[r8:disclaimerApplicabilityFor]-(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)
+        OPTIONAL MATCH (pw)-[r10:supersedes]->(superseded:PublicationWork)
+        OPTIONAL MATCH (supersededBy:PublicationWork)-[r11:supersedes]->(pw:PublicationWork)
         WHERE pw.id='%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN    pw.title AS title,
@@ -22,7 +24,12 @@ module Datagraphs
                   COLLECT_LIST(DISTINCT c.id) AS concept_ids,
                   COLLECT_LIST(d.id) AS disclaimer_ids,
                   COLLECT_LIST(d.label) AS disclaimer_labels,
-                  COLLECT_LIST(f.applicableFrom) AS disclaimers_applicable_from
+                  COLLECT_LIST(f.applicableFrom) AS disclaimers_applicable_from,
+                  COLLECT_LIST(DISTINCT superseded.id) AS superseded_ids,
+                  COLLECT_LIST(DISTINCT superseded.title) AS superseded_titles,
+                  COLLECT_LIST(DISTINCT supersededBy.id) AS superseded_by_ids,
+                  COLLECT_LIST(DISTINCT supersededBy.title) AS superseded_by_titles
+
       Q
 
       PUBLICATION_ONLY = <<-Q.squish
