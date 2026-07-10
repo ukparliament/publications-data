@@ -11,7 +11,7 @@
 
 <% if @disclaimers.any? %>
   <% @disclaimers.each do |label, from| %>
-    <div class="highlight highlight-info">
+    <div class="highlight highlight-warning">
       <p><%= label %> Applicable from: <%= nice_date(from) %></p>
     </div>
   <% end %>
@@ -21,6 +21,19 @@
 
 <p>Reference: <b><%= @publication.ref.presence || "We do not have a reference for this publication." %></b></p>
 <p>Created on: <b><%= nice_date @publication.created_at %></b></p>
+
+<% if @supersedes.any? %>
+  <div class="highlight highlight-info">
+  This work supersedes:
+  <% @supersedes.each do |id, title| %>
+    <%= link_to title, publication_path(id) %>
+  <% end %>
+  </div>
+<% else %>
+  <p>No disclaimers</p>
+<% end %>
+
+
 <h3>Associated concepts</h3>
 <% if @concepts.any? %>
   <% @concepts.each do |name, id| %>
