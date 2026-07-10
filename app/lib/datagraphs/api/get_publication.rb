@@ -1,11 +1,12 @@
 module Datagraphs
   module Api
     class GetPublication < CypherQuery
-      PUBLISHED_PUBLICATION_ONLY = <<-Q
+      PUBLISHED_PUBLICATION_ONLY = <<-Q.squish
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
         OPTIONAL MATCH path5=(pw)-[r7:subject]->(c:Concept)
+        OPTIONAL MATCH (pw)-[r8:disclaimerApplicabilityFor]-(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)
         WHERE pw.id='%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN    pw.title AS title,
@@ -17,11 +18,14 @@ module Datagraphs
                   rs.name AS research_service_name,
                   pe.createdAt AS created_at,
                   pe.publishedAt AS published_at,
-                  COLLECT_LIST(c.label) AS concepts,
-                  COLLECT_LIST(c.id) AS concept_ids
+                  COLLECT_LIST(DISTINCT c.label) AS concepts,
+                  COLLECT_LIST(DISTINCT c.id) AS concept_ids,
+                  COLLECT_LIST(d.id) AS disclaimer_ids,
+                  COLLECT_LIST(d.label) AS disclaimer_labels,
+                  COLLECT_LIST(f.applicableFrom) AS disclaimers_applicable_from
       Q
 
-      PUBLICATION_ONLY = <<-Q
+      PUBLICATION_ONLY = <<-Q.squish
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
@@ -40,7 +44,7 @@ module Datagraphs
                   COLLECT_LIST(c.id) AS concept_ids
       Q
 
-      QUERY = <<-Q
+      QUERY = <<-Q.squish
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         OPTIONAL MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
         OPTIONAL MATCH path3=(c:Contribution)-[r4:hasContributionType]->(ct:ContributionType)
@@ -107,21 +111,21 @@ module Datagraphs
 
       def process(publication_work_id: 'urn:publications-data:PublicationWork:3549', skip: 0, limit: 25)
         params = { query: QUERY % { publication_work_id: publication_work_id, skip: skip, limit: limit }}
-
+        ap params
         response = call(params: params)
         process_response(response.body)
       end
 
       def get_published_publication_details(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: PUBLISHED_PUBLICATION_ONLY % { publication_work_id: publication_work_id }}
-
+        ap params
         response = call(params: params)
         process_response(response.body)
       end
 
       def details(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: PUBLICATION_ONLY % { publication_work_id: publication_work_id }}
-
+        ap params
         response = call(params: params)
         process_response(response.body)
       end
