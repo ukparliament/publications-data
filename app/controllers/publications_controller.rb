@@ -31,6 +31,8 @@ class PublicationsController < AuthenticatedController
 
     title = @publication.title
 
+    @disclaimers = @publication.disclaimer_ids ? @publication.disclaimer_labels.zip(@publication.disclaimers_applicable_from) : []
+
     contributions = Datagraphs::Api::GetPublication.new.get_contributors(publication_work_id: @publication_work_id).uniq
     @contributions = contributions.map { |contribution| OpenStruct.new(contribution) }
 

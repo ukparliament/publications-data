@@ -9,13 +9,17 @@
 
 <p><i><%= @publication.teaser_text %></i></p>
 
-<p>
-  <% if @publication.ref %>
-    Reference <b><%= @publication.ref %></b>
-  <% else %>
-    We do not have a reference for this publication.
+<% if @disclaimers.any? %>
+  <% @disclaimers.each do |label, from| %>
+    <div class="highlight highlight-info">
+      <p><%= label %> Applicable from: <%= nice_date(from) %></p>
+    </div>
   <% end %>
-</p>
+<% else %>
+  <p>No disclaimers</p>
+<% end %>
+
+<p>Reference: <b><%= @publication.ref.presence || "We do not have a reference for this publication." %></b></p>
 
 <h3>Associated concepts</h3>
 <% if @concepts.any? %>
