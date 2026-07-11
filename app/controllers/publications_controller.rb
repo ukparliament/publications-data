@@ -2,6 +2,7 @@ require 'ostruct'
 
 class PublicationsController < AuthenticatedController
   include Pagy::Method
+  include ApplicationHelper # For nice date time
 
   MAIN_PAGE_TITLE = 'Published publications'
 
@@ -40,6 +41,17 @@ class PublicationsController < AuthenticatedController
     @superseded_by = @publication.superseded_by_ids ? @publication.superseded_by_ids.zip(@publication.superseded_by_titles) : []
     @merged_from = @publication.merged_from_ids ? @publication.merged_from_ids.zip(@publication.merged_from_titles) : []
     @split_from = @publication.split_from_ids ? @publication.split_from_ids.zip(@publication.split_from_titles) : []
+
+    @withdrawal_periods = @publication.wps.map do |w|
+      # Transform keys in place from JS style camel case
+      if w["reinstatedAt"].present?
+        w["reinstated_at"] = nice_date_time(w["reinstatedAt"])
+      end
+
+      w["withdrawn_at"] = nice_date_time(w["withdrawnAt"])
+
+      OpenStruct.new(w)
+    end.sort_by { |wp| wp.withdrawn_at }.reverse
 
     contributions = Datagraphs::Api::GetPublication.new.get_contributors(publication_work_id: @publication_work_id).uniq
     @contributions = contributions.map { |contribution| OpenStruct.new(contribution) }
