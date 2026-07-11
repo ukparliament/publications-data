@@ -5,13 +5,6 @@ module Datagraphs
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
-        OPTIONAL MATCH path5=(pw)-[r7:subject]->(c:Concept)
-        OPTIONAL MATCH (pw)-[r8:disclaimerApplicabilityFor]-(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)
-        OPTIONAL MATCH (pw)-[r10:supersedes]->(superseded:PublicationWork)
-        OPTIONAL MATCH (supersededBy:PublicationWork)-[r11:supersedes]->(pw:PublicationWork)
-        OPTIONAL MATCH (pw)-[r12:mergedFrom]->(mf:PublicationWork)
-        OPTIONAL MATCH (pw)-[r13:splitFrom]->(sf:PublicationWork)
-        OPTIONAL MATCH (pw)-[r14:hasWithdrawalPeriod]->(wp:WithdrawalPeriod)
         WHERE pw.id='%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN    pw.title AS title,
@@ -22,21 +15,33 @@ module Datagraphs
                   rs.id AS research_service_id,
                   rs.name AS research_service_name,
                   pw.createdAt AS created_at,
-                  pe.publishedAt AS published_at,
-                  COLLECT_LIST(DISTINCT c.label) AS concepts,
-                  COLLECT_LIST(DISTINCT c.id) AS concept_ids,
+                  pe.publishedAt AS published_at
+      Q
+
+      PUBLICATION_OPTIONAL_EXTRAS  = <<-Q.squish
+        MATCH (pw:PublicationWork)
+        OPTIONAL MATCH (pw)-[r7:subject]->(c:Concept)
+        OPTIONAL MATCH (pw)-[r8:disclaimerApplicabilityFor]-(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)
+        OPTIONAL MATCH (pw)-[r10:supersedes]->(superseded:PublicationWork)
+        OPTIONAL MATCH (supersededBy:PublicationWork)-[r11:supersedes]->(pw:PublicationWork)
+        OPTIONAL MATCH (pw)-[r12:mergedFrom]->(mf:PublicationWork)
+        OPTIONAL MATCH (pw)-[r13:splitFrom]->(sf:PublicationWork)
+        OPTIONAL MATCH (pw)-[r14:hasWithdrawalPeriod]->(wp:WithdrawalPeriod)
+        WHERE pw.id='%{publication_work_id}'
+        RETURN
                   COLLECT_LIST(DISTINCT d.id) AS disclaimer_ids,
                   COLLECT_LIST(DISTINCT d.label) AS disclaimer_labels,
                   COLLECT_LIST(DISTINCT f.applicableFrom) AS disclaimers_applicable_from,
-                  COLLECT_LIST(DISTINCT superseded.id) AS superseded_ids,
-                  COLLECT_LIST(DISTINCT superseded.title) AS superseded_titles,
-                  COLLECT_LIST(DISTINCT supersededBy.id) AS superseded_by_ids,
-                  COLLECT_LIST(DISTINCT supersededBy.title) AS superseded_by_titles,
                   COLLECT_LIST(DISTINCT mf.id) AS merged_from_ids,
                   COLLECT_LIST(DISTINCT mf.title) AS merged_from_titles,
                   COLLECT_LIST(DISTINCT sf.id) AS split_from_ids,
                   COLLECT_LIST(DISTINCT sf.title) AS split_from_titles,
-                  COLLECT_LIST(DISTINCT wp) AS wps
+                  COLLECT_LIST(DISTINCT wp) AS wps,
+                  COLLECT_LIST(DISTINCT c) AS concepts,
+                  COLLECT_LIST(DISTINCT superseded) AS supersedes,
+                  COLLECT_LIST(DISTINCT supersededBy) AS superseded_by,
+                  COLLECT_LIST(DISTINCT sf) AS split_from,
+                  COLLECT_LIST(DISTINCT mf) AS merged_from
       Q
 
       PUBLICATION_ONLY = <<-Q.squish
@@ -130,7 +135,7 @@ module Datagraphs
         process_response(response.body)
       end
 
-      def get_published_publication_details(publication_work_id: 'urn:publications-data:PublicationWork:3549')
+      def and_published_publication_details(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: PUBLISHED_PUBLICATION_ONLY % { publication_work_id: publication_work_id }}
         ap params
         response = call(params: params)
@@ -144,6 +149,12 @@ module Datagraphs
         process_response(response.body)
       end
 
+      def and_optional_extras(publication_work_id:)
+        params = { query: PUBLICATION_OPTIONAL_EXTRAS % { publication_work_id: publication_work_id }}
+        ap params
+        response = call(params: params)
+        process_response(response.body)
+      end
 
       def get_total(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: COUNT % { publication_work_id: publication_work_id }}
@@ -153,14 +164,14 @@ module Datagraphs
         output["results"].first["total"]
       end
 
-      def get_contributors(publication_work_id: 'urn:publications-data:PublicationWork:3549')
+      def and_contributors(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: ALL_CONTRIBUTORS % { publication_work_id: publication_work_id }}
 
         response = call(params: params)
         process_response(response.body)
       end
 
-      def get_resources(publication_work_id: 'urn:publications-data:PublicationWork:7809')
+      def and_resources(publication_work_id: 'urn:publications-data:PublicationWork:7809')
         params = { query: RESOURCES_ONLY % { publication_work_id: publication_work_id }}
 
         response = call(params: params)

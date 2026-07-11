@@ -1,8 +1,8 @@
 <% if @superseded_by.any? %>
   <div class="highlight highlight-warning">
   This work is superseded by:
-  <% @superseded_by.each do |id, title| %>
-    <%= link_to title, publication_path(id) %>
+  <% @superseded_by.each do |s| %>
+    <%= link_to s.title, publication_path(s.id) %>
   <% end %>
   </div>
 <% end %>
@@ -47,28 +47,29 @@
 <% if @supersedes.any? %>
   <div class="highlight highlight-info">
   This work supersedes:
-  <% @supersedes.each do |id, title| %>
-    <%= link_to title, publication_path(id) %>
+
+  <% @supersedes.each do |s| %>
+    <%= link_to s.title, publication_path(s.id) %>
   <% end %>
   </div>
 <% end %>
 
 <% if @merged_from.any? %>
   <div class="highlight highlight-info">
-  This work is merged from: <%= publication_links_from_array(@merged_from) %>
+    This work is merged from: <%= publication_links_from_array_of_objects(@merged_from) %>
   </div>
 <% end %>
 
 <% if @split_from.any? %>
   <div class="highlight highlight-info">
-  This work is split from: <%= publication_links_from_array(@split_from) %>
+  This work is split from: <%= publication_links_from_array_of_objects(@split_from) %>
   </div>
 <% end %>
 
 <h3>Associated concepts</h3>
 <% if @concepts.any? %>
-  <% @concepts.each do |name, id| %>
-    <span class="badge badge-primary"><%= link_to name, concept_path(id), class: "text-white" %></span>
+  <% @concepts.each do |c| %>
+    <span class="badge badge-primary"><%= link_to c.label, concept_path(c.id), class: "text-white" %></span>
   <% end %>
 <% else %>
   <p>We do not have any associated concepts for this publication</p>

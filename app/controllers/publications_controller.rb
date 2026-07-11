@@ -29,20 +29,26 @@ class PublicationsController < AuthenticatedController
   def show
     @publication_work_id = params[:id]
 
-    publication = Datagraphs::Api::GetPublication.new.get_published_publication_details(publication_work_id: @publication_work_id).first
+    get_publication = Datagraphs::Api::GetPublication.new
+
+    publication = get_publication.and_published_publication_details(publication_work_id: @publication_work_id).first
     @publication = OpenStruct.new(publication)
 
-    @concepts = @publication.concepts ? @publication.concepts.zip(@publication.concept_ids) : []
+    optional_extras = get_publication.and_optional_extras(publication_work_id: @publication_work_id).first
+    @optional_extras = OpenStruct.new(optional_extras)
 
     title = @publication.title
 
-    @disclaimers = @publication.disclaimer_ids ? @publication.disclaimer_labels.zip(@publication.disclaimers_applicable_from) : []
-    @supersedes = @publication.superseded_ids ? @publication.superseded_ids.zip(@publication.superseded_titles) : []
-    @superseded_by = @publication.superseded_by_ids ? @publication.superseded_by_ids.zip(@publication.superseded_by_titles) : []
-    @merged_from = @publication.merged_from_ids ? @publication.merged_from_ids.zip(@publication.merged_from_titles) : []
-    @split_from = @publication.split_from_ids ? @publication.split_from_ids.zip(@publication.split_from_titles) : []
+    @concepts = @optional_extras.concepts.map { |c| OpenStruct.new(c) }
+    @supersedes = @optional_extras.supersedes.map { |c| OpenStruct.new(c) }
+    @superseded_by = @optional_extras.superseded_by.map { |c| OpenStruct.new(c) }
+    @merged_from = @optional_extras.merged_from.map { |c| OpenStruct.new(c) }
+    @split_from = @optional_extras.split_from.map { |c| OpenStruct.new(c) }
 
-    @withdrawal_periods = @publication.wps.map do |w|
+    # We do this differently as we need to merge the dates in there
+    @disclaimers = @optional_extras.disclaimer_ids ? @optional_extras.disclaimer_labels.zip(@optional_extras.disclaimers_applicable_from) : []
+
+    @withdrawal_periods = @optional_extras.wps.map do |w|
       # Transform keys in place from JS style camel case
       if w["reinstatedAt"].present?
         w["reinstated_at"] = nice_date_time(w["reinstatedAt"])
@@ -53,10 +59,10 @@ class PublicationsController < AuthenticatedController
       OpenStruct.new(w)
     end.sort_by { |wp| wp.withdrawn_at }.reverse
 
-    contributions = Datagraphs::Api::GetPublication.new.get_contributors(publication_work_id: @publication_work_id).uniq
+    contributions = get_publication.and_contributors(publication_work_id: @publication_work_id).uniq
     @contributions = contributions.map { |contribution| OpenStruct.new(contribution) }
 
-    resources = Datagraphs::Api::GetPublication.new.get_resources(publication_work_id: @publication_work_id)
+    resources = get_publication.and_resources(publication_work_id: @publication_work_id)
     @resources = resources.map { |resource| OpenStruct.new(resource) if resource["file_title"].present? }
 
     @crumb << { label: MAIN_PAGE_TITLE, url: publications_path }
