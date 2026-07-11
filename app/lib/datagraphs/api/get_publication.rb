@@ -11,6 +11,7 @@ module Datagraphs
         OPTIONAL MATCH (supersededBy:PublicationWork)-[r11:supersedes]->(pw:PublicationWork)
         OPTIONAL MATCH (pw)-[r12:mergedFrom]->(mf:PublicationWork)
         OPTIONAL MATCH (pw)-[r13:splitFrom]->(sf:PublicationWork)
+        OPTIONAL MATCH (pw)-[r14:hasWithdrawalPeriod]->(wp:WithdrawalPeriod)
         WHERE pw.id='%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN    pw.title AS title,
@@ -24,9 +25,9 @@ module Datagraphs
                   pe.publishedAt AS published_at,
                   COLLECT_LIST(DISTINCT c.label) AS concepts,
                   COLLECT_LIST(DISTINCT c.id) AS concept_ids,
-                  COLLECT_LIST(d.id) AS disclaimer_ids,
-                  COLLECT_LIST(d.label) AS disclaimer_labels,
-                  COLLECT_LIST(f.applicableFrom) AS disclaimers_applicable_from,
+                  COLLECT_LIST(DISTINCT d.id) AS disclaimer_ids,
+                  COLLECT_LIST(DISTINCT d.label) AS disclaimer_labels,
+                  COLLECT_LIST(DISTINCT f.applicableFrom) AS disclaimers_applicable_from,
                   COLLECT_LIST(DISTINCT superseded.id) AS superseded_ids,
                   COLLECT_LIST(DISTINCT superseded.title) AS superseded_titles,
                   COLLECT_LIST(DISTINCT supersededBy.id) AS superseded_by_ids,
@@ -34,7 +35,8 @@ module Datagraphs
                   COLLECT_LIST(DISTINCT mf.id) AS merged_from_ids,
                   COLLECT_LIST(DISTINCT mf.title) AS merged_from_titles,
                   COLLECT_LIST(DISTINCT sf.id) AS split_from_ids,
-                  COLLECT_LIST(DISTINCT sf.title) AS split_from_titles
+                  COLLECT_LIST(DISTINCT sf.title) AS split_from_titles,
+                  COLLECT_LIST(DISTINCT wp) AS wps
       Q
 
       PUBLICATION_ONLY = <<-Q.squish

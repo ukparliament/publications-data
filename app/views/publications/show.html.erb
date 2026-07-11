@@ -17,6 +17,20 @@
 
 <p><i><%= @publication.teaser_text %></i></p>
 
+<% if @withdrawal_periods.any? %>
+  <% @withdrawal_periods.each do |wp| %>
+    <%= tag.div class: class_names(
+      "highlight",
+      "highlight-error": wp.reinstated_at.blank?,
+      "highlight-info": wp.reinstated_at.present?
+    ) do %>
+      <p><b><%= wp.label %></b> <%= " - re-instated at: #{nice_date_time(wp.reinstated_at)}" if wp.reinstated_at %></p>
+    <% end %>
+  <% end %>
+<% else %>
+  <p>No withdrawal periods</p>
+<% end %>
+
 <% if @disclaimers.any? %>
   <% @disclaimers.each do |label, from| %>
     <div class="highlight highlight-warning">
