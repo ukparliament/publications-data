@@ -45,6 +45,12 @@
   </div>
 <% end %>
 
+<% if @split_from.any? %>
+  <div class="highlight highlight-info">
+  This work is split from: <%= publication_links_from_array(@split_from) %>
+  </div>
+<% end %>
+
 <h3>Associated concepts</h3>
 <% if @concepts.any? %>
   <% @concepts.each do |name, id| %>
