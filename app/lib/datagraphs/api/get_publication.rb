@@ -5,13 +5,6 @@ module Datagraphs
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
-        OPTIONAL MATCH path5=(pw)-[r7:subject]->(c:Concept)
-        OPTIONAL MATCH (pw)-[r8:disclaimerApplicabilityFor]-(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)
-        OPTIONAL MATCH (pw)-[r10:supersedes]->(superseded:PublicationWork)
-        OPTIONAL MATCH (supersededBy:PublicationWork)-[r11:supersedes]->(pw:PublicationWork)
-        OPTIONAL MATCH (pw)-[r12:mergedFrom]->(mf:PublicationWork)
-        OPTIONAL MATCH (pw)-[r13:splitFrom]->(sf:PublicationWork)
-        OPTIONAL MATCH (pw)-[r14:hasWithdrawalPeriod]->(wp:WithdrawalPeriod)
         WHERE pw.id='%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN    pw.title AS title,
@@ -22,7 +15,20 @@ module Datagraphs
                   rs.id AS research_service_id,
                   rs.name AS research_service_name,
                   pw.createdAt AS created_at,
-                  pe.publishedAt AS published_at,
+                  pe.publishedAt AS published_at
+      Q
+
+      PUBLICATION_OPTIONAL_EXTRAS  = <<-Q.squish
+        MATCH (pw:PublicationWork)
+        OPTIONAL MATCH (pw)-[r7:subject]->(c:Concept)
+        OPTIONAL MATCH (pw)-[r8:disclaimerApplicabilityFor]-(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)
+        OPTIONAL MATCH (pw)-[r10:supersedes]->(superseded:PublicationWork)
+        OPTIONAL MATCH (supersededBy:PublicationWork)-[r11:supersedes]->(pw:PublicationWork)
+        OPTIONAL MATCH (pw)-[r12:mergedFrom]->(mf:PublicationWork)
+        OPTIONAL MATCH (pw)-[r13:splitFrom]->(sf:PublicationWork)
+        OPTIONAL MATCH (pw)-[r14:hasWithdrawalPeriod]->(wp:WithdrawalPeriod)
+        WHERE pw.id='%{publication_work_id}'
+        RETURN
                   COLLECT_LIST(DISTINCT c.label) AS concepts,
                   COLLECT_LIST(DISTINCT c.id) AS concept_ids,
                   COLLECT_LIST(DISTINCT d.id) AS disclaimer_ids,
@@ -139,6 +145,13 @@ module Datagraphs
 
       def details(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: PUBLICATION_ONLY % { publication_work_id: publication_work_id }}
+        ap params
+        response = call(params: params)
+        process_response(response.body)
+      end
+
+      def and_optional_extras(publication_work_id:)
+        params = { query: PUBLICATION_OPTIONAL_EXTRAS % { publication_work_id: publication_work_id }}
         ap params
         response = call(params: params)
         process_response(response.body)

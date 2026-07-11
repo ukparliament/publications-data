@@ -32,17 +32,26 @@ class PublicationsController < AuthenticatedController
     publication = Datagraphs::Api::GetPublication.new.get_published_publication_details(publication_work_id: @publication_work_id).first
     @publication = OpenStruct.new(publication)
 
-    @concepts = @publication.concepts ? @publication.concepts.zip(@publication.concept_ids) : []
+    ap '*' * 80
+    optional_extras = Datagraphs::Api::GetPublication.new.and_optional_extras(publication_work_id: @publication_work_id).first
+
+    ap optional_extras
+
+    ap '*' * 80
+
+    @optional_extras = OpenStruct.new(optional_extras)
 
     title = @publication.title
 
-    @disclaimers = @publication.disclaimer_ids ? @publication.disclaimer_labels.zip(@publication.disclaimers_applicable_from) : []
-    @supersedes = @publication.superseded_ids ? @publication.superseded_ids.zip(@publication.superseded_titles) : []
-    @superseded_by = @publication.superseded_by_ids ? @publication.superseded_by_ids.zip(@publication.superseded_by_titles) : []
-    @merged_from = @publication.merged_from_ids ? @publication.merged_from_ids.zip(@publication.merged_from_titles) : []
-    @split_from = @publication.split_from_ids ? @publication.split_from_ids.zip(@publication.split_from_titles) : []
+    @concepts = @optional_extras.concepts ? @optional_extras.concepts.zip(@optional_extras.concept_ids) : []
 
-    @withdrawal_periods = @publication.wps.map do |w|
+    @disclaimers = @optional_extras.disclaimer_ids ? @optional_extras.disclaimer_labels.zip(@optional_extras.disclaimers_applicable_from) : []
+    @supersedes = @optional_extras.superseded_ids ? @optional_extras.superseded_ids.zip(@optional_extras.superseded_titles) : []
+    @superseded_by = @optional_extras.superseded_by_ids ? @optional_extras.superseded_by_ids.zip(@optional_extras.superseded_by_titles) : []
+    @merged_from = @optional_extras.merged_from_ids ? @optional_extras.merged_from_ids.zip(@optional_extras.merged_from_titles) : []
+    @split_from = @optional_extras.split_from_ids ? @optional_extras.split_from_ids.zip(@optional_extras.split_from_titles) : []
+
+    @withdrawal_periods = @optional_extras.wps.map do |w|
       # Transform keys in place from JS style camel case
       if w["reinstatedAt"].present?
         w["reinstated_at"] = nice_date_time(w["reinstatedAt"])
