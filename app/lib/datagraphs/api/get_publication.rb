@@ -21,8 +21,7 @@ module Datagraphs
       PUBLICATION_OPTIONAL_EXTRAS  = <<-Q.squish
         MATCH (pw:PublicationWork)
         OPTIONAL MATCH (pw)-[r7:subject]->(c:Concept)
-        OPTIONAL MATCH (pw)-[r8:disclaimerApplicabilityFor]-(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)
-        OPTIONAL MATCH (pw)-[r10:supersedes]->(superseded:PublicationWork)
+        OPTIONAL MATCH (pw)-[r8:hasDisclaimerApplicability]->(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)        OPTIONAL MATCH (pw)-[r10:supersedes]->(superseded:PublicationWork)
         OPTIONAL MATCH (supersededBy:PublicationWork)-[r11:supersedes]->(pw:PublicationWork)
         OPTIONAL MATCH (pw)-[r12:mergedFrom]->(mf:PublicationWork)
         OPTIONAL MATCH (pw)-[r13:splitFrom]->(sf:PublicationWork)

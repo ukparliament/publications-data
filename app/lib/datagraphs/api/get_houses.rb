@@ -4,7 +4,11 @@ module Datagraphs
 
       QUERY = <<-Q
         MATCH p = (house:House)<-[r1:for]-(rs:ResearchService)
-        RETURN house.id as id, house.name as name, house.shortName AS short_name, house.isDefunct AS defunct, collect(rs.id) AS research_service_ids, collect(rs.name) AS research_service_names
+        RETURN house.id as id,
+               house.name as name,
+               house.shortName AS short_name,
+               COLLECT_LIST(rs.id) AS research_service_ids,
+               COLLECT_LIST(rs.name) AS research_service_names
         ORDER BY house.name
       Q
 

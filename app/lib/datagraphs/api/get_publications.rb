@@ -15,8 +15,8 @@ module Datagraphs
                pe.number as the_number,
                rs.shortName AS short_research_service_name,
                rs.id AS research_service_id,
-               COLLECT_LIST(person.id) AS contributor_ids,
-               COLLECT_LIST(person.displayName) AS contributor_names
+               COLLECT_LIST(DISTINCT person.id) AS contributor_ids,
+               COLLECT_LIST(DISTINCT person.displayName) AS contributor_names
         ORDER BY pe.publishedAt desc
         SKIP %{skip}
         LIMIT %{limit}
