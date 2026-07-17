@@ -37,6 +37,8 @@ class CollectionsController < AuthenticatedController
 
   def process_collections
     collections = Datagraphs::Api::GetCollections.new.process
+
+    ap collections
     collections.each { |collection| collection["id"] = collection["collection"]["id"]}
     collections.map { |collection| OpenStruct.new(collection) }
   end
@@ -46,8 +48,3 @@ class CollectionsController < AuthenticatedController
     collection_and_publication_works.map { |publication_works| OpenStruct.new(publication_works) }
   end
 end
-
-
-
-
- #{"results":[{"s":{"id":"urn:publications-data:Section:16849","type":"Section","name":"Business and Transport Section","shortName":"BTS","strapLine":"The Business and Transport Section covers topics including transport, pensions, taxation, financial systems and institutions, corporate matters, and employment.","isDefunct":false,"formsPartOf":"urn:publications-data:ResearchService:1"}},{"s":{"id":"urn:publications-data:Section:17113","type":"Section","name":"Economic Policy and Statistics Section","shortName":"EPAS","strapLine":"The Economic Policy and Statistics Section covers policy on topics including the economy, trade and public spending, as well as statistics on a wider range of policy areas, including businesses, employment and poverty.","isDefunct":false,"formsPartOf":"urn:publications-data:ResearchService:1"}},{"s":{"id":"urn:publications-data:Section:25036","type":"Section","name":"Home Affairs Section","shortName":"HAS","strapLine":"The Home Affairs Section covers topics including policing and criminal justice, immigration, civil law, national security, media, equality and human rights.","isDefunct":false,"formsPartOf":"urn:publications-data:ResearchService:1"}},{"s":{"id":"urn:publications-data:Section:298694",       ORDER BY section.name
