@@ -36,13 +36,13 @@ module Datagraphs
 
       LETTERS = <<-Q.squish
         MATCH p = (a:Concept)<-[e:broaderTerm]-(b:Concept)
-        RETURN COLLECT(DISTINCT a.alphabetisationLetter) AS letters
+        RETURN COLLECT_LIST(DISTINCT a.alphabetisationLetter) AS letters
         ORDER BY letters asc
       Q
 
       def get_concepts_based_on_broader_term(broader_term: 'Concept', skip: 0, limit: 200)
         params = { query: CHILD_QUERY % { broader_term: broader_term, skip: skip, limit: limit }}
-        ap params
+
         response = call(params: params)
         process_response(response.body)
       end
@@ -51,13 +51,13 @@ module Datagraphs
         params = { query: COUNT % { letter: letter } }
         response = call(params: params)
         output = JSON.parse(response.body)
-        ap output
+
         output["results"].first["total"]
       end
 
       def process(letter: "A", skip: 0, limit: 25)
         params = { query: QUERY % { skip: skip, limit: limit, letter: letter }}
-        ap params
+
         response = call(params: params)
         process_response(response.body)
       end

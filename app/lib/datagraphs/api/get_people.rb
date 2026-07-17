@@ -34,7 +34,7 @@ module Datagraphs
 
       def get_total(letter: 'A')
         params = { query: COUNT % { letter: letter } }
-        ap params
+
         response = call(params: params)
         output = JSON.parse(response.body)
         output["results"].first["total"]
@@ -42,14 +42,14 @@ module Datagraphs
 
       def process(letter: "A", skip: 0, limit: 25)
         params = { query: QUERY % { skip: skip, limit: limit, letter: letter }}
-        ap params
+
         response = call(params: params)
         process_response(response.body)
       end
 
       def get_letters
         params = { query: LETTERS }
-        ap params
+
         response = call(params: params)
         process_response(response.body)
       end
