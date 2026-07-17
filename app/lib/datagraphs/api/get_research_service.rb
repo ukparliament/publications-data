@@ -16,8 +16,6 @@ module Datagraphs
       def process(research_service_id = 'urn:publications-data:ResearchService:1')
         params = { query: QUERY % { research_service_id: research_service_id }}
 
-        ap params
-
         response = call(params: params)
         process_response(response.body)
       end

@@ -2,15 +2,18 @@ module Datagraphs
   module Api
     class GetPeople < CypherQuery
 
-
-      QUERY = <<-Q
+      #
+      # Note that a person may have multiple contributions to a publication,
+      # this ensures it is publications we count rather than as owner (1) and author (2)
+      #
+      QUERY = <<-Q.squish
         MATCH path_1 = (p:Person)
         OPTIONAL MATCH path_2 = (p)<-[e:contributionBy]-(c:Contribution)-[r:contributionTo]->(pe:PublicationExpression)-[s:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         WHERE pes.label = "Published"
         AND p.alphabetisationLetter = '%{letter}'
         RETURN p.displayName AS name,
                p.id AS id,
-               COUNT(DISTINCT pe.id) AS number_of_contributions, -- Note that a person may have multiple contributions to a publication, this ensures it is publications we count rather than as owner (1) and author (2)
+               COUNT(DISTINCT pe.id) AS number_of_contributions,
                p.sortName as sort_name
         ORDER BY sort_name ASC
         SKIP %{skip}
