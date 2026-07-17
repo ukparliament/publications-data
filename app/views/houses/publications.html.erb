@@ -1,9 +1,5 @@
 <h1><small class="text-muted"><%= @house.short_name %></small></h1>
 
-<% if @house.defunct %>
-  <p>This house is marked as DEFUNCT.</p>
-<% end %>
-
 <h2>Research services</h2>
 
 <ol>
@@ -14,7 +10,7 @@
 
 <% if @publications.any? %>
   <h2>Published publications</h2>
-  <p><%= link_to 'Unpublished', publications_unpublished_house_path %></p>
+  <p><%= link_to 'Unpublished publications', publications_unpublished_house_path %></p>
   <p>Total publications: <%= @total_count %></p>
   <%== @pagy.series_nav(:bootstrap) %>
 

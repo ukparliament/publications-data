@@ -1,8 +1,5 @@
-
 <p>Short name: <b><%= @research_service.short_name %></b></p>
 
-<p>Strap line: <b><%= @research_service.strap_line.presence || "No strap line" %></b></p>
-<p>Defunct: <b><%= @research_service.defunct ? "Yes" : "No" %></b></p>
 <p>For the: <b>
   <%= @research_service.houses.map do |house_id, house_name| %>
     <% link_to house_name, house_path(house_id) %>

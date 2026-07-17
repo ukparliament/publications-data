@@ -2,19 +2,18 @@ module Datagraphs
   module Api
     class GetHouse < CypherQuery
 
-      QUERY = <<-Q
+      QUERY = <<-Q.squish
         MATCH houses=(house:House)<-[r1:for]-(rs:ResearchService)
         WHERE
           house.id='%{house_id}'
         RETURN house.name as name,
                house.shortName as short_name,
-               house.isDefunct AS defunct,
-               collect_list(rs.id) AS research_service_ids,
-               collect_list(rs.name) AS research_service_names
+               COLLECT_LIST(rs.id) AS research_service_ids,
+               COLLECT_LIST(rs.name) AS research_service_names
         LIMIT 1
       Q
 
-      QUERY_WITH_PUBLICATIONS_WITH_A_STATUS = <<-Q
+      QUERY_WITH_PUBLICATIONS_WITH_A_STATUS = <<-Q.squish
         MATCH p = (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH q = (pw)-[s:publishedBy]->(rs:ResearchService)-[t:for]->(house:House)
         OPTIONAL MATCH r = (pw)-[d:hasWithdrawalPeriod]->(w:WithdrawalPeriod)
@@ -36,7 +35,7 @@ module Datagraphs
       Q
 
 
-      QUERY_WITH_PUBLICATIONS_WITH_A_STATUS_COUNT = <<-Q
+      QUERY_WITH_PUBLICATIONS_WITH_A_STATUS_COUNT = <<-Q.squish
         MATCH p = (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExpression:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH q = (pubWork)-[s:publishedBy]->(rs:ResearchService)-[t:for]->(house:House)
         OPTIONAL MATCH r = (pubWork)-[d:hasWithdrawalPeriod]->(w:WithdrawalPeriod)
