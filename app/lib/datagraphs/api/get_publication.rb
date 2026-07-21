@@ -152,6 +152,7 @@ module Datagraphs
         params = { query: PUBLICATION_OPTIONAL_EXTRAS % { publication_work_id: publication_work_id }}
         ap params
         response = call(params: params)
+        ap response.body
         process_response(response.body)
       end
 
