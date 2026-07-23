@@ -19,7 +19,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
-gem "library_design", github: "ukparliament/design-assets", glob: "library_design/*.gemspec", tag: "0.6.10"
+gem "library_design", github: "ukparliament/design-assets", glob: "library_design/*.gemspec", tag: "0.6.12"
 gem "irb"
 gem "dotenv-rails"
 gem "lograge"
