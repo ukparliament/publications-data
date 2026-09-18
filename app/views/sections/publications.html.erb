@@ -14,6 +14,7 @@
       <tr>
         <th scope="col" class="col-4">Title</th>
         <th scope="col">Reference</th>
+        <th scope="col">Owned by</th>
         <th scope="col">Created at</th>
         <th scope="col">Published at</th>
       </tr>
@@ -23,6 +24,7 @@
         <tr>
           <td><%= link_to publication.title, publication_path(publication.publication_work_id) %></td>
           <td><%= publication.ref %></td>
+          <td><%= contributor_links_from_array(publication.owners) %></td>
           <td><%= nice_date_time(publication.created_at) %></td>
           <td><%= nice_date_time(publication.published_at) %></td>
         </tr>
