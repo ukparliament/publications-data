@@ -76,7 +76,7 @@ module Datagraphs
                pe.teaserText as teaser_text,
                pe.createdAt as created_at,
                pe.number as the_number
-        ORDER BY title
+        ORDER BY published_at DESC
         SKIP %{skip}
         LIMIT %{limit}
       Q
