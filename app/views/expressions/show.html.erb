@@ -24,7 +24,7 @@
 <% if @related_links.any? %>
   <ul>
   <% @related_links.each do |related_link| %>
-    <li><%= link_to related_link.title, related_link.url %></li>
+    <li><%= link_to related_link.title, related_link.url.sub('http://', 'https://') %></li>
   <% end %>
   </ul>
 <% else %>
