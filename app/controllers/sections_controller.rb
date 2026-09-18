@@ -38,8 +38,14 @@ class SectionsController < AuthenticatedController
       limit: @pagy.limit
     )
 
+    # We have a collected list of people and contribution types, so let's combine and filter at the same time
     @publications = publications.map do |p|
-      p["owners"] = p["people_ids"].zip(p["people_names"])
+
+      # Combine here
+      contributors = p["people_ids"].zip(p["people_names"], p["contribution_type"])
+
+      # But we only want owners for this view, so just select them
+      p["owners"] = contributors.find_all { |c| c[2] == "Owner" }
       OpenStruct.new(p)
     end
 

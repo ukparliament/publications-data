@@ -69,7 +69,6 @@ module Datagraphs
         MATCH (cont)-[r6:hasContributionType]->(contributionType:ContributionType)
         WHERE s.id = '%{section_id}'
         AND pes.label = 'Published'
-        AND contributionType.label = 'Owner'
         RETURN
                pe.id as publication_expression_id,
                pw.id as publication_work_id,
@@ -81,7 +80,8 @@ module Datagraphs
                pe.createdAt as created_at,
                pe.number as the_number,
                COLLECT_LIST(DISTINCT person.id) AS people_ids,
-               COLLECT_LIST(DISTINCT person.displayName) AS people_names
+               COLLECT_LIST(DISTINCT person.displayName) AS people_names,
+               COLLECT_LIST(DISTINCT contributionType.label) AS contribution_type
         ORDER BY published_at DESC
         SKIP %{skip}
         LIMIT %{limit}
