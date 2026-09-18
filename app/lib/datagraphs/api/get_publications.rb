@@ -65,9 +65,13 @@ module Datagraphs
       FOR_A_SECTION = <<-Q.squish
         MATCH (s:Section)<-[e:sectionContributionBy]-(sc:SectionContribution)-[r:sectionContributionTo]->(pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH (pe)-[t:expressionOf]->(pw:PublicationWork)
+        MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe)
+        MATCH (cont)-[r6:hasContributionType]->(contributionType:ContributionType)
         WHERE s.id = '%{section_id}'
         AND pes.label = 'Published'
-        RETURN pe.id as publication_expression_id,
+        AND contributionType.label = 'Owner'
+        RETURN
+               pe.id as publication_expression_id,
                pw.id as publication_work_id,
                pw.reference as ref,
                pw.title as title,
@@ -75,7 +79,9 @@ module Datagraphs
                pe.publishedAt as published_at,
                pe.teaserText as teaser_text,
                pe.createdAt as created_at,
-               pe.number as the_number
+               pe.number as the_number,
+               COLLECT_LIST(DISTINCT person.id) AS people_ids,
+               COLLECT_LIST(DISTINCT person.displayName) AS people_names
         ORDER BY published_at DESC
         SKIP %{skip}
         LIMIT %{limit}

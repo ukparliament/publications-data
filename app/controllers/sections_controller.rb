@@ -38,7 +38,10 @@ class SectionsController < AuthenticatedController
       limit: @pagy.limit
     )
 
-    @publications = publications.map { |p| OpenStruct.new(p) }
+    @publications = publications.map do |p|
+      p["owners"] = p["people_ids"].zip(p["people_names"])
+      OpenStruct.new(p)
+    end
 
     @page_title =  @section.name
 
