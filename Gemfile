@@ -24,7 +24,7 @@ gem "irb"
 gem "dotenv-rails"
 gem "lograge"
 gem "amazing_print"
-gem "json", "<3"
+gem "json", "<4"
 
 # For API calls
 gem "typhoeus"
