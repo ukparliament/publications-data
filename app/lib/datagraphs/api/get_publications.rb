@@ -111,6 +111,38 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
+      COUNT_FOR_A_GEOGRAPHIC_AREA = <<-Q.squish
+        MATCH (area:GeographicArea)<-[e]-(pw:PublicationWork)
+        OPTIONAL MATCH (pes:PublicationExpressionStatus)<-[r2:hasPublicationExpressionStatus]-(pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
+        WHERE pes.label = '%{publication_status_label}'
+        AND area.id = '%{geographic_area_id}'
+        RETURN COUNT(pw) AS total
+      Q
+
+      FOR_A_GEOGRAPHIC_AREA = <<-Q.squish
+        MATCH (area:GeographicArea)<-[e]-(pw:PublicationWork)
+        OPTIONAL MATCH (pes:PublicationExpressionStatus)<-[r2:hasPublicationExpressionStatus]-(pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
+        OPTIONAL MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe)
+        OPTIONAL MATCH (cont)-[r6:hasContributionType]->(contributionType:ContributionType)
+        WHERE pes.label = '%{publication_status_label}'
+        AND area.id = '%{geographic_area_id}'
+        AND contributionType.label = '%{contribution_type_label}'
+        RETURN pe.id as publication_expression_id,
+               pe.publishedAt as published_at,
+               pw.id as publication_work_id,
+               pw.reference as ref,
+               pw.title as title,
+               pw.createdAt as created_at,
+               pes.label as status,
+               pe.number as the_number,
+               COLLECT_LIST(DISTINCT person.id) AS contributor_ids,
+               COLLECT_LIST(DISTINCT person.displayName) AS contributor_names,
+               COLLECT_LIST(DISTINCT contributionType.label) AS contribution_type
+        ORDER BY title
+        SKIP %{skip}
+        LIMIT %{limit}
+      Q
+
       UNPUBLISHED_FOR_A_HOUSE_COUNT = <<-Q.squish
         OPTIONAL MATCH (pw:PublicationWork)<-[e:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH (pw:PublicationWork)-[s:publishedBy]->(d:ResearchService)-[f:for]->(h:House)
@@ -183,6 +215,31 @@ module Datagraphs
         params = { query: FOR_A_CONCEPT % { concept_id: concept_id, skip: skip, limit: limit }}
         response = call(params: params)
         process_response(response.body)
+      end
+
+      def for_a_geographic_area_count(geographic_area_id:, publication_status_label: "Published")
+        params = { query: COUNT_FOR_A_GEOGRAPHIC_AREA % {  geographic_area_id: geographic_area_id, publication_status_label: publication_status_label }}
+        response = call(params: params)
+        output = JSON.parse(response.body)
+        output["results"].first["total"]
+      end
+
+      def for_a_geographic_area(geographic_area_id:, skip: 0, limit: 25, publication_status_label: "Published", contribution_type_label: "Owner")
+        params = { query: FOR_A_GEOGRAPHIC_AREA % {
+          geographic_area_id: geographic_area_id,
+          contribution_type_label: contribution_type_label,
+          publication_status_label: publication_status_label,
+          skip: skip,
+          limit: limit
+        }}
+        response = call(params: params)
+        publications = process_response(response.body)
+
+        publications.each do |pub|
+          pub["owners"] = pub["contributor_ids"].zip(pub["contributor_names"])
+        end
+
+        publications.map { |result| Hashie::Mash.new(result) }
       end
 
       def process(skip: 0, limit: 25)
