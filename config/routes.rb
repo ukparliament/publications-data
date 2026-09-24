@@ -44,7 +44,7 @@ Rails.application.routes.draw do
   end
 
   resources :people, only: [:index, :show]
-
+  resources :geographic_areas, only: [:index, :show]
 
   #
   # Single sign on routes

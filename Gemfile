@@ -35,6 +35,9 @@ gem "pagy"
 # Openstruct
 gem "ostruct"
 
+# Hashie - use hashie's Mashie instead of a hash - better performance than open struct
+gem "hashie"
+
 # For SAML SSO with Azure
 gem "ruby-saml"
 
