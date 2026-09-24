@@ -7,32 +7,11 @@ module Datagraphs
       WHERE pe.id = '%{expression_id}'
       RETURN pe.title AS title,
              pe.publishedAt AS published_at,
-             pe.teaserText AS teaser_text,
+             pe.id AS id,
              pw.id AS publication_work_id,
              pes.label AS status,
              pw.reference AS ref,
              pe.createdAt AS created_at
-      Q
-
-      TEST_QUERY = <<-Q
-      MATCH path0 = (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-      MATCH path2 = (pe)<-[u:contributionTo]-(c:Contribution)-[v:contributionBy]->(p:Person)
-      MATCH path3 = (c)-[w:hasContributionType]->(ct:ContributionType)
-      OPTIONAL MATCH path4 = (pe)<-[x:relatedLinkFor]-(rl:RelatedLink)
-      WHERE pe.id = 'urn:publications-data:PublicationExpression:23577'
-      RETURN pe.title AS title,
-             pe.publishedAt AS published_at,
-             pe.teaserText AS teaser_text,
-             COLLECT_LIST(p.displayName) AS people_names,
-             COLLECT_LIST(p.id) AS people_ids,
-             COLLECT_LIST(ct.label) AS contribution_types,
-             COLLECT_LIST( DISTINCT rf.id) AS resource_file_id,
-             COLLECT_LIST(DISTINCT rl.id) AS related_link_ids,
-             pw.id AS publication_work_id,
-             pes.label AS status,
-             pw.reference AS ref,
-             pe.createdAt AS created_at,
-             c.isPublic AS is_public
       Q
 
       CONTRIBUTORS = <<-Q
@@ -77,39 +56,38 @@ module Datagraphs
 
       def process(expression_id: 'urn:publications-data:PublicationExpression:69185')
         params = { query: QUERY % { expression_id: expression_id }}
-        ap params
+
         response = call(params: params)
         process_response(response.body)
       end
 
       def resources(expression_id: 'urn:publications-data:PublicationExpression:69185')
         params = { query: RESOURCES % { expression_id: expression_id }}
-        ap params
+
         response = call(params: params)
         process_response(response.body)
       end
 
       def related_links(expression_id: 'urn:publications-data:PublicationExpression:69185')
         params = { query: RELATED_LINKS % { expression_id: expression_id }}
-        ap params
+
         response = call(params: params)
         process_response(response.body)
       end
 
       def contributors(expression_id: 'urn:publications-data:PublicationExpression:69185')
         params = { query: CONTRIBUTORS % { expression_id: expression_id }}
-        ap params
+
         response = call(params: params)
         process_response(response.body)
       end
 
       def sections(expression_id: 'urn:publications-data:PublicationExpression:69185')
         params = { query: SECTIONS % { expression_id: expression_id }}
-        ap params
+
         response = call(params: params)
         process_response(response.body)
       end
-
     end
   end
 end

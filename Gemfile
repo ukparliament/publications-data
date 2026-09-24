@@ -23,7 +23,7 @@ gem "library_design", github: "ukparliament/design-assets", glob: "library_desig
 gem "irb"
 gem "dotenv-rails"
 gem "lograge"
-gem "awesome_print"
+gem "amazing_print"
 gem "json", "<3"
 
 # For API calls

@@ -54,7 +54,7 @@ module Datagraphs
 
       def process(concept_id:, skip: 0, limit: 25)
         params = { query: QUERY % { skip: skip, limit: limit, concept_id: concept_id, except_id: $CONCEPT_CONCEPT_ID }}
-        ap params
+
         response = call(params: params)
         process_response(response.body)
       end
@@ -70,7 +70,6 @@ module Datagraphs
         response = call(params: params)
         process_response(response.body)
       end
-
     end
   end
 end

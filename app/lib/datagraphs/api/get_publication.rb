@@ -3,19 +3,19 @@ module Datagraphs
     class GetPublication < CypherQuery
       PUBLISHED_PUBLICATION_ONLY = <<-Q.squish
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
-        MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
+        MATCH (pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        MATCH (pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
         WHERE pw.id='%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN    pw.title AS title,
-                  pe.teaserText AS teaser_text,
                   pw.id AS id,
                   pes.label AS status,
                   pw.reference AS ref,
                   rs.id AS research_service_id,
                   rs.name AS research_service_name,
                   pw.createdAt AS created_at,
-                  pe.publishedAt AS published_at
+                  pe.publishedAt AS published_at,
+                  pe.id AS published_expression_id
       Q
 
       PUBLICATION_OPTIONAL_EXTRAS  = <<-Q.squish
@@ -45,12 +45,11 @@ module Datagraphs
 
       PUBLICATION_ONLY = <<-Q.squish
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
-        MATCH addStatus=(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        MATCH path4=(pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
+        MATCH (pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        MATCH (pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
         OPTIONAL MATCH path5=(pw)-[r7:subject]->(c:Concept)
         WHERE pw.id='%{publication_work_id}'
         RETURN    pw.title AS title,
-                  pe.teaserText AS teaser_text,
                   pw.id AS id,
                   pes.label AS status,
                   pw.reference AS ref,
@@ -58,6 +57,7 @@ module Datagraphs
                   rs.name AS research_service_name,
                   pe.createdAt AS created_at,
                   pe.publishedAt AS published_at,
+                  pe.id AS publication_expression_id,
                   COLLECT_LIST(c.label) AS concepts,
                   COLLECT_LIST(c.id) AS concept_ids
       Q
@@ -129,37 +129,31 @@ module Datagraphs
 
       def process(publication_work_id: 'urn:publications-data:PublicationWork:3549', skip: 0, limit: 25)
         params = { query: QUERY % { publication_work_id: publication_work_id, skip: skip, limit: limit }}
-        ap params
         response = call(params: params)
         process_response(response.body)
       end
 
       def and_published_publication_details(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: PUBLISHED_PUBLICATION_ONLY % { publication_work_id: publication_work_id }}
-        ap params
         response = call(params: params)
         process_response(response.body)
       end
 
       def details(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: PUBLICATION_ONLY % { publication_work_id: publication_work_id }}
-        ap params
         response = call(params: params)
         process_response(response.body)
       end
 
       def and_optional_extras(publication_work_id:)
         params = { query: PUBLICATION_OPTIONAL_EXTRAS % { publication_work_id: publication_work_id }}
-        ap params
         response = call(params: params)
-        ap response.body
         process_response(response.body)
       end
 
       def get_total(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: COUNT % { publication_work_id: publication_work_id }}
         response = call(params: params)
-        ap response.body
         output = JSON.parse(response.body)
         output["results"].first["total"]
       end
@@ -175,7 +169,6 @@ module Datagraphs
         params = { query: RESOURCES_ONLY % { publication_work_id: publication_work_id }}
 
         response = call(params: params)
-        ap response.body
         process_response(response.body)
       end
     end

@@ -18,7 +18,6 @@ module Datagraphs
         response = call(params: params)
         Rails.logger.info("Called get houses")
         process_response(response.body)
-
       end
     end
   end

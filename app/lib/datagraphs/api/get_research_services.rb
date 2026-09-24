@@ -17,11 +17,8 @@ module Datagraphs
       Q
 
       def process
-        Rails.logger.info("Calling get research services")
         params = { query: QUERY }
-        ap params
         response = call(params: params)
-        Rails.logger.info("Called get research services")
         process_response(response.body)
       end
     end

@@ -54,9 +54,7 @@ module Datagraphs
 
         params = { query: QUERY_WITH_PUBLICATIONS_WITH_A_STATUS_COUNT % { house_id: house_id, publication_status_label: publication_status_label }}
 
-        ap params
         response = call(params: params)
-        ap response.body
         output = JSON.parse(response.body)
         output["results"].first["total"]
       end
