@@ -66,8 +66,8 @@ module Datagraphs
       FOR_A_SECTION = <<-Q.squish
         MATCH (s:Section)<-[e:sectionContributionBy]-(sc:SectionContribution)-[r:sectionContributionTo]->(pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH (pe)-[t:expressionOf]->(pw:PublicationWork)
-        MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe)
-        MATCH (cont)-[r6:hasContributionType]->(contributionType:ContributionType)
+        OPTIONAL MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe)
+        OPTIONAL MATCH (cont)-[r6:hasContributionType]->(contributionType:ContributionType)
         WHERE s.id = '%{section_id}'
         AND pes.label = 'Published'
         RETURN
@@ -181,12 +181,6 @@ module Datagraphs
 
       def for_a_concept(concept_id:, skip: 0, limit: 25)
         params = { query: FOR_A_CONCEPT % { concept_id: concept_id, skip: skip, limit: limit }}
-        response = call(params: params)
-        process_response(response.body)
-      end
-
-      def for_a_section(section_id:, skip: 0, limit: 25)
-        params = { query: FOR_A_SECTION % { section_id: section_id, skip: skip, limit: limit }}
         response = call(params: params)
         process_response(response.body)
       end
