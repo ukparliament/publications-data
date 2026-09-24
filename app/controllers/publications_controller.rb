@@ -51,16 +51,7 @@ class PublicationsController < AuthenticatedController
     # We do this differently as we need to merge the dates in there
     @disclaimers = @optional_extras.disclaimer_ids ? @optional_extras.disclaimer_labels.zip(@optional_extras.disclaimers_applicable_from) : []
 
-    @withdrawal_periods = @optional_extras.wps.map do |w|
-      # Transform keys in place from JS style camel case
-      if w["reinstatedAt"].present?
-        w["reinstated_at"] = nice_date_time(w["reinstatedAt"])
-      end
-
-      w["withdrawn_at"] = nice_date_time(w["withdrawnAt"])
-
-      OpenStruct.new(w)
-    end.sort_by { |wp| wp.withdrawn_at }.reverse
+    @withdrawal_periods = sort_out_withdrawal_periods(@optional_extras.wps)
 
     contributions = get_publication.and_contributors(publication_work_id: @publication_work_id).uniq
     @contributions = contributions.map { |contribution| OpenStruct.new(contribution) }
@@ -71,5 +62,18 @@ class PublicationsController < AuthenticatedController
     @crumb << { label: MAIN_PAGE_TITLE, url: publications_path }
     @crumb << { label: title, url: nil }
     @page_title =  title
+  end
+
+  private
+
+  def sort_out_withdrawal_periods(wps)
+    # Iterate through all of the withdrawal periods
+    wps.map do |w|
+      # Transform keys in place from camel case to underscore case
+      w.transform_keys!(&:underscore)
+
+      # Create an open struct
+      OpenStruct.new(w)
+    end.sort_by(&:withdrawn_at).reverse
   end
 end
