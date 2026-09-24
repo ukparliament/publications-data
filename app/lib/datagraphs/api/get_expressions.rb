@@ -105,9 +105,7 @@ module Datagraphs
 
       def get_dynamic_status_count(publication_work_id: 'urn:publications-data:PublicationWork:3549', statuses:)
         params = { query: DYNAMIC_STATUS_COUNT % { publication_work_id: publication_work_id, statuses: statuses }}
-        ap params
         response = call(params: params)
-        ap response.body
         output = JSON.parse(response.body)
         output["results"].first["total"]
       end
@@ -136,7 +134,6 @@ module Datagraphs
       def get_total(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: COUNT % { publication_work_id: publication_work_id }}
         response = call(params: params)
-        ap response.body
         output = JSON.parse(response.body)
         output["results"].first["total"]
       end
@@ -152,7 +149,6 @@ module Datagraphs
         params = { query: RESOURCES_ONLY % { publication_work_id: publication_work_id }}
 
         response = call(params: params)
-        ap response.body
         process_response(response.body)
       end
     end

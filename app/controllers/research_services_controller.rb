@@ -27,10 +27,6 @@ class ResearchServicesController < AuthenticatedController
   def get_publications(research_service_id)
     @total_count = Datagraphs::Api::GetPublications.new.get_count_for_a_research_service(research_service_id)
 
-    ap "HI"
-    ap @total_count
-    ap "THERE"
-
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
     publications = Datagraphs::Api::GetPublications.new.get_for_a_research_service(

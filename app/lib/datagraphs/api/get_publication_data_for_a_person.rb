@@ -13,7 +13,6 @@ module Datagraphs
             collect(c.ordinality) AS ordinality,
             c.isPublic AS is_public,
             pe.publishedAt AS published_at,
-            pe.teaserText AS teaser_text,
             pw.title AS title,
             pw.id AS id,
             pes.label AS status,
@@ -42,7 +41,6 @@ module Datagraphs
       def get_total(person_id: 'urn:publications-data:Person:294313')
         params = { query: COUNT % { person_id: person_id }}
         response = call(params: params)
-        ap response.body
         output = JSON.parse(response.body)
         output["results"].first["total"]
       end

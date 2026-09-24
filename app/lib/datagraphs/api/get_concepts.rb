@@ -57,7 +57,6 @@ module Datagraphs
 
       def process(letter: "A", skip: 0, limit: 25)
         params = { query: QUERY % { skip: skip, limit: limit, letter: letter }}
-
         response = call(params: params)
         process_response(response.body)
       end

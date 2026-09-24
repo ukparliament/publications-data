@@ -6,6 +6,7 @@ module Datagraphs
         MATCH (c:Collection)-[r1:hasMember]->(pw:PublicationWork)-[r2:publishedBy]->(rs:ResearchService)
         WHERE c.id="%{collection_id}"
         RETURN c.name AS collection_name,
+               c.hasLeadMember AS lead_member_id,
                pw.title AS title,
                pw.id AS pw_id,
                pw.reference AS ref,
@@ -39,5 +40,3 @@ module Datagraphs
     end
   end
 end
-
-

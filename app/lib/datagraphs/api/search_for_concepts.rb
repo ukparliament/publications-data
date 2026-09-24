@@ -72,8 +72,6 @@ module Datagraphs
 
         STANDARD_KEYS.each { |key| single_record.delete(key) }
 
-        #ap datagraphs_type
-
         Concept.where(
           label: label,
           datagraphs_type: datagraphs_type,

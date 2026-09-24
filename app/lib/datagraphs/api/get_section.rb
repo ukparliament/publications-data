@@ -11,12 +11,9 @@ module Datagraphs
       Q
 
       def process(section_id = 'urn:publications-data:Section:1')
-        Rails.logger.info("Calling get section for #{section_id}")
         params = { query: QUERY % { section_id: section_id }}
 
         response = call(params: params)
-        Rails.logger.info("Called get section")
-        ap response.body
         process_response(response.body)
       end
     end

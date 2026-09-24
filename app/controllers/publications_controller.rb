@@ -34,6 +34,9 @@ class PublicationsController < AuthenticatedController
     publication = get_publication.and_published_publication_details(publication_work_id: @publication_work_id).first
     @publication = OpenStruct.new(publication)
 
+    published_expression_id = @publication.published_expression_id
+    @teaser_text = Datagraphs::Api::GetTeaserText.new.for_publication_expression(publication_expression_id: published_expression_id)
+
     optional_extras = get_publication.and_optional_extras(publication_work_id: @publication_work_id).first
     @optional_extras = OpenStruct.new(optional_extras)
 

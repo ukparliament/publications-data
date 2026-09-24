@@ -6,6 +6,8 @@ module Datagraphs
       def call(body: default_body, params: default_params, method_type: default_method_type, logger: Rails.logger)
         @logger = logger
 
+        logger.ap(params)
+
         request = Typhoeus::Request.new(
           url,
           method: method_type,

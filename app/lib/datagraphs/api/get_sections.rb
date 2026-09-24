@@ -10,10 +10,8 @@ module Datagraphs
       Q
 
       def process
-        Rails.logger.info("Calling get sections")
         params = { query: QUERY }
         response = call(params: params)
-        Rails.logger.info("Called get sections")
         process_response(response.body)
       end
     end

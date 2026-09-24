@@ -28,9 +28,10 @@ module Datagraphs
         WHERE pes.label = 'Published'
         AND rs.id = '%{research_service_id}'
         RETURN pe.id as publication_expression_id,
-               pw.id as publication_work_id, pw.title as title,
+               pw.id as publication_work_id,
+               pw.title as title,
                pes.label as status, pe.publishedAt as published_at,
-               pe.teaserText as teaser_text, pe.createdAt as created_at,
+               pe.createdAt as created_at,
                pe.number as the_number,
                rs.shortName AS short_research_service_name,
                rs.id AS research_service_id
@@ -76,7 +77,6 @@ module Datagraphs
                pw.title as title,
                pes.label as status,
                pe.publishedAt as published_at,
-               pe.teaserText as teaser_text,
                pe.createdAt as created_at,
                pe.number as the_number,
                COLLECT_LIST(DISTINCT person.id) AS people_ids,
@@ -105,9 +105,6 @@ module Datagraphs
                pw.reference as ref,
                pw.title as title,
                pes.label as status,
-               pe.publishedAt as published_at,
-               pe.teaserText as teaser_text,
-               pe.createdAt as created_at,
                pe.number as the_number
         ORDER BY title
         SKIP %{skip}
@@ -144,14 +141,12 @@ module Datagraphs
 
       def get_for_a_research_service(research_service_id:, skip: 0, limit: 25)
         params = { query: FOR_A_RESEARCH_SERVICE % { skip: skip, limit: limit, research_service_id: research_service_id }}
-        ap params
         response = call(params: params)
         process_response(response.body)
       end
 
       def get_count_for_a_research_service(research_service_id)
         params = { query: COUNT_FOR_RESEARCH_SERVICE % {  research_service_id: research_service_id }}
-        ap params
         response = call(params: params)
         output = JSON.parse(response.body)
         output["results"].first["total"]
@@ -173,7 +168,6 @@ module Datagraphs
 
       def for_a_section(section_id:, skip: 0, limit: 25)
         params = { query: FOR_A_SECTION % { section_id: section_id, skip: skip, limit: limit }}
-        ap params
         response = call(params: params)
         process_response(response.body)
       end
@@ -187,21 +181,18 @@ module Datagraphs
 
       def for_a_concept(concept_id:, skip: 0, limit: 25)
         params = { query: FOR_A_CONCEPT % { concept_id: concept_id, skip: skip, limit: limit }}
-        ap params
         response = call(params: params)
         process_response(response.body)
       end
 
       def for_a_section(section_id:, skip: 0, limit: 25)
         params = { query: FOR_A_SECTION % { section_id: section_id, skip: skip, limit: limit }}
-        ap params
         response = call(params: params)
         process_response(response.body)
       end
 
       def process(skip: 0, limit: 25)
         params = { query: QUERY % { skip: skip, limit: limit }}
-        ap params
         response = call(params: params)
         process_response(response.body)
       end
