@@ -120,13 +120,11 @@ module Datagraphs
       Q
 
       FOR_A_GEOGRAPHIC_AREA = <<-Q.squish
-        MATCH (area:GeographicArea)<-[e]-(pw:PublicationWork)
-        OPTIONAL MATCH (pes:PublicationExpressionStatus)<-[r2:hasPublicationExpressionStatus]-(pe:PublicationExpression)-[r1:expressionOf]->(pw:PublicationWork)
-        OPTIONAL MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe)
-        OPTIONAL MATCH (cont)-[r6:hasContributionType]->(contributionType:ContributionType)
-        WHERE pes.label = '%{publication_status_label}'
-        AND area.id = '%{geographic_area_id}'
-        AND contributionType.label = '%{contribution_type_label}'
+        MATCH (area:GeographicArea)<-[e]-(pw:PublicationWork)<-[r1:expressionOf]-(pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE area.id = '%{geographic_area_id}'
+        AND pes.label = '%{publication_status_label}'
+        OPTIONAL MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe), (cont)-[r6:hasContributionType]->(contributionType:ContributionType)
+        WHERE contributionType.label = '%{contribution_type_label}'
         RETURN pe.id as publication_expression_id,
                pe.publishedAt as published_at,
                pw.id as publication_work_id,
