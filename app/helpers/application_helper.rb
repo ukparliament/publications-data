@@ -14,21 +14,26 @@ module ApplicationHelper
   end
 
   def contributor_links_from_array(array_of_contributors)
+    return unless array_of_contributors
+
     array_of_contributors.map do |id, name|
       link_to name, person_path(id)
     end.to_sentence.html_safe
   end
 
   def publication_links_from_array(array_of_publications)
+    return unless array_of_publications
+
     array_of_publications.map do |id, name|
       link_to name, publication_path(id)
     end.to_sentence.html_safe
   end
 
   def publication_links_from_array_of_objects(array_of_publications)
+    return unless array_of_publications
+
     array_of_publications.map do |p|
       link_to p.title, publication_path(p.id)
     end.to_sentence.html_safe
   end
-
 end
