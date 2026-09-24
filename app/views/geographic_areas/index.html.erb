@@ -1,0 +1,19 @@
+
+<% @geographic_areas.each do |area| %>
+  <%= link_to geographic_area_path(area.id), class: "card" do %>
+    <div class="card-inner">
+      <div class="content">
+        <div class="primary-info">
+          <%= area.label %>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-inner">
+          <div class="indicators-left">
+            <div class="indicator indicator-label">Publication count: <%= area.publication_count %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
