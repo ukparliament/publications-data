@@ -5,8 +5,9 @@ module Datagraphs
 
       def call(body: default_body, params: default_params, method_type: default_method_type, logger: Rails.logger)
         @logger = logger
-
-        logger.ap(params)
+        # This tells us who is running the query
+        logger.ap "#{caller_locations.first.label} is running this query: "
+        logger.ap params[:query]
 
         request = Typhoeus::Request.new(
           url,
