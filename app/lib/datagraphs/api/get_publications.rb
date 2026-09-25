@@ -8,11 +8,14 @@ module Datagraphs
         OPTIONAL MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe)
         WHERE pes.label = 'Published'
         RETURN pe.id as publication_expression_id,
-               pw.id as publication_work_id, pw.title as title,
-               pes.label as status, pe.publishedAt as published_at,
+               pw.id as publication_work_id,
+               pw.title as title,
+               pes.label as status,
+               pe.publishedAt as published_at,
                pe.teaserText as teaser_text,
                pw.createdAt as created_at,
-               pe.number as the_number,
+               pe.number as version_number,
+               pe.updatedAt AS updated_at,
                rs.shortName AS short_research_service_name,
                rs.id AS research_service_id,
                COLLECT_LIST(DISTINCT person.id) AS contributor_ids,
@@ -246,10 +249,16 @@ module Datagraphs
         publications.map { |result| Hashie::Mash.new(result) }
       end
 
-      def process(skip: 0, limit: 25)
+      def all(skip: 0, limit: 25)
         params = { query: QUERY % { skip: skip, limit: limit }}
         response = call(params: params)
-        process_response(response.body)
+        publications = process_response(response.body)
+
+        publications.each do |pub|
+          pub["contributors"] = pub["contributor_ids"].zip(pub["contributor_names"])
+        end
+
+        publications.map { |result| Hashie::Mash.new(result) }
       end
 
       def unpublished_for_a_house(house_id:, skip: 0, limit: 25)

@@ -7,20 +7,12 @@ class PublicationsController < AuthenticatedController
   MAIN_PAGE_TITLE = 'Published publications'
 
   def index
-    @total_count = Datagraphs::Api::GetPublications.new.get_total
+    get_publications = Datagraphs::Api::GetPublications.new
+    @total_count = get_publications.get_total
 
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    publications = Datagraphs::Api::GetPublications.new.process(
-      skip: @pagy.offset,
-      limit: @pagy.limit
-    )
-
-    publications.each do |pub|
-      pub["contributors"] = pub["contributor_ids"].zip(pub["contributor_names"])
-    end
-
-    @publications = publications.map { |pub| OpenStruct.new(pub) }
+    @publications = get_publications.all(skip: @pagy.offset, limit: @pagy.limit)
 
     @crumb << { label: MAIN_PAGE_TITLE, url: nil }
     @page_title = MAIN_PAGE_TITLE

@@ -15,6 +15,8 @@ module Datagraphs
                   rs.name AS research_service_name,
                   pw.createdAt AS created_at,
                   pe.publishedAt AS published_at,
+                  pe.updatedAt AS updated_at,
+                  pe.number AS version_number,
                   pe.id AS published_expression_id
       Q
 
