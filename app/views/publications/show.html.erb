@@ -1,7 +1,14 @@
-<% if @superseded_by.any? %>
+<% if @optional_extras.geographic_areas.any? %>
+  <div class="highlight highlight-warning">
+  This work is geographically covers: <%= geographic_area_links_from_array(@optional_extras.geographic_areas) %>
+  </div>
+
+<% end %>
+
+<% if  @optional_extras.superseded_by.any? %>
   <div class="highlight highlight-warning">
   This work is superseded by:
-  <% @superseded_by.each do |s| %>
+  <% @optional_extras.superseded_by.each do |s| %>
     <%= link_to s.title, publication_path(s.id) %>
   <% end %>
   </div>
@@ -44,31 +51,31 @@
 <p>Reference: <b><%= @publication.ref.presence || "We do not have a reference for this publication." %></b></p>
 <p>Created on: <b><%= nice_date @publication.created_at %></b></p>
 
-<% if @supersedes.any? %>
+<% if @optional_extras.supersedes.any? %>
   <div class="highlight highlight-info">
   This work supersedes:
 
-  <% @supersedes.each do |s| %>
+  <% @optional_extras.supersedes.each do |s| %>
     <%= link_to s.title, publication_path(s.id) %>
   <% end %>
   </div>
 <% end %>
 
-<% if @merged_from.any? %>
+<% if @optional_extras.merged_from.any? %>
   <div class="highlight highlight-info">
-    This work is merged from: <%= publication_links_from_array_of_objects(@merged_from) %>
+    This work is merged from: <%= publication_links_from_array_of_objects(@optional_extras.merged_from) %>
   </div>
 <% end %>
 
-<% if @split_from.any? %>
+<% if @optional_extras.split_from.any? %>
   <div class="highlight highlight-info">
-  This work is split from: <%= publication_links_from_array_of_objects(@split_from) %>
+  This work is split from: <%= publication_links_from_array_of_objects(@optional_extras.split_from) %>
   </div>
 <% end %>
 
 <h3>Associated concepts</h3>
-<% if @concepts.any? %>
-  <% @concepts.each do |c| %>
+<% if @optional_extras.concepts.any? %>
+  <% @optional_extras.concepts.each do |c| %>
     <span class="badge badge-primary"><%= link_to c.label, concept_path(c.id), class: "text-white" %></span>
   <% end %>
 <% else %>

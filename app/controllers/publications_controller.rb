@@ -28,36 +28,25 @@ class PublicationsController < AuthenticatedController
 
   def show
     @publication_work_id = params[:id]
-
     get_publication = Datagraphs::Api::GetPublication.new
 
-    publication = get_publication.and_published_publication_details(publication_work_id: @publication_work_id).first
-    @publication = OpenStruct.new(publication)
+    @publication = get_publication.and_published_publication_details(publication_work_id: @publication_work_id)
+    title = @publication.title
 
     published_expression_id = @publication.published_expression_id
     @teaser_text = Datagraphs::Api::GetTeaserText.new.for_publication_expression(publication_expression_id: published_expression_id)
 
-    optional_extras = get_publication.and_optional_extras(publication_work_id: @publication_work_id).first
-    @optional_extras = OpenStruct.new(optional_extras)
-
-    title = @publication.title
-
-    @concepts = @optional_extras.concepts.map { |c| OpenStruct.new(c) }
-    @supersedes = @optional_extras.supersedes.map { |c| OpenStruct.new(c) }
-    @superseded_by = @optional_extras.superseded_by.map { |c| OpenStruct.new(c) }
-    @merged_from = @optional_extras.merged_from.map { |c| OpenStruct.new(c) }
-    @split_from = @optional_extras.split_from.map { |c| OpenStruct.new(c) }
+    @optional_extras = get_publication.and_optional_extras(publication_work_id: @publication_work_id)
 
     # We do this differently as we need to merge the dates in there
     @disclaimers = @optional_extras.disclaimer_ids ? @optional_extras.disclaimer_labels.zip(@optional_extras.disclaimers_applicable_from) : []
 
     @withdrawal_periods = sort_out_withdrawal_periods(@optional_extras.wps)
 
-    contributions = get_publication.and_contributors(publication_work_id: @publication_work_id).uniq
-    @contributions = contributions.map { |contribution| OpenStruct.new(contribution) }
+    @contributions = get_publication.and_contributors(publication_work_id: @publication_work_id)
 
     resources = get_publication.and_resources(publication_work_id: @publication_work_id)
-    @resources = resources.map { |resource| OpenStruct.new(resource) if resource["file_title"].present? }
+    @resources = resources.select { |resource| resource.file_title.present? }
 
     @crumb << { label: MAIN_PAGE_TITLE, url: publications_path }
     @crumb << { label: title, url: nil }
