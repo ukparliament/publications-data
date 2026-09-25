@@ -7,33 +7,28 @@ class ExpressionsController < AuthenticatedController
 
   def index
     @publication_work_id = params[:publication_id]
-    @statuses = Datagraphs::Api::GetExpressions.new.get_statuses(publication_work_id: @publication_work_id).first["statuses"]
-    @selected_statuses = params["statuses"]
+    @selected_statuses = params[:statuses]
+
+    @statuses = Datagraphs::Api::GetExpressions.new.get_statuses(publication_work_id: @publication_work_id)
+
 
     if @selected_statuses.blank?
       @selected_statuses = @statuses
     end
 
-    filter = @selected_statuses.map { |s| "pes.label = '#{s}'" }.join(" OR ")
-    @total_count = Datagraphs::Api::GetExpressions.new.get_dynamic_status_count(publication_work_id: @publication_work_id, statuses: filter)
+    @total_count = Datagraphs::Api::GetExpressions.new.get_dynamic_status_count(publication_work_id: @publication_work_id, selected_statuses: @selected_statuses)
 
     publication = Datagraphs::Api::GetPublication.new.details(publication_work_id: @publication_work_id).first
     @publication = OpenStruct.new(publication)
 
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    expressions  = Datagraphs::Api::GetExpressions.new.dynamic_expressions(
+    @expressions  = Datagraphs::Api::GetExpressions.new.dynamic_expressions(
       publication_work_id: @publication_work_id,
       skip: @pagy.offset,
       limit: @pagy.limit,
-      statuses: filter
+      selected_statuses: @selected_statuses
     )
-
-    expressions.each do |expression|
-      expression["contributions"] = expression["people_ids"].zip(expression["people_names"]).zip(expression["contribution_types"]).zip(expression["public"]).zip(expression["ordinalities"])
-    end
-
-    @expressions = expressions.map { |expression| OpenStruct.new(expression) }
 
     @page_title = @publication.title == 'Untitled' ? @expressions.first.title : @publication.title
 
