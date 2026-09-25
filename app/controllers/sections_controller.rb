@@ -32,22 +32,11 @@ class SectionsController < AuthenticatedController
     @total_count = Datagraphs::Api::GetPublications.new.for_a_section_count(section_id: section_id)
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    publications = Datagraphs::Api::GetPublications.new.for_a_section(
+    @publications = Datagraphs::Api::GetPublications.new.for_a_section(
       section_id: section_id,
       skip: @pagy.offset,
       limit: @pagy.limit
     )
-
-    # We have a collected list of people and contribution types, so let's combine and filter at the same time
-    @publications = publications.map do |p|
-
-      # Combine here
-      contributors = p["people_ids"].zip(p["people_names"], p["contribution_type"])
-
-      # But we only want owners for this view, so just select them
-      p["owners"] = contributors.find_all { |c| c[2] == "Owner" }
-      OpenStruct.new(p)
-    end
 
     @page_title =  @section.name
 
