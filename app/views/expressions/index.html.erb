@@ -42,6 +42,8 @@
           <th scope="col" class="col-4">Title</th>
           <th scope="col">Status</th>
           <th scope="col">Published at</th>
+          <th scope="col">Updated at</th>
+          <th scope="col">Version no.</th>
           <th scope="col">Contributions</th>
         </tr>
       </thead>
@@ -51,6 +53,8 @@
             <td><%= link_to expression.title, publication_expression_path(expression.publication_work_id, expression.id) %></td>
             <td><%= expression.status %></td>
             <td><%= nice_date_time(expression.published_at) %></td>
+            <td><%= nice_date_time(expression.updated_at) %></td>
+            <td><%= expression.version_number %></td>
             <td>
               <% if expression.contributions.any? %>
                 <% expression.contributions.sort_by { |cont| cont[1] || 1}.each do |(((id, name), role), public), _ordinality| %>
