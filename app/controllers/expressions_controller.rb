@@ -42,23 +42,18 @@ class ExpressionsController < AuthenticatedController
   end
 
   def show
-    expression = Datagraphs::Api::GetExpression.new.process(expression_id: params[:id]).first
-    @expression = OpenStruct.new(expression)
+    expression_id = params[:id]
 
-    teaser_text = Datagraphs::Api::GetTeaserText.new.for_publication_expression(publication_expression_id: @expression.id)
-    @teaser_text = teaser_text
+    get_expression = Datagraphs::Api::GetExpression.new
 
-    resources = Datagraphs::Api::GetExpression.new.resources(expression_id: params[:id])
-    @resources = resources.map { |resource| OpenStruct.new(resource) if resource["id"] }
+    @expression = get_expression.details(expression_id: expression_id)
+    @teaser_text = Datagraphs::Api::GetTeaserText.new.for_publication_expression(publication_expression_id: @expression.id)
 
-    related_links = Datagraphs::Api::GetExpression.new.related_links(expression_id: params[:id])
-    @related_links = related_links.map { |related_link| OpenStruct.new(related_link) if related_link["id"] }
+    @resources = get_expression.resources(expression_id: expression_id)
+    @related_links = get_expression.related_links(expression_id: expression_id)
+    @contributors = get_expression.contributors(expression_id: expression_id)
 
-    contributors = Datagraphs::Api::GetExpression.new.contributors(expression_id: params[:id])
-    @contributors = contributors.map { |contributor| OpenStruct.new(contributor) if contributor["person_id"] }
-
-    sections = Datagraphs::Api::GetExpression.new.sections(expression_id: params[:id])
-    @sections = sections.map { |section| OpenStruct.new(section) if section["name"] }
+    @sections = get_expression.sections(expression_id: expression_id)
 
     title = @expression.title
 

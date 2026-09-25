@@ -1,6 +1,9 @@
 <p><i><%= @teaser_text %></i></p>
 <p><b>Reference:</b> <%= @expression.ref %></p>
+<p><b>Version number:</b> <%= @expression.version_number %></p>
 <p><b>Published at:</b> <%= nice_date_time @expression.published_at %></p>
+<p><b>Updated at:</b> <%= nice_date_time @expression.updated_at %></p>
+
 <p><b>Created at:</b> <%= nice_date_time @expression.created_at %></p>
 <p><b>Publication work:</b> <%= link_to @expression.title, publication_path(@expression.publication_work_id) %></p>
 <p><b>Status:</b> <%= @expression.status %></p>
