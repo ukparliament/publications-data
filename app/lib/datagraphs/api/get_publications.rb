@@ -66,10 +66,10 @@ module Datagraphs
       FOR_A_SECTION = <<-Q.squish
         MATCH (s:Section)<-[e:sectionContributionBy]-(sc:SectionContribution)-[r:sectionContributionTo]->(pe:PublicationExpression)-[r2:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH (pe)-[t:expressionOf]->(pw:PublicationWork)
-        OPTIONAL MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe)
-        OPTIONAL MATCH (cont)-[r6:hasContributionType]->(contributionType:ContributionType)
         WHERE s.id = '%{section_id}'
         AND pes.label = 'Published'
+        OPTIONAL MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe), (cont)-[r6:hasContributionType]->(contributionType:ContributionType)
+        WHERE contributionType.label = 'Owner'
         RETURN
                pe.id as publication_expression_id,
                pw.id as publication_work_id,
@@ -79,8 +79,8 @@ module Datagraphs
                pe.publishedAt as published_at,
                pe.createdAt as created_at,
                pe.number as the_number,
-               COLLECT_LIST(DISTINCT person.id) AS people_ids,
-               COLLECT_LIST(DISTINCT person.displayName) AS people_names,
+               COLLECT_LIST(DISTINCT person.id) AS contributor_ids,
+               COLLECT_LIST(DISTINCT person.displayName) AS contributor_names,
                COLLECT_LIST(DISTINCT contributionType.label) AS contribution_type
         ORDER BY published_at DESC
         SKIP %{skip}
@@ -199,7 +199,13 @@ module Datagraphs
       def for_a_section(section_id:, skip: 0, limit: 25)
         params = { query: FOR_A_SECTION % { section_id: section_id, skip: skip, limit: limit }}
         response = call(params: params)
-        process_response(response.body)
+        publications = process_response(response.body)
+
+        publications.each do |pub|
+          pub["owners"] = pub["contributor_ids"].zip(pub["contributor_names"])
+        end
+
+        publications.map { |result| Hashie::Mash.new(result) }
       end
 
       def for_a_concept_count(concept_id:)

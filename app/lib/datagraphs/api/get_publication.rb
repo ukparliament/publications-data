@@ -116,7 +116,7 @@ module Datagraphs
         MATCH p = (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         OPTIONAL MATCH opt = (pubExp)<-[r:forPublicationExpression]-(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
         WHERE pubWork.id = '%{publication_work_id}'
-        AND pes.label = "Published"
+        AND pes.label = 'Published'
         RETURN
               resFileLink.title as file_title,
               resourceFile.label as file_label,
