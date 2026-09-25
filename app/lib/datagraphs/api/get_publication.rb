@@ -21,11 +21,13 @@ module Datagraphs
       PUBLICATION_OPTIONAL_EXTRAS  = <<-Q.squish
         MATCH (pw:PublicationWork)
         OPTIONAL MATCH (pw)-[r7:subject]->(c:Concept)
-        OPTIONAL MATCH (pw)-[r8:hasDisclaimerApplicability]->(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)        OPTIONAL MATCH (pw)-[r10:supersedes]->(superseded:PublicationWork)
+        OPTIONAL MATCH (pw)-[r8:hasDisclaimerApplicability]->(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)
+        OPTIONAL MATCH (pw)-[r10:supersedes]->(superseded:PublicationWork)
         OPTIONAL MATCH (supersededBy:PublicationWork)-[r11:supersedes]->(pw:PublicationWork)
         OPTIONAL MATCH (pw)-[r12:mergedFrom]->(mf:PublicationWork)
         OPTIONAL MATCH (pw)-[r13:splitFrom]->(sf:PublicationWork)
         OPTIONAL MATCH (pw)-[r14:hasWithdrawalPeriod]->(wp:WithdrawalPeriod)
+        OPTIONAL MATCH (area:GeographicArea)<-[e]-(pw:PublicationWork)
         WHERE pw.id='%{publication_work_id}'
         RETURN
                   COLLECT_LIST(DISTINCT d.id) AS disclaimer_ids,
@@ -40,7 +42,8 @@ module Datagraphs
                   COLLECT_LIST(DISTINCT superseded) AS supersedes,
                   COLLECT_LIST(DISTINCT supersededBy) AS superseded_by,
                   COLLECT_LIST(DISTINCT sf) AS split_from,
-                  COLLECT_LIST(DISTINCT mf) AS merged_from
+                  COLLECT_LIST(DISTINCT mf) AS merged_from,
+                  COLLECT_LIST(DISTINCT area) AS geographic_areas
       Q
 
       PUBLICATION_ONLY = <<-Q.squish
@@ -136,7 +139,9 @@ module Datagraphs
       def and_published_publication_details(publication_work_id: 'urn:publications-data:PublicationWork:3549')
         params = { query: PUBLISHED_PUBLICATION_ONLY % { publication_work_id: publication_work_id }}
         response = call(params: params)
-        process_response(response.body)
+        pub_details = process_response(response.body)
+
+        Hashie::Mash.new(pub_details.first)
       end
 
       def details(publication_work_id: 'urn:publications-data:PublicationWork:3549')
@@ -148,7 +153,9 @@ module Datagraphs
       def and_optional_extras(publication_work_id:)
         params = { query: PUBLICATION_OPTIONAL_EXTRAS % { publication_work_id: publication_work_id }}
         response = call(params: params)
-        process_response(response.body)
+        optional_extras_array = process_response(response.body)
+
+        Hashie::Mash.new(optional_extras_array.first)
       end
 
       def get_total(publication_work_id: 'urn:publications-data:PublicationWork:3549')
@@ -162,14 +169,16 @@ module Datagraphs
         params = { query: ALL_CONTRIBUTORS % { publication_work_id: publication_work_id }}
 
         response = call(params: params)
-        process_response(response.body)
+        body = process_response(response.body)
+        body.uniq.map { |contributor| Hashie::Mash.new(contributor) }
       end
 
       def and_resources(publication_work_id: 'urn:publications-data:PublicationWork:7809')
         params = { query: RESOURCES_ONLY % { publication_work_id: publication_work_id }}
 
         response = call(params: params)
-        process_response(response.body)
+        body = process_response(response.body)
+        body.map { |resource| Hashie::Mash.new(resource) }
       end
     end
   end
