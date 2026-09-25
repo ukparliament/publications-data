@@ -24,8 +24,6 @@ module ApplicationHelper
   def geographic_area_links_from_array(array_of_geographic_areas)
     return unless array_of_geographic_areas
 
-    ap array_of_geographic_areas
-
     array_of_geographic_areas.map do |ga|
       link_to ga.name, geographic_area_path(ga.id)
     end.to_sentence.html_safe
