@@ -91,6 +91,17 @@
   <p>We do not have any contributors in our records for this publication.</p>
 <% end %>
 
+<h2>Related links</h2>
+<% if @related_links.any? %>
+  <ul>
+  <% @related_links.each do |related_link| %>
+    <li><%= link_to related_link.title, related_link.url %></li>
+  <% end %>
+  </ul>
+<% else %>
+  <p>We do not have any related links for this expression.</p>
+<% end %>
+
 <h3>Resources</h3>
 <% if @resources.any? %>
   <% @resources.each do |resource| %>

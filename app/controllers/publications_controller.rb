@@ -37,6 +37,7 @@ class PublicationsController < AuthenticatedController
     @teaser_text = Datagraphs::Api::GetTeaserText.new.for_publication_expression(publication_expression_id: published_expression_id)
 
     @optional_extras = get_publication.and_optional_extras(publication_work_id: @publication_work_id)
+    @related_links = get_publication.and_related_links(publication_work_id: @publication_work_id)
 
     # We do this differently as we need to merge the dates in there
     @disclaimers = @optional_extras.disclaimer_ids ? @optional_extras.disclaimer_labels.zip(@optional_extras.disclaimers_applicable_from) : []
