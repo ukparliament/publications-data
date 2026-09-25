@@ -9,6 +9,8 @@
           <th scope="col" class="col-4">Title</th>
           <th scope="col">Contributors</th>
           <th scope="col">Published at</th>
+          <th scope="col">Updated at</th>
+          <th scope="col">Version</th>
           <th scope="col">Published by</th>
         </tr>
       </thead>
@@ -24,6 +26,8 @@
               <% end %>
             </td>
             <td><%= nice_date_time(publication.published_at) %></td>
+            <td><%= nice_date_time(publication.updated_at) %></td>
+            <td><%= publication.version_number %></td>
             <td><%= link_to publication.short_research_service_name, research_service_path(publication.research_service_id) %></td>
           </tr>
         <% end %>
