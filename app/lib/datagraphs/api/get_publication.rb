@@ -116,8 +116,8 @@ module Datagraphs
       Q
 
       RESOURCES_ONLY = <<-Q.squish
-        MATCH p = (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        OPTIONAL MATCH opt = (pubExp)<-[r:forPublicationExpression]-(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
+        MATCH (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        OPTIONAL MATCH (pubExp)<-[r:forPublicationExpression]-(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
         WHERE pubWork.id = '%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN
@@ -128,6 +128,15 @@ module Datagraphs
               resourceFile.fileSizeInBytes as file_size_in_bytes,
               resourceFile.publicUrl as public_url,
               resourceFile.privateUrl as private_url
+      Q
+
+      RELATED_LINKS_ONLY  = <<-Q.squish
+        MATCH (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        OPTIONAL MATCH (pubExp)<-[rlf:relatedLinkFor]-(relatedLink:RelatedLink)
+        WHERE pubWork.id = '%{publication_work_id}'
+        AND pes.label = 'Published'
+        RETURN relatedLink.title AS title,
+               relatedLink.url AS url
       Q
 
       def process(publication_work_id: 'urn:publications-data:PublicationWork:3549', skip: 0, limit: 25)
@@ -179,6 +188,17 @@ module Datagraphs
         response = call(params: params)
         body = process_response(response.body)
         body.map { |resource| Hashie::Mash.new(resource) }
+      end
+
+      def and_related_links(publication_work_id: 'urn:publications-data:PublicationWork:7809')
+        params = { query: RELATED_LINKS_ONLY % { publication_work_id: publication_work_id }}
+
+        response = call(params: params)
+        body = process_response(response.body)
+        body.map do |related_link|
+          related_link["url"].sub!('http://', 'https://')
+          Hashie::Mash.new(related_link)
+        end
       end
     end
   end
