@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     member do
       get 'publications'
       get 'publications/unpublished'
+      get 'sections'
     end
   end
 

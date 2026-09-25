@@ -12,14 +12,34 @@ class ResearchServicesController < AuthenticatedController
 
   def show
     research_service_id = params[:id]
+    redirect_to publications_research_service_path(research_service_id)
+  end
+
+  def publications
+    research_service_id = params[:id]
     @research_service = process_research_service(research_service_id)
 
     @publications = get_publications(research_service_id)
+    @sections = Datagraphs::Api::GetSections.new.for_a_research_service(research_service_id)
 
     @page_title =  @research_service.name
 
     @crumb << { label: 'Research services', url: research_services_path }
-    @crumb << { label: @page_title, url: nil }
+    @crumb << { label: @page_title, url: research_service_path(research_service_id) }
+    @crumb << { label: 'Publications', url: nil }
+  end
+
+  def sections
+    research_service_id = params[:id]
+    @research_service = process_research_service(research_service_id)
+
+    @sections = Datagraphs::Api::GetSections.new.for_a_research_service(research_service_id)
+
+    @page_title =  @research_service.name
+
+    @crumb << { label: 'Research services', url: research_services_path }
+    @crumb << { label: @page_title, url: research_service_path(research_service_id) }
+    @crumb << { label: 'Sections', url: nil }
   end
 
   private
