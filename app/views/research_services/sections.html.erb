@@ -1,0 +1,20 @@
+<p>Short name: <b><%= @research_service.short_name %></b></p>
+
+<p>For the: <b>
+  <%= @research_service.houses.map do |house_id, house_name| %>
+    <% link_to house_name, house_path(house_id) %>
+  <% end.join(', ').html_safe %>
+</b></p>
+
+<p><%= link_to "Publications", publications_research_service_path %></p>
+
+<% if @sections.any? %>
+  <h2>Sections</h2>
+  <ol>
+    <% @sections.each do |section| %>
+      <li><%= link_to section.name, section_path(section.id) %></li>
+    <% end %>
+  </ol>
+<% else %>
+  <h2>No sections</h2>
+<% end %>
