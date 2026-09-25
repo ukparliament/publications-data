@@ -134,7 +134,7 @@ module Datagraphs
 
       RELATED_LINKS_ONLY  = <<-Q.squish
         MATCH (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        OPTIONAL MATCH (pubExp)<-[rlf:relatedLinkFor]-(relatedLink:RelatedLink)
+        MATCH (pubExp)<-[rlf:relatedLinkFor]-(relatedLink:RelatedLink)
         WHERE pubWork.id = '%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN relatedLink.title AS title,
