@@ -10,12 +10,6 @@ class ResearchServicesController < AuthenticatedController
     @page_title = "Research services"
   end
 
-
-# publications_research_service_path
-# sections_research_service_path
-
-
-
   def show
     research_service_id = params[:id]
     redirect_to publications_research_service_path(research_service_id)
