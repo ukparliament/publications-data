@@ -34,7 +34,6 @@ module Datagraphs
           rf.id as id,
           rfl.title as file_title,
           rf.label as file_label,
-          rf.fileType as file_type,
           rf.mimeType as mime_type,
           rf.fileSizeInBytes as file_size_in_bytes,
           rf.publicUrl as public_url,

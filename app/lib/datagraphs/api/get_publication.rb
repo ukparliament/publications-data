@@ -13,7 +13,7 @@ module Datagraphs
                   pw.reference AS ref,
                   rs.id AS research_service_id,
                   rs.name AS research_service_name,
-                  pw.createdAt AS created_at,
+                  pw.createdOn AS created_at,
                   pe.publishedAt AS published_at,
                   pe.updatedAt AS updated_at,
                   pe.number AS version_number,
@@ -125,7 +125,6 @@ module Datagraphs
         RETURN
               resFileLink.title as file_title,
               resourceFile.label as file_label,
-              resourceFile.fileType as file_type,
               resourceFile.mimeType as mime_type,
               resourceFile.fileSizeInBytes as file_size_in_bytes,
               resourceFile.publicUrl as public_url,

@@ -10,7 +10,7 @@ module Datagraphs
                pw.title AS title,
                pw.id AS pw_id,
                pw.reference AS ref,
-               pw.createdAt as created_at,
+               pw.createdOn as created_at,
                rs.name AS published_by,
                rs.id AS rs_id
         ORDER BY created_at DESC
