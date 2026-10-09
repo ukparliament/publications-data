@@ -16,7 +16,7 @@ module Datagraphs
         ORDER BY name
       Q
 
-      def process
+      def all
         params = { query: QUERY }
         response = call(params: params)
         body = process_response(response.body)

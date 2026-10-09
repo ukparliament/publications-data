@@ -6,7 +6,7 @@ class CollectionsController < AuthenticatedController
   MAIN_PAGE_TITLE = 'Collections'
 
   def index
-    @collections = Datagraphs::Api::GetCollections.new.process
+    @collections = Datagraphs::Api::GetCollections.new.all
 
     @crumb << { label: MAIN_PAGE_TITLE, url: nil }
     @page_title = MAIN_PAGE_TITLE
@@ -32,12 +32,5 @@ class CollectionsController < AuthenticatedController
 
     @crumb << { label: MAIN_PAGE_TITLE, url: collections_path }
     @crumb << { label: @page_title, url: nil }
-  end
-
-  private
-
-  def process_collection
-    collection_and_publication_works = Datagraphs::Api::GetCollection.new.process(params[:id])
-    collection_and_publication_works.map { |publication_works| OpenStruct.new(publication_works) }
   end
 end
