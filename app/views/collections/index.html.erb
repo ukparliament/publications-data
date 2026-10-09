@@ -3,6 +3,7 @@
   <thead>
     <tr>
       <th scope="col">Name</th>
+      <th scope="col">Lead work</th>
       <th scope="col">Number of works</th>
     </tr>
   </thead>
@@ -10,6 +11,7 @@
     <% @collections.each do |collection| %>
       <tr>
         <th scope="row"><%= link_to collection.name, collection_path(collection.id) %></th>
+        <td><%= link_to collection.lead_publication_work_name, publication_path(collection.lead_publication_work_id) if collection.lead_publication_work_id %></td>
         <td><%= collection.pw_count %></td>
       </tr>
     <% end %>
