@@ -24,6 +24,24 @@
 
 <p><i><%= @teaser_text %></i></p>
 
+<% if @optional_extras.collections.any? %>
+  <p>Is part of these collections:</p>
+  <ul>
+  <% @optional_extras.collections.each do |id, name| %>
+    <li><%= link_to name, collection_path(id) %></li>
+  <% end %>
+  </ul>
+<% end %>
+
+<% if @optional_extras.lead_member_for_collections.any? %>
+  <p>Is lead member for these collections:</p>
+  <ul>
+  <% @optional_extras.lead_member_for_collections.each do |id, name| %>
+    <li><%= link_to name, collection_path(id) %></li>
+  <% end %>
+  </ul>
+<% end %>
+
 <% if @withdrawal_periods.any? %>
   <% @withdrawal_periods.each do |wp| %>
     <%= tag.div class: class_names(
