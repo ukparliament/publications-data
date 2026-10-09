@@ -29,9 +29,15 @@ module Datagraphs
         OPTIONAL MATCH (pw)-[r12:mergedFrom]->(mf:PublicationWork)
         OPTIONAL MATCH (pw)-[r13:splitFrom]->(sf:PublicationWork)
         OPTIONAL MATCH (pw)-[r14:hasWithdrawalPeriod]->(wp:WithdrawalPeriod)
-        OPTIONAL MATCH (area:GeographicArea)<-[e]-(pw:PublicationWork)
+        OPTIONAL MATCH (area:GeographicArea)<-[e]-(pw)
+        OPTIONAL MATCH (col:Collection)-[hasMember:hasMember]->(pw)
+        OPTIONAL MATCH (leadOfCollection:Collection)-[hasLeadMember:hasLeadMember]->(pw)
         WHERE pw.id='%{publication_work_id}'
         RETURN
+                  COLLECT_LIST(DISTINCT col.id) AS collection_ids,
+                  COLLECT_LIST(DISTINCT col.name) AS collection_names,
+                  COLLECT_LIST(DISTINCT leadOfCollection.id) AS lead_collection_ids,
+                  COLLECT_LIST(DISTINCT leadOfCollection.name) AS lead_collection_names,
                   COLLECT_LIST(DISTINCT d.id) AS disclaimer_ids,
                   COLLECT_LIST(DISTINCT d.label) AS disclaimer_labels,
                   COLLECT_LIST(DISTINCT f.applicableFrom) AS disclaimers_applicable_from,
@@ -164,6 +170,11 @@ module Datagraphs
         params = { query: PUBLICATION_OPTIONAL_EXTRAS % { publication_work_id: publication_work_id }}
         response = call(params: params)
         optional_extras_array = process_response(response.body)
+
+        optional_extras_array.each do |oe|
+          oe["collections"] = oe["collection_ids"].zip(oe["collection_names"])
+          oe["lead_member_for_collections"] = oe["lead_collection_ids"].zip(oe["lead_collection_names"])
+        end
 
         Hashie::Mash.new(optional_extras_array.first)
       end
