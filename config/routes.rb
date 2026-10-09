@@ -68,5 +68,7 @@ Rails.application.routes.draw do
   get '/logout', to: "saml_sso/authentication#destroy", as: :saml_sso_logout
   delete '/logout', to: "saml_sso/authentication#destroy"
 
-  get 'meta/cookies' => 'meta#cookies', as: :meta_cookies
+  # Note that this is in the design system set up
+  get 'meta/cookies' => 'home#cookies', as: :meta_cookies
+  get 'meta/examples' => 'home#examples', as: :examples
 end
