@@ -31,7 +31,12 @@
       "highlight-error": wp.reinstated_at.blank?,
       "highlight-info": wp.reinstated_at.present?
     ) do %>
-      <p><b><%= wp.label %></b> <%= " - re-instated at: #{nice_date_time(wp.reinstated_at)}" if wp.reinstated_at %></p>
+      <p>
+        <b>Withdrawn from <%= nice_date_time(wp.withdrawn_at) %></b>
+        <% if wp.reinstated_at %>
+          - re-instated at: <b><%= nice_date_time(wp.reinstated_at) %></b>
+        <% end %>
+      </p>
     <% end %>
   <% end %>
 <% else %>
