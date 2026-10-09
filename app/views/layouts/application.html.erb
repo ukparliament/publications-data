@@ -33,6 +33,7 @@
     </main>
     <%= render 'library_design/footer/fat_footer' do %>
       <li><%= link_to 'Contact us', 'mailto:RIIDMSMailbox@parliament.uk' %></li>
+      <li><%= link_to 'Examples', examples_path %></li>
       <li><%= link_to 'Log in', saml_sso_login_path unless session[:user_id] %></li>
       <li><%= link_to 'Log out', saml_sso_logout_path, data: { turbo_method: :delete } if session[:user_id] %></li>
     <% end %>
