@@ -88,10 +88,7 @@ module Datagraphs
 
       def count_for_a_house_and_year(house_id:)
         params = { query: COUNT_FOR_A_HOUSE_AND_YEAR % { house_id: house_id, year: year } }
-        response = call(params: params)
-        output = JSON.parse(response.body)
-
-        output["results"].first["total"]
+        generic_count(params: params)
       end
     end
   end

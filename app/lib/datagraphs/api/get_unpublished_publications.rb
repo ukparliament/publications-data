@@ -39,9 +39,7 @@ module Datagraphs
 
       def get_total
         params = { query: COUNT }
-        response = call(params: params)
-        output = JSON.parse(response.body)
-        output["results"].first["total"]
+        generic_count(params: params)
       end
 
       def all(skip: 0, limit: 25)

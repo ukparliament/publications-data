@@ -91,10 +91,7 @@ module Datagraphs
 
       def count_for(letter: 'A')
         params = { query: COUNT % { letter: letter } }
-        response = call(params: params)
-        output = JSON.parse(response.body)
-
-        output["results"].first["total"]
+        generic_count(params: params)
       end
 
       def all_for(letter: "A", skip: 0, limit: 25)
@@ -106,10 +103,7 @@ module Datagraphs
 
       def count_for_promoted_by_no_one
         params = { query: COUNT_FOR_PROMOTED_BY_NO_ONE }
-        response = call(params: params)
-        output = JSON.parse(response.body)
-
-        output["results"].first["total"]
+        generic_count(params: params)
       end
 
       def promoted_by_no_one(skip: 0, limit: 25)
@@ -121,10 +115,7 @@ module Datagraphs
 
       def count_for_promoted_by(research_service_id:)
         params = { query: COUNT_FOR_PROMOTED_BY % { research_service_id: research_service_id } }
-        response = call(params: params)
-        output = JSON.parse(response.body)
-
-        output["results"].first["total"]
+        generic_count(params: params)
       end
 
       def promoted_by(research_service_id:, skip: 0, limit: 25)

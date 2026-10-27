@@ -225,20 +225,6 @@ module Datagraphs
         ORDER BY expression_titles
       Q
 
-      def count_for_a_research_service(research_service_id)
-        params = { query: COUNT_FOR_RESEARCH_SERVICE % {  research_service_id: research_service_id }}
-        response = call(params: params)
-        output = JSON.parse(response.body)
-        output["results"].first["total"]
-      end
-
-      def for_a_section_count(section_id:)
-        params = { query: COUNT_FOR_A_SECTION % {  section_id: section_id}}
-        response = call(params: params)
-        output = JSON.parse(response.body)
-        output["results"].first["total"]
-      end
-
       def for_a_concept(concept_id:, skip: 0, limit: 25)
         for_a_generic(
           skip: skip,
@@ -322,21 +308,6 @@ module Datagraphs
         publications.map { |result| Hashie::Mash.new(result) }
       end
 
-      def for_a_collection_count(collection_id:)
-        params = { query: COUNT_FOR_A_COLLECTION % { collection_id: collection_id }}
-        response = call(params: params)
-        output = JSON.parse(response.body)
-        output["results"].first["total"]
-      end
-
-
-      def for_a_disclaimer_count(disclaimer_id:)
-        params = { query: COUNT_FOR_A_DISCLAIMER % { disclaimer_id: disclaimer_id }}
-        response = call(params: params)
-        output = JSON.parse(response.body)
-        output["results"].first["total"]
-      end
-
       def for_a_disclaimer(disclaimer_id:, skip: 0, limit: 25)
         params = { query: FOR_A_DISCLAIMER % { disclaimer_id: disclaimer_id, skip: skip, limit: limit }}
         response = call(params: params)
@@ -349,25 +320,39 @@ module Datagraphs
         publications.map { |result| Hashie::Mash.new(result) }
       end
 
+      def count_for_a_research_service(research_service_id)
+        params = { query: COUNT_FOR_RESEARCH_SERVICE % {  research_service_id: research_service_id }}
+        generic_count(params: params)
+      end
+
+      def for_a_section_count(section_id:)
+        params = { query: COUNT_FOR_A_SECTION % {  section_id: section_id}}
+        generic_count(params: params)
+      end
+
+      def for_a_collection_count(collection_id:)
+        params = { query: COUNT_FOR_A_COLLECTION % { collection_id: collection_id }}
+        generic_count(params: params)
+      end
+
+      def for_a_disclaimer_count(disclaimer_id:)
+        params = { query: COUNT_FOR_A_DISCLAIMER % { disclaimer_id: disclaimer_id }}
+        generic_count(params: params)
+      end
+
       def count_for_a_concept(concept_id:)
-        params = { query: COUNT_FOR_A_CONCEPT % {  concept_id: concept_id }}
-        response = call(params: params)
-        output = JSON.parse(response.body)
-        output["results"].first["total"]
+        params = { query: QUERY_FOR_A_CONCEPT % { concept_id: concept_id }}
+        generic_count(params: params)
       end
 
       def for_a_geographic_area_count(geographic_area_id:, publication_status_label: "Published")
-        params = { query: COUNT_FOR_A_GEOGRAPHIC_AREA % {  geographic_area_id: geographic_area_id, publication_status_label: publication_status_label }}
-        response = call(params: params)
-        output = JSON.parse(response.body)
-        output["results"].first["total"]
+        params = { query: COUNT_FOR_A_GEOGRAPHIC_AREA % { geographic_area_id: geographic_area_id, publication_status_label: publication_status_label }}
+        generic_count(params: params)
       end
 
       def for_a_house_count(house_id:, publication_status_label: "Published")
-        params = { query: COUNT_FOR_A_HOUSE % {  house_id: house_id, publication_status_label: publication_status_label }}
-        response = call(params: params)
-        output = JSON.parse(response.body)
-        output["results"].first["total"]
+        params = { query: COUNT_FOR_A_HOUSE % { house_id: house_id, publication_status_label: publication_status_label }}
+        generic_count(params: params)
       end
 
       def all(skip: 0, limit: 25, other_where_clause: '')
