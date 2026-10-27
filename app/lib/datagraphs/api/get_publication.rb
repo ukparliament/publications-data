@@ -156,6 +156,10 @@ module Datagraphs
         oe["supersedes"] = oe["supersedes_ids"].zip(oe["supersedes_titles"], oe["supersedes_at"])
         oe["superseded_by"] = oe["superseded_by_ids"].zip(oe["superseded_by_titles"], oe["superseded_by_ats"])
 
+        oe["withdrawal_periods"] = oe["wps"].map do |w|
+          w.transform_keys!(&:underscore)
+        end.sort_by(&:withdrawn_at).reverse
+
         Hashie::Mash.new(oe)
       end
 

@@ -1,5 +1,3 @@
-require 'ostruct'
-
 class PublicationsController < AuthenticatedController
   include Pagy::Method
   include ApplicationHelper # For nice date time
@@ -67,22 +65,11 @@ class PublicationsController < AuthenticatedController
     # We do this differently as we need to merge the dates in there
     @disclaimers = @optional_extras.disclaimers
 
-    @withdrawal_periods = sort_out_withdrawal_periods(@optional_extras.wps)
+    @withdrawal_periods = @optional_extras.withdrawal_periods
 
     @contributions = get_publication.and_contributors(publication_work_id: @publication_work_id)
 
     resources = get_publication.and_resources(publication_work_id: @publication_work_id)
     @resources = resources.select { |resource| resource.file_title.present? }
-  end
-
-  def sort_out_withdrawal_periods(wps)
-    # Iterate through all of the withdrawal periods
-    wps.map do |w|
-      # Transform keys in place from camel case to underscore case
-      w.transform_keys!(&:underscore)
-
-      # Create an open struct
-      OpenStruct.new(w)
-    end.sort_by(&:withdrawn_at).reverse
   end
 end

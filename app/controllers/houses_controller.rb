@@ -122,8 +122,7 @@ class HousesController < AuthenticatedController
     #   limit: @pagy.limit
     # )
 
-    publications = Datagraphs::Api::GetPublications.new.unpublished_for_a_house(house_id: house_id, skip: @pagy.offset, limit: @pagy.limit)
-    @publications = publications.map { |publication| OpenStruct.new(publication) }
+    @publications = Datagraphs::Api::GetPublications.new.unpublished_for_a_house(house_id: house_id, skip: @pagy.offset, limit: @pagy.limit)
 
     @page_title =  @house.name
 

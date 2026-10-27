@@ -401,7 +401,8 @@ module Datagraphs
       def unpublished_for_a_house(house_id:, skip: 0, limit: 25)
         params = { query: UNPUBLISHED_FOR_A_HOUSE % { house_id: house_id, skip: skip, limit: limit }}
         response = call(params: params)
-        process_response(response.body)
+        body = process_response(response.body)
+        body.map { |pub| Hashie::Mash.new(pub) }
       end
 
       def unpublished_for_a_house_count(house_id:)
