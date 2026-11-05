@@ -158,7 +158,7 @@ module Datagraphs
 
         oe["withdrawal_periods"] = oe["wps"].map do |w|
           w.transform_keys!(&:underscore)
-        end.sort_by(&:withdrawn_at).reverse
+        end.sort_by { |oe| ["withdrawn_at"] }.reverse
 
         Hashie::Mash.new(oe)
       end
