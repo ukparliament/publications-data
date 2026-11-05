@@ -9,6 +9,14 @@ module Datagraphs
         json_response = JSON.parse(response)
         json_response["results"]
       end
+
+      private
+
+      def generic_count(params:)
+        response = call(params: params)
+        output = JSON.parse(response.body)
+        output["results"].first["total"]
+      end
     end
   end
 end

@@ -33,10 +33,7 @@ module Datagraphs
 
       def total_count(letter: 'A')
         params = { query: COUNT % { letter: letter.upcase } }
-
-        response = call(params: params)
-        output = JSON.parse(response.body)
-        output["results"].first["total"]
+        generic_count(params: params)
       end
 
       def all(letter: "A", skip: 0, limit: 25)
