@@ -1,0 +1,19 @@
+<p>Short name: <b><%= @research_service.short_name %></b></p>
+
+<p>For the: <b>
+  <%= @research_service.houses.map do |house_id, house_name| %>
+    <% link_to house_name, house_path(house_id) %>
+  <% end.join(', ').html_safe %>
+</b></p>
+
+<div class="block">
+  <div class="tabs">
+    <%= render 'tab_nav' %>
+
+    <div class="tab-content">
+      <div class="tab-pane active" role="tabpanel">
+        <%= render 'publications/unpublished_table', publications: @publications, pagy: @pagy, total_count: @total_count %>
+      </div>
+    </div>
+  </div>
+</div>
