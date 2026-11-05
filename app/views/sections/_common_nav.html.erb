@@ -1,0 +1,21 @@
+<%# locals: (section:) %>
+
+<p>Short name: <b><%= section.short_name %></b></p>
+<p>Strap line: <b><%= section.strap_line %></b></p>
+<p>Defunct: <b><%= section.defunct ? "Yes" : "No" %></b></p>
+<p>Forms part of <b><%= link_to section.research_service_name, research_service_path(@section.research_service_id) %></b></p>
+
+<div class="block">
+  <div class="tabs">
+    <ul class="nav-tabs" role="tablist">
+      <li role="presentation"><%= link_to 'Publications', publications_section_path, role: "tab", class: class_names(active: current_page?(publications_section_path)) %></li>
+      <li role="presentation"><%= link_to 'Unpublished', publications_unpublished_section_path, role: "tab", class: class_names(active: current_page?(publications_unpublished_section_path)) %></li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane active" role="tabpanel">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+</div>
