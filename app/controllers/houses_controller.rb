@@ -115,12 +115,7 @@ class HousesController < AuthenticatedController
     @total_count = Datagraphs::Api::GetPublications.new.unpublished_for_a_house_count(house_id: house_id)
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    @house = process_house(house_id)
-    # @publications = process_publications(
-    #   house_id: house_id,
-    #   skip: @pagy.offset,
-    #   limit: @pagy.limit
-    # )
+    @house = Datagraphs::Api::GetHouse.new.details(house_id)
 
     @publications = Datagraphs::Api::GetPublications.new.unpublished_for_a_house(house_id: house_id, skip: @pagy.offset, limit: @pagy.limit)
 

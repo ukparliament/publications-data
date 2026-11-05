@@ -7,7 +7,6 @@ Rails.application.routes.draw do
   get '/' => 'home#index', as: :home
 
   resources :houses, only: [:index, :show] do
-
     member do
       get 'research-services'
       get 'business-items'
@@ -22,6 +21,7 @@ Rails.application.routes.draw do
   resources :sections, only: [:index, :show] do
     member do
       get 'publications'
+      get 'publications/unpublished', action: :unpublished
     end
   end
   resources :collections, only: [:index, :show]
@@ -47,7 +47,7 @@ Rails.application.routes.draw do
   resources :research_services, path: 'research-services', only: [:index, :show] do
     member do
       get 'publications'
-      get 'publications/unpublished'
+      get 'publications/unpublished', action: :unpublished
       get 'sections'
       get 'promoted-concepts'
       get 'promoted-collections'
