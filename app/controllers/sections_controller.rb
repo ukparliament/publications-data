@@ -38,10 +38,10 @@ class SectionsController < AuthenticatedController
     section_id = params[:id]
     @section = Datagraphs::Api::GetSection.new.process(section_id)
 
-    @total_count = Datagraphs::Api::GetPublications.new.unpublished_for_a_section_count(section_id: section_id)
+    @total_count = Datagraphs::Api::GetUnpublishedPublications.new.for_a_section_count(section_id: section_id)
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    @publications = Datagraphs::Api::GetPublications.new.unpublished_for_a_section(
+    @publications = Datagraphs::Api::GetUnpublishedPublications.new.for_a_section(
       section_id: section_id,
       skip: @pagy.offset,
       limit: @pagy.limit

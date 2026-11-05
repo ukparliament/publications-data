@@ -42,11 +42,12 @@ class ResearchServicesController < AuthenticatedController
     research_service_id = params[:id]
     @research_service = Datagraphs::Api::GetResearchService.new.details(research_service_id)
 
-    @total_count = Datagraphs::Api::GetUnpublishedPublications.new.get_total
+    @total_count = Datagraphs::Api::GetUnpublishedPublications.new.for_a_research_service_count(research_service_id: research_service_id)
 
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    @publications = Datagraphs::Api::GetUnpublishedPublications.new.all(
+    @publications = Datagraphs::Api::GetUnpublishedPublications.new.for_a_research_service(
+      research_service_id: research_service_id,
       skip: @pagy.offset,
       limit: @pagy.limit
     )
