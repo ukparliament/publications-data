@@ -23,14 +23,30 @@ module Datagraphs
                   pe.id AS published_expression_id
       Q
 
+      PUBLICATION_SPLITTING_AND_MERGING = <<-Q.squish
+        MATCH (pw:PublicationWork)
+        OPTIONAL MATCH (mf:PublicationWork)<-[mFrom:mergedFrom]-(merging:Merging)-[mInto:mergedInto]->(pw)
+        OPTIONAL MATCH (pw:PublicationWork)<-[e:mergedFrom]-(merging2:Merging)-[f:mergedInto]-(mi:PublicationWork)
+        OPTIONAL MATCH (pw:PublicationWork)<-[split1:splitInto]-(splitting:Splitting)-[split2:splitFrom]->(splitFromWork:PublicationWork)
+        OPTIONAL MATCH (splitIntoWork:PublicationWork)<-[split3:splitInto]-(splitting2:Splitting)-[split4:splitFrom]->(pw:PublicationWork)
+        WHERE pw.id='%{publication_work_id}'
+        RETURN
+                COLLECT_LIST(DISTINCT mf) AS merged_from,
+                COLLECT_LIST(DISTINCT mi) AS merged_into,
+                COLLECT_LIST(DISTINCT merging2.mergedAt) AS merged_into_dates,
+                COLLECT_LIST(DISTINCT merging.mergedAt) AS merged_from_dates,
+                COLLECT_LIST(DISTINCT splitting.splitAt) AS split_from_dates,
+                COLLECT_LIST(DISTINCT splitFromWork) AS split_from,
+                COLLECT_LIST(DISTINCT splitting2.splitAt) AS split_to_dates,
+                COLLECT_LIST(DISTINCT splitIntoWork) AS split_to
+      Q
+
       PUBLICATION_OPTIONAL_EXTRAS  = <<-Q.squish
         MATCH (pw:PublicationWork)
         OPTIONAL MATCH (pw)-[r7:subject]->(c:Concept)
         OPTIONAL MATCH (pw)-[r8:hasDisclaimerApplicability]->(f:DisclaimerApplicability)-[r9:hasDisclaimer]->(d:Disclaimer)
         OPTIONAL MATCH (pw)<-[sr1:supersedes]-(s1:Superseding)-[sr2:supersededBy]->(superpw:PublicationWork)
         OPTIONAL MATCH (supersedes)<-[sr3:supersedes]-(s2:Superseding)-[sr4:supersededBy]->(pw:PublicationWork)
-        OPTIONAL MATCH (mf:PublicationWork)<-[mFrom:mergedFrom]-(merging:Merging)-[mInto:mergedInto]->(pw)
-        OPTIONAL MATCH (pw:PublicationWork)<-[split1:splitInto]-(splitting:Splitting)-[split2:splitFrom]->(splitFromWork:PublicationWork)
         OPTIONAL MATCH (pw)-[r14:hasWithdrawalPeriod]->(wp:WithdrawalPeriod)
         OPTIONAL MATCH (area:GeographicArea)<-[e]-(pw)
         OPTIONAL MATCH (col:Collection)-[hasMember:hasMember]->(pw)
@@ -45,12 +61,6 @@ module Datagraphs
                   COLLECT_LIST(DISTINCT d.id) AS disclaimer_ids,
                   COLLECT_LIST(DISTINCT d.label) AS disclaimer_labels,
                   COLLECT_LIST(DISTINCT f.applicableFrom) AS disclaimers_applicable_from,
-                  COLLECT_LIST(DISTINCT mf.id) AS merged_from_ids,
-                  COLLECT_LIST(DISTINCT mf.title) AS merged_from_titles,
-                  COLLECT_LIST(DISTINCT merging.mergedAt) AS merged_from_dates,
-                  COLLECT_LIST(DISTINCT splitFromWork.id) AS split_from_ids,
-                  COLLECT_LIST(DISTINCT splitFromWork.title) AS split_from_titles,
-                  COLLECT_LIST(DISTINCT splitting.splitAt) AS split_from_dates,
                   COLLECT_LIST(DISTINCT wp) AS wps,
                   COLLECT_LIST(DISTINCT c) AS concepts,
                   COLLECT_LIST(DISTINCT supersedes.id) AS supersedes_ids,
@@ -59,8 +69,6 @@ module Datagraphs
                   COLLECT_LIST(DISTINCT superpw.id) AS superseded_by_ids,
                   COLLECT_LIST(DISTINCT superpw.title) AS superseded_by_titles,
                   COLLECT_LIST(DISTINCT s1.supersededAt) AS superseded_by_ats,
-                  COLLECT_LIST(DISTINCT splitFromWork) AS split_from,
-                  COLLECT_LIST(DISTINCT mf) AS merged_from,
                   COLLECT_LIST(DISTINCT area) AS geographic_areas,
                   COLLECT_LIST(DISTINCT bi) AS business_item_objects
       Q
@@ -159,6 +167,14 @@ module Datagraphs
         oe["withdrawal_periods"] = oe["wps"].map do |w|
           w.transform_keys!(&:underscore)
         end.sort_by { |oe| ["withdrawn_at"] }.reverse
+
+        Hashie::Mash.new(oe)
+      end
+
+      def and_merged_and_split_details(publication_work_id:)
+        params = { query: PUBLICATION_SPLITTING_AND_MERGING % { publication_work_id: publication_work_id }}
+        response = call(params: params)
+        oe = process_response(response.body).first
 
         Hashie::Mash.new(oe)
       end

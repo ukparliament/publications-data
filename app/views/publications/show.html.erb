@@ -120,20 +120,38 @@
   </div>
 <% end %>
 
-<% if @optional_extras.merged_from.any? %>
+<% if @merged_and_split_details.merged_from.any? %>
   <div class="highlight highlight-info">
-    This work is merged from: <%= publication_links_from_array_of_objects(@optional_extras.merged_from) %>
-    <% if @optional_extras.merged_from_dates %>
-      on: <%= @optional_extras.merged_from_dates.map { |d| nice_date_time(d) }.join(', ') %>
+    This work is merged from: <%= publication_links_from_array_of_objects(@merged_and_split_details.merged_from) %>
+    <% if @merged_and_split_details.merged_from_dates %>
+      on: <%= @merged_and_split_details.merged_from_dates.map { |d| nice_date_time(d) }.join(', ') %>
     <% end %>
   </div>
 <% end %>
 
-<% if @optional_extras.split_from.any? %>
+<% if @merged_and_split_details.merged_into.any? %>
   <div class="highlight highlight-info">
-    This work is split from: <%= publication_links_from_array_of_objects(@optional_extras.split_from) %>
-    <% if @optional_extras.split_from_dates %>
-      on: <%= @optional_extras.split_from_dates.map { |d| nice_date_time(d) }.join(', ') %>
+    This work is merged into: <%= publication_links_from_array_of_objects(@merged_and_split_details.merged_into) %>
+    <% if @merged_and_split_details.merged_into_dates %>
+      on: <%= @merged_and_split_details.merged_into_dates.map { |d| nice_date_time(d) }.join(', ') %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @merged_and_split_details.split_from.any? %>
+  <div class="highlight highlight-info">
+    This work is split from: <%= publication_links_from_array_of_objects(@merged_and_split_details.split_from) %>
+    <% if @merged_and_split_details.split_from_dates %>
+      on: <%= @merged_and_split_details.split_from_dates.map { |d| nice_date_time(d) }.join(', ') %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @merged_and_split_details.split_to.any? %>
+  <div class="highlight highlight-info">
+    This work is split into: <%= publication_links_from_array_of_objects(@merged_and_split_details.split_to) %>
+    <% if @merged_and_split_details.split_to_dates %>
+      on: <%= @merged_and_split_details.split_to_dates.map { |d| nice_date_time(d) }.join(', ') %>
     <% end %>
   </div>
 <% end %>
