@@ -341,7 +341,7 @@ module Datagraphs
       end
 
       def count_for_a_concept(concept_id:)
-        params = { query: QUERY_FOR_A_CONCEPT % { concept_id: concept_id }}
+        params = { query: COUNT_FOR_A_CONCEPT % { concept_id: concept_id }}
         generic_count(params: params)
       end
 
