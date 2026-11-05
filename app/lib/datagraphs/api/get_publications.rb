@@ -207,7 +207,7 @@ module Datagraphs
         RETURN COUNT(DISTINCT pw.id) AS total
       Q
 
-      UNPUBLISHED_COUNT_FOR_HOUSE_SUB_QUERY =  <<-Q.squish
+      UNPUBLISHED_FOR_A_HOUSE_SUB_QUERY = <<-Q.squish
         MATCH (pw:PublicationWork)-[s:publishedBy]->(d:ResearchService)-[f:for]->(h:House)
         WHERE h.id = '%{house_id}'
       Q
@@ -217,7 +217,7 @@ module Datagraphs
         WHERE d.id = '%{research_service_id}'
       Q
 
-      UNPUBLISHED_COUNT_FOR_SECTION_SUB_QUERY =  <<-Q.squish
+      UNPUBLISHED_FOR_A_SECTION_SUB_QUERY =  <<-Q.squish
         MATCH (s:Section)<-[scb:sectionContributionBy]-(sc:SectionContribution)-[sct:sectionContributionTo]->(pe:PublicationExpression)
         WHERE s.id = '%{section_id}'
       Q
@@ -248,10 +248,7 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
-      UNPUBLISHED_FOR_A_HOUSE_SUB_QUERY = <<-Q.squish
-        MATCH (pw:PublicationWork)-[s:publishedBy]->(d:ResearchService)-[f:for]->(h:House)
-        WHERE h.id = '%{house_id}'
-      Q
+
 
       def for_a_concept(concept_id:, skip: 0, limit: 25)
         for_a_generic(
@@ -431,6 +428,11 @@ module Datagraphs
         unpublished_for_a_generic(sub_query: sub_query, skip: skip, limit: 25)
       end
 
+      def unpublished_for_a_section(section_id:, skip: 0, limit: 25)
+        sub_query = UNPUBLISHED_FOR_A_SECTION_SUB_QUERY % { section_id: section_id }
+        unpublished_for_a_generic(sub_query: sub_query, skip: skip, limit: 25)
+      end
+
       def unpublished_for_a_generic(sub_query:, skip:0, limit: 25)
         params = { query: UNPUBLISHED_FOR_A_GENERIC % { sub_query: sub_query, skip: skip, limit: limit }}
         response = call(params: params)
@@ -449,7 +451,7 @@ module Datagraphs
       end
 
       def unpublished_for_a_house_count(house_id:)
-        for_a_generic_unpublished_count(sub_query: UNPUBLISHED_COUNT_FOR_HOUSE_SUB_QUERY % { house_id: house_id })
+        for_a_generic_unpublished_count(sub_query: UNPUBLISHED_FOR_A_HOUSE_SUB_QUERY % { house_id: house_id })
       end
 
       def unpublished_for_a_research_service_count(research_service_id:)
@@ -457,7 +459,7 @@ module Datagraphs
       end
 
       def unpublished_for_a_section_count(section_id:)
-        for_a_generic_unpublished_count(sub_query: UNPUBLISHED_COUNT_FOR_SECTION_SUB_QUERY % { section_id: section_id })
+        for_a_generic_unpublished_count(sub_query: UNPUBLISHED_FOR_A_SECTION_SUB_QUERY % { section_id: section_id })
       end
 
       def for_a_generic_unpublished_count(sub_query:)
