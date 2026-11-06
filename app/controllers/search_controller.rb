@@ -8,12 +8,11 @@ class SearchController < AuthenticatedController
     # We get the query from the URL parameter.
     @query = params[:q]
 
-    @published_by = Datagraphs::Api::GetResearchServices.new.all
-    @selected_published_by_ids = @published_by.map(&:id)
+    published_by_ids = params[:research_service_ids]
 
     # We query Data Graphs with the query, returning only people and concepts - not publications.
     search_service = Datagraphs::Api::Search.new
-    search_service.process(query: @query, published_by_ids: nil)
+    search_service.process(query: @query, published_by_ids: published_by_ids)
 
     # We set the results to be the first item returned.
     results = search_service.results.first
