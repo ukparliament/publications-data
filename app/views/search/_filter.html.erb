@@ -1,21 +1,22 @@
 <%= form_for(:search, method: :get, include_hidden: false) do |f| %>
   <fieldset class="p-form__fieldset">
-    <legend class="p-form__fieldset-legend">Type</legend>
+    <legend class="p-form__fieldset-legend">Published by</legend>
     <%= f.hidden_field :query, value: query %>
     <div class="p-form__checkbox-group">
-      <% types.each_with_index do |type, index| %>
+      <% published_by.each do |research_service| %>
+
         <div class="p-form__checkbox-item">
           <input
             type="checkbox"
-            name="types[]"
-            id="checkbox-standard-<%= type %>"
-            value="<%= type %>"
-            <% if selected_types.include?(type) %>
+            name="research_service_ids[]"
+            id="checkbox-standard-<%= research_service.id %>"
+            value="<%= research_service.id %>"
+            <% if selected_published_by_ids.include?(research_service.id) %>
               checked
             <% end %>
           >
-          <label for="checkbox-standard-<%= type %>" class="p-form__checkbox-item-label">
-            <%= convert_type_for_search(type) %>
+          <label for="checkbox-standard-<%= research_service.name %>" class="p-form__checkbox-item-label">
+            <%= research_service.name %>
           </label>
         </div>
       <% end %>

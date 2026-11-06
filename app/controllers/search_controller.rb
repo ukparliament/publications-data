@@ -8,9 +8,12 @@ class SearchController < AuthenticatedController
     # We get the query from the URL parameter.
     @query = params[:q]
 
+    @published_by = Datagraphs::Api::GetResearchServices.new.all
+    @selected_published_by_ids = @published_by.map(&:id)
+
     # We query Data Graphs with the query, returning only people and concepts - not publications.
     search_service = Datagraphs::Api::Search.new
-    search_service.process(query: @query, types: ["PublicationWork"])
+    search_service.process(query: @query, published_by_ids: nil)
 
     # We set the results to be the first item returned.
     results = search_service.results.first
@@ -31,11 +34,11 @@ class SearchController < AuthenticatedController
     # We get the query from the URL parameter.
     @query = params[:button_query] || params[:search][:query]
 
-    # We get a list of search result types from Data Graphs, being people, concepts and works.
-    @types = Datagraphs::Api::Search::TYPES
+    @published_by = Datagraphs::Api::GetResearchServices.new.all
+    @published_by_ids = @published_by.map(&:id)
 
     # We get the selected types from the URL parameters.
-    @selected_types = params[:types] || @types
+    @selected_published_by_ids = params[:research_service_ids] || @published_by_ids
 
     # If a query has been passed ...
     if @query.present?
@@ -45,7 +48,7 @@ class SearchController < AuthenticatedController
 
       # ... we query Data Graphs with the query.
       search_service = Datagraphs::Api::Search.new
-      results = search_service.pagination_process(query: @query, types: @selected_types, page_size: page_size, page_number: page_number)
+      results = search_service.pagination_process(query: @query, page_size: page_size, page_number: page_number, published_by_ids: @selected_published_by_ids)
 
       # We set the total count.
       @total_count = results.total_count

@@ -10,22 +10,22 @@ module Datagraphs
       STANDARD_KEYS = ["label", "type", "id"].freeze
       TYPES = ["PublicationWork"].freeze
 
-      def pagination_process(query:, types: Datagraphs::Api::Search::TYPES, page_size: 10, page_number: 1)
+      def pagination_process(query:, published_by_ids:, page_size: 10, page_number: 1)
 
-        params = default_query_params_for_pagination(query: query, types: convert_types(types), page_number: page_number, page_size: page_size)
+        params = default_query_params_for_pagination(query: query, published_by: convert_published_by_ids(published_by_ids), page_number: page_number, page_size: page_size)
         response = call(params: params)
 
         json_response = JSON.parse(response.body)
         NewPaginationResults.new(total_count: json_response["search"]["totalResults"], results: json_response["results"])
       end
 
-      def process(query:, types: Datagraphs::Api::Search::TYPES)
+      def process(query:, published_by_ids:)
         @total_count = 0
         @results = []
 
-        type_query = convert_types(types)
+        published_by_query = convert_published_by_ids(published_by_ids)
 
-        response = call(params: default_query_params(query: query, types: type_query))
+        response = call(params: default_query_params(query: query, published_by: published_by_query))
         pagination_response = process_response(response.body)
 
         return unless pagination_response
@@ -49,11 +49,19 @@ module Datagraphs
         end.join("|")
       end
 
-      def default_query_params_for_pagination(query:, types: "type:PublicationWork", page_size: 10, page_number: 1)
+      def convert_published_by_ids(published_by_ids)
+        return nil unless published_by_ids
+
+        published_by_ids.map do |published_by_id|
+          "publishedBy:#{published_by_id}"
+        end.join("|")
+      end
+
+      def default_query_params_for_pagination(query:, published_by:, page_size: 10, page_number: 1)
         {
           pageSize: page_size,
           pageNo: page_number,
-          filter: filter(types),
+          filter: filter(published_by),
           fields: fields,
           q: query,
           embed: "publishedBy"
@@ -62,18 +70,18 @@ module Datagraphs
 
       # In the DL app this uses these fields
       # fields:"id,type,label,title,name,alternativeName,summary,scopeNote,publishedURL,publicationDate,author,teaserSummary,inSection.label,isHeadOfSection,isCurrentlyAvailable",
-      def default_query_params(query:, types: "type:PublicationWork")
+      def default_query_params(query:, published_by:)
         {
           pageSize: 500,
-          filter: filter(types),
+          filter: filter(published_by),
           fields: fields,
           q: query,
           embed: "publishedBy"
         }
       end
 
-      def filter(types)
-        "publishedBy:urn:publications-data:ResearchService:3,type:-PublicationExpression,type:-Concept,type:-Section,type:-House,type:-ResearchService,(#{types})"
+      def filter(published_by)
+        "type:PublicationWork,type:-PublicationExpression,type:-Concept,type:-Section,type:-House,type:-ResearchService,(#{published_by})"
       end
 
       def fields

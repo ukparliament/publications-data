@@ -1,5 +1,6 @@
+<%= render 'layouts/search_form', query: @query if show_search? %>
 
-<%#= render 'search/filter', types: @types, selected_types: @selected_types, query: @query %>
+<%= render 'search/filter', published_by: @published_by, selected_published_by_ids: @selected_published_by_ids, query: @query %>
 
 <% if @results.any? %>
   <%== @pagy.series_nav(:bootstrap) if @total_count > @results.size %>
