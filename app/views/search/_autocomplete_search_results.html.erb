@@ -1,0 +1,9 @@
+<% results.each_with_index do |result, index| %>
+  <% if result.type != 'Person' or result.isCurrentlyAvailable -%>
+    <li class="list-group-item"
+      role="option"
+      data-autocomplete-value="<%= index + 1 %>">
+      <%= link_to "#{result.title} - #{result.reference}", publication_path(result.id) %>
+    </li>
+  <% end -%>
+<% end %>

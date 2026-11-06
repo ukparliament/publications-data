@@ -1,0 +1,18 @@
+<%= render 'layouts/search_form', query: @query if show_search? %>
+
+<%= render 'search/filter', published_by: @published_by, selected_published_by_ids: @selected_published_by_ids, query: @query %>
+
+<% if @results.any? %>
+  <%== @pagy.series_nav(:bootstrap) if @total_count > @results.size %>
+  <% @results.each do |result| %>
+    <%= render 'publication_work', publication: result %>
+  <% end %>
+<% else %>
+  <p>
+    <% if @query.blank? -%>
+      No search results found.
+    <% else -%>
+      No search results found for '<b><%= @query %></b>'.
+    <% end -%>
+  </p>
+<% end %>

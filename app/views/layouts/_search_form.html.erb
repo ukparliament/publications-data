@@ -1,0 +1,38 @@
+<%= form_tag(search_path, method: :get, id: 'search-form', class: 'p-form' ) do %>
+	<div id="search" class="p-form__form-group mb-3">
+		<div
+			data-controller="autocomplete search-autocomplete-customiser"
+			data-autocomplete-url-value="/search/autocomplete"
+			data-autocomplete-min-length-value="3">
+
+			<div
+				id="autocomplete-container"
+				role="combobox"
+				class="p-form__input--with-button"">
+
+				<input type="text" data-autocomplete-target="input" autocomplete="off" name="button_query" class="p-form__input" spellcheck="true" required="required" placeholder="Search for briefings" value="<%= query %>">
+
+				<button class="btn btn-primary" type="submit">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						width="20"
+						height="20"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round">
+
+						<circle cx="11" cy="11" r="7"></circle>
+						<line x1="16.65" y1="16.65" x2="21" y2="21"></line>
+					</svg>
+				</button>
+
+				<input type="hidden" name="query" data-autocomplete-target="hidden">
+			</div>
+
+			<ul class="list-group" data-autocomplete-target="results"></ul>
+		</div>
+	</div>
+<% end %>

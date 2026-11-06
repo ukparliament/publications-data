@@ -1,0 +1,23 @@
+<%= link_to publication_path(publication.id), class: "card" do %>
+  <div class="card-inner">
+    <div class="content">
+      <div class="primary-info">
+        <%= publication.title %>
+      </div>
+    </div>
+    <div class="info">
+      <div class="info-inner">
+        <div class="indicators-left">
+          <div class="indicator">
+            Published by: <%= publication.publishedBy.map(&:"name").join(', ') %>
+          </div>
+        </div>
+        <div class="indicators-right">
+          <div class="indicator">
+            <span>Published on: <b><%= nice_date_time(publication.createdOn) %></b></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
