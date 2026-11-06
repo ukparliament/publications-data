@@ -1,0 +1,175 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "073b358387062a00c6acebf3092bf1e72765bdcda8646df73e448624afb1de06",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/research_services/promoted_concepts.html.erb",
+      "line": 4,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "Datagraphs::Api::GetResearchService.new.details(params[:id]).houses.map do\n link_to(house_name, house_path(house_id))\n end.join(\", \")",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "ResearchServicesController",
+          "method": "promoted_concepts",
+          "line": 75,
+          "file": "app/controllers/research_services_controller.rb",
+          "rendered": {
+            "name": "research_services/promoted_concepts",
+            "file": "app/views/research_services/promoted_concepts.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "research_services/promoted_concepts"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        79
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "25867e1882888bf9fcdf21112ab4d21c5852eb1cc6aa321b725fdfc02df3b0ca",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/layouts/application.html.erb",
+      "line": 32,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_scripting/",
+      "code": "params[:button_query]",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "SearchController",
+          "method": "index",
+          "line": 77,
+          "file": "app/controllers/search_controller.rb",
+          "rendered": {
+            "name": "layouts/application",
+            "file": "app/views/layouts/application.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "layouts/application"
+      },
+      "user_input": null,
+      "confidence": "High",
+      "cwe_id": [
+        79
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "440aeab1f4f3866d6115beb9db17f665571743d706e7b9c1b1c3a836054429df",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/research_services/sections.html.erb",
+      "line": 5,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "Datagraphs::Api::GetResearchService.new.details(params[:id]).houses.map do\n link_to(house_name, house_path(house_id))\n end.join(\", \")",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "ResearchServicesController",
+          "method": "sections",
+          "line": 52,
+          "file": "app/controllers/research_services_controller.rb",
+          "rendered": {
+            "name": "research_services/sections",
+            "file": "app/views/research_services/sections.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "research_services/sections"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        79
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "93e8fd7b5ac2ca79c0e2fc276b031068eee464b13cdf9a316bdac9297db33f0d",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/research_services/publications.html.erb",
+      "line": 4,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "Datagraphs::Api::GetResearchService.new.details(params[:id]).houses.map do\n link_to(house_name, house_path(house_id))\n end.join(\", \")",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "ResearchServicesController",
+          "method": "publications",
+          "line": 39,
+          "file": "app/controllers/research_services_controller.rb",
+          "rendered": {
+            "name": "research_services/publications",
+            "file": "app/views/research_services/publications.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "research_services/publications"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        79
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "9ec4ec580abfc6fbfe4db5bcf9052f47bb7e3d97e7aba4e931fb0fb350dc489f",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/research_services/promoted_collections.html.erb",
+      "line": 4,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "Datagraphs::Api::GetResearchService.new.details(params[:id]).houses.map do\n link_to(house_name, house_path(house_id))\n end.join(\", \")",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "ResearchServicesController",
+          "method": "promoted_collections",
+          "line": 98,
+          "file": "app/controllers/research_services_controller.rb",
+          "rendered": {
+            "name": "research_services/promoted_collections",
+            "file": "app/views/research_services/promoted_collections.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "research_services/promoted_collections"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        79
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "8.1.0"
+}
