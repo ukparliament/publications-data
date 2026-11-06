@@ -43,12 +43,6 @@ module Datagraphs
         end
       end
 
-      def convert_types(types)
-        types.map do |type|
-          "type:#{type}"
-        end.join("|")
-      end
-
       def convert_published_by_ids(published_by_ids)
         return nil unless published_by_ids
 
