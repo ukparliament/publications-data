@@ -1,4 +1,7 @@
+
 <div class="block">
+  <%= render 'layouts/search_form', query: @query if show_search? %>
+
   <div class="tabs">
     <ul class="nav-tabs" role="tablist">
       <li role="presentation"><%= link_to 'Published', publications_path, role: "tab", class: class_names(active: current_page?(publications_path)) %></li>

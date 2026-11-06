@@ -28,12 +28,7 @@
         </div>
       <% end %>
 
-
       <div class="inner-content container">
-        <div class="reading-width">
-          <%= render 'layouts/search_form', query: @query if show_search? %>
-        </div>
-
         <h1><%= @multiline_page_title || @page_title || $PRODUCT_TITLE %></h1>
         <%= yield %>
       </div>
