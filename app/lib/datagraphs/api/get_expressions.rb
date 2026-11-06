@@ -1,6 +1,8 @@
 module Datagraphs
   module Api
     class GetExpressions < CypherQuery
+
+      # Include publishedAt for Sorting
       FOR_WORK_ID_AND_STATUS_QUERY = <<-Q.squish
         MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
         OPTIONAL MATCH startWithPerson = (p:Person)<-[r3:contributionBy]-(c:Contribution)-[r2:contributionTo]->(pe:PublicationExpression)
@@ -9,16 +11,11 @@ module Datagraphs
         WHERE pw.id='%{publication_work_id}'
         AND (%{statuses})
         RETURN    c.isPublic AS is_public,
-                  pe.publishedAt AS published_at,
-                  pe.updatedAt AS updated_at,
-                  pe.number AS version_number,
-                  pe.title AS title,
                   pw.id AS publication_work_id,
-                  pe.id AS id,
-                  pes.label AS status,
                   pw.reference AS ref,
-                  pe.createdAt AS created_at,
                   pes.label AS status,
+                  pe AS details,
+                  pe.publishedAt AS published_at,
                   COLLECT_LIST(DISTINCT p.id) AS people_ids,
                   COLLECT_LIST(DISTINCT p.displayName) AS people_names,
                   COLLECT_LIST(DISTINCT ct.label) AS contribution_types,
@@ -58,7 +55,7 @@ module Datagraphs
         response = call(params: params)
         body = process_response(response.body)
 
-        expressions = body.map { |record| Hashie::Mash.new(record) }
+        expressions = body.map { |record| Hashie::Mash.new(record.deep_transform_keys(&:underscore)) }
 
         expressions.each do |expression|
           expression.contributions = expression.people_ids.zip(expression.people_names).zip(expression.contribution_types).zip(expression.public).zip(expression.ordinalities)
