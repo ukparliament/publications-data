@@ -1,0 +1,25 @@
+<%= form_for(:search, method: :get, include_hidden: false) do |f| %>
+  <fieldset class="p-form__fieldset">
+    <legend class="p-form__fieldset-legend">Type</legend>
+    <%= f.hidden_field :query, value: query %>
+    <div class="p-form__checkbox-group">
+      <% types.each_with_index do |type, index| %>
+        <div class="p-form__checkbox-item">
+          <input
+            type="checkbox"
+            name="types[]"
+            id="checkbox-standard-<%= type %>"
+            value="<%= type %>"
+            <% if selected_types.include?(type) %>
+              checked
+            <% end %>
+          >
+          <label for="checkbox-standard-<%= type %>" class="p-form__checkbox-item-label">
+            <%= convert_type_for_search(type) %>
+          </label>
+        </div>
+      <% end %>
+    </div>
+  </fieldset>
+  <%= f.submit value: "Filter results", class: "btn btn-primary mt-3 mb-3" %>
+<% end %>

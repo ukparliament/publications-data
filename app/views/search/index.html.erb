@@ -1,0 +1,17 @@
+
+<%#= render 'search/filter', types: @types, selected_types: @selected_types, query: @query %>
+
+<% if @results.any? %>
+  <%== @pagy.series_nav(:bootstrap) if @total_count > @results.size %>
+  <% @results.each do |result| %>
+    <%= render 'publication_work', publication: result %>
+  <% end %>
+<% else %>
+  <p>
+    <% if @query.blank? -%>
+      No search results found.
+    <% else -%>
+      No search results found for '<b><%= @query %></b>'.
+    <% end -%>
+  </p>
+<% end %>

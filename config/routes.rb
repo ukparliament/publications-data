@@ -64,6 +64,9 @@ Rails.application.routes.draw do
   resources :people, only: [:index, :show]
   resources :geographic_areas, only: [:index, :show]
 
+
+  get 'search/autocomplete' => 'search#autocomplete', as: :search_autocomplete
+  get 'search' => 'search#index', as: :search
   #
   # Single sign on routes
   #
