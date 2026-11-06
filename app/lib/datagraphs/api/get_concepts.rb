@@ -7,6 +7,7 @@ module Datagraphs
         WHERE concept.alphabetisationLetter = '%{letter}'
         RETURN  DISTINCT(concept.id) AS id,
                 concept.label AS concept_name,
+                concept.isLegislationBeforeParliament AS is_legislation_before_parliament,
                 COUNT(DISTINCT narrowerTerms.id) AS narrower_terms_count,
                 COUNT(DISTINCT pw.id) AS publications_count,
                 COUNT(DISTINCT broaderTerms.id) AS broader_terms_count

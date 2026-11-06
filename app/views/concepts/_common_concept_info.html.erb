@@ -3,6 +3,7 @@
 <p>Scope note: <%= concept.scope_note.presence || "No scope note" %></p>
 <p>Indexer note: <%= concept.indexer_note || "No indexer note" %></p>
 <p>Class type: <%= concept.class_type || "No class type" %></p>
+<p>Has legislation before parliament: <%= concept.is_legislation_before_parliament ? "Yes" : "No" %></p>
 
 <p>
   <% if concept.synonyms.present? %>

@@ -15,6 +15,7 @@ module Datagraphs
                 concept.synonym AS synonym,
                 concept.classType AS class_type,
                 concept.scopeNote AS scope_note,
+                concept.isLegislationBeforeParliament AS is_legislation_before_parliament,
                 COUNT(DISTINCT narrowerTerms.id) AS narrower_terms_count,
                 COUNT(DISTINCT pw.id) AS publications_count,
                 COUNT(DISTINCT broaderTerm.id) AS broader_terms_count

@@ -47,6 +47,11 @@
                       <div class="indicators-left">
                         <div class="indicator indicator-label">Publication count: <%= concept.publications_count %></div>
                       </div>
+                      <% if concept.is_legislation_before_parliament %>
+                        <div class="indicators-right">
+                          <div class="indicator indicator-label">Legislation before parliament</div>
+                        </div>
+                      <% end %>
                     </div>
                   </div>
                 </div>
