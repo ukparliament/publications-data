@@ -3,7 +3,7 @@ module Datagraphs
     class GetConcepts < CypherQuery
       ALL_FOR = <<-Q.squish
         MATCH (broaderTerms:Concept)<-[r1:broaderTerm]-(concept:Concept)<-[r2:broaderTerm]-(narrowerTerms:Concept)
-        MATCH (concept)<-[s:subject]-(pw:PublicationWork)<-[r3:expressionOf]-(pe:PublicationExpression)-[r4:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        OPTIONAL MATCH (concept)<-[s:subject]-(pw:PublicationWork)<-[r3:expressionOf]-(pe:PublicationExpression)-[r4:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         WHERE concept.alphabetisationLetter = '%{letter}'
         RETURN  DISTINCT(concept.id) AS id,
                 concept.label AS concept_name,
@@ -55,10 +55,11 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
+      # I think we have the match clause so we don't get the top level ones like concept?
       COUNT = <<-Q.squish
-        MATCH p = (a:Concept)<-[e:broaderTerm]-(b:Concept)
-        WHERE a.alphabetisationLetter = '%{letter}'
-        RETURN count(a) AS total
+        MATCH (concept:Concept)<-[e:broaderTerm]-(b:Concept)
+        WHERE concept.alphabetisationLetter = '%{letter}'
+        RETURN COUNT(DISTINCT concept) AS total
       Q
 
       COUNT_FOR_PROMOTED_BY = <<-Q.squish
