@@ -9,7 +9,7 @@
       <div class="info-inner">
         <div class="indicators-left">
           <div class="indicator">
-            <span class="badge badge-primary">Publication</span>
+            Published by: <%= publication.publishedBy.map(&:"name").join(', ') %>
           </div>
         </div>
         <div class="indicators-right">

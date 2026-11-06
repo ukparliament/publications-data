@@ -56,7 +56,7 @@ module Datagraphs
           filter: filter(types),
           fields: fields,
           q: query,
-          embed: "inSection"
+          embed: "publishedBy"
         }
       end
 
@@ -68,16 +68,16 @@ module Datagraphs
           filter: filter(types),
           fields: fields,
           q: query,
-          embed: "inSection"
+          embed: "publishedBy"
         }
       end
 
       def filter(types)
-        "type:-PublicationExpression,type:-Concept,type:-Section,type:-House,type:-ResearchService,(#{types})"
+        "publishedBy:urn:publications-data:ResearchService:3,type:-PublicationExpression,type:-Concept,type:-Section,type:-House,type:-ResearchService,(#{types})"
       end
 
       def fields
-        "type,title,createdOn,reference".freeze
+        "type,title,createdOn,reference,publishedBy.id, publishedBy.name"
       end
 
       def process_response(response)
