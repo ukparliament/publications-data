@@ -57,6 +57,7 @@ Rails.application.routes.draw do
   resources :publications, only: [:index, :show] do
     collection do
       get 'unpublished'
+      get 'withdrawn'
     end
     resources :expressions, only: [:index, :show]
   end
