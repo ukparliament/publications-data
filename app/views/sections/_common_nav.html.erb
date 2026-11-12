@@ -9,7 +9,7 @@
   <div class="tabs">
     <ul class="nav-tabs" role="tablist">
       <li role="presentation"><%= link_to 'Publications', publications_section_path, role: "tab", class: class_names(active: current_page?(publications_section_path)) %></li>
-      <li role="presentation"><%= link_to 'Unpublished', publications_unpublished_section_path, role: "tab", class: class_names(active: current_page?(publications_unpublished_section_path)) %></li>
+      <li role="presentation"><%#= link_to 'Unpublished', publications_unpublished_section_path, role: "tab", class: class_names(active: current_page?(publications_unpublished_section_path)) %></li>
     </ul>
 
     <div class="tab-content">
