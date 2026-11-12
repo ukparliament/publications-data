@@ -38,6 +38,28 @@ class ResearchServicesController < AuthenticatedController
     @crumb << { label: 'Publications', url: nil }
   end
 
+  def unpublished
+    research_service_id = params[:id]
+    @research_service = Datagraphs::Api::GetResearchService.new.details(research_service_id)
+
+    @total_count = Datagraphs::Api::GetUnpublishedPublications.new.for_a_research_service_count(research_service_id: research_service_id)
+
+    @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
+
+    @publications = Datagraphs::Api::GetUnpublishedPublications.new.for_a_research_service(
+      research_service_id: research_service_id,
+      skip: @pagy.offset,
+      limit: @pagy.limit
+    )
+
+    @page_title = MAIN_PAGE_TITLE
+
+    @crumb << { label: 'Research services', url: research_services_path }
+    @crumb << { label: @page_title, url: research_service_path(research_service_id) }
+    @crumb << { label: 'Publications', url: publications_research_service_path(research_service_id) }
+    @crumb << { label: 'Unpublished', url: nil }
+  end
+
   def sections
     research_service_id = params[:id]
     @research_service = Datagraphs::Api::GetResearchService.new.details(research_service_id)
