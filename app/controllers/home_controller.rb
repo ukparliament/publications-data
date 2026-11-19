@@ -5,5 +5,6 @@ class HomeController < ApplicationController
 
   def examples
     @page_title = "Examples"
+    @crumb << { label: 'Examples', url: nil }
   end
 end
