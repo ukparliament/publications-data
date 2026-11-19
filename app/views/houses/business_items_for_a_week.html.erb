@@ -4,6 +4,7 @@
   <div class="tabs">
     <%= render 'tab_nav', this_path: business_items_for_a_week_and_house_path %>
 
+    <p>Working days is the number of days (Monday to Friday) betweem the publication date and the date of the business item.</p>
     <div class="tab-content">
       <div class="tab-pane active" role="tabpanel">
         <table class="table table-bordered">
@@ -14,17 +15,20 @@
               <th scope="col">Meeting type</th>
               <th scope="col">Ordinality</th>
               <th scope="col">Publication</th>
+              <th scope="col">Published At</th>
+              <th scope="col">Working days</th>
             </tr>
           </thead>
           <tbody>
             <% @business_items.each do |business_item| %>
               <tr>
-                <th scope="row"><%= business_item.on_date %></th>
+                <th scope="row"><%= nice_date business_item.on_date %></th>
                 <td><%= business_item.label %></td>
                 <td><%= business_item.meeting_type_label %></td>
                 <td><%= business_item.ordinality %></td>
                 <td><%= link_to business_item.publication_work_title, publication_path(business_item.publication_work_id) %></td>
-
+                <td><%= nice_date_time(business_item.published_at) %></td>
+                <td><%= business_day_calculator(business_item.on_date, business_item.published_at) %></td>
               </tr>
             <% end %>
           </tbody>

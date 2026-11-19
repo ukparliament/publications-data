@@ -44,4 +44,11 @@ module ApplicationHelper
       link_to p.title, publication_path(p.id)
     end.to_sentence.html_safe
   end
+
+  def business_day_calculator(date_one, date_two)
+    first_date = [date_one, date_two].min.to_date
+    second_date = [date_one, date_two].max.to_date
+
+    (first_date..second_date).count { |date| !date.saturday? && !date.sunday? }
+  end
 end

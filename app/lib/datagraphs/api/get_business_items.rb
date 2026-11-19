@@ -40,9 +40,11 @@ module Datagraphs
         MATCH (businessItem:BusinessItem)-[r:businessItemInHouse]->(house:House)
         MATCH (businessItem:BusinessItem)-[r2:hasMeetingType]->(meetingType:MeetingType)
         OPTIONAL MATCH (businessItem)<-[r3:pertainsTo]-(pw:PublicationWork)
+        OPTIONAL MATCH (pw:PublicationWork)<-[z:expressionOf]-(pe:PublicationExpression)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         WHERE house.id = '%{house_id}'
         AND businessItem.year = %{year}
         AND businessItem.weekNumber = %{week_number}
+        AND pes.label = "Published"
         RETURN
           businessItem.onDate AS on_date,
           businessItem.ordinality AS ordinality,
@@ -52,7 +54,8 @@ module Datagraphs
           meetingType.id AS meeting_type_id,
           meetingType.label AS meeting_type_label,
           pw.id AS publication_work_id,
-          pw.title AS publication_work_title
+          pw.title AS publication_work_title,
+          pe.publishedAt AS published_at
         ORDER BY on_date ASC, ordinality ASC
       Q
 

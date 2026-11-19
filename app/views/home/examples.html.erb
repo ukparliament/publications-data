@@ -1,5 +1,5 @@
 <div class="brand-commons">
-  <div class="container reading-width">
+  <div class="container ">
     <h1><%= yield :title %></h1>
 
     <h2>With disclaimer</h2>
@@ -147,36 +147,27 @@
 
     <h2>Related work</h2>
 
-
-    <h3>2004 US presidential and congressional election results</h3>
-
-    <p>publication work 891</p>
-
     related work UK-USA mutual defence agreement
-    <a href="/publications/urn:publications-data:PublicationWork:891">2004 US Presidential and Congressional election results</a>
+    <p><%= link_to "2004 US Presidential and Congressional election results", publication_path(891) %></p>
 
     <h2>Promoted concepts</h2>
+    <p><%= link_to "Ukraine", concept_path(13438) %></p>
 
-    <h3>Departmental responsibilities </h3>
-
-    <a href="/publications/urn:publications-data:Concept:90863/publications">Departmental responsibilities</a>
-
-
-    <h3>EU countries (Concept 49818)</h3>
-    <a href="/publications/urn:publications-data:Concept:91439/publications">Government departments</a>
-
-    <h3>Immigration controls</h3>
-    <a href="/publications/urn:publications-data:Concept:91611/publications">Government departments</a>
+    <h3>Other concepts</h3>
+    <p><%= link_to "Departmental responsibilities", concept_path(90863) %></p>
+    <p><%= link_to "EU countries", concept_path(49818) %></p>
+    <p><%= link_to "Government departments", concept_path(91439) %></p>
+    <p><%= link_to "Immigration controls", concept_path(91611) %></p>
 
     <h2>Concepts with Legislation before parliament</h2>
     <p><%= link_to "Northern Ireland Troubles Bill 2024-26", concept_path('urn:publications-data:Concept:566913') %></p>
     <p><%= link_to "Armed Forces Bill 2024-26", concept_path('urn:publications-data:Concept:574043') %></p>
     <p><%= link_to "Cyber Security and Resilience (Network and Information Systems) Bill 2024-26", concept_path('urn:publications-data:Concept:569822') %></p>
 
-
     <h2>Expressions with change notes</h2>
-    <%= link_to "Gas and electricity prices during the 'energy crisis' and beyond", publication_expressions_path(16183) %>
+    <p><%= link_to "Gas and electricity prices during the 'energy crisis' and beyond", publication_expressions_path(16183) %></p>
 
-
+    <h2>With a business item</h2>
+    <p><%= link_to "The fishing industry", publication_path(18164) %></p>
   </div>
 </div>
