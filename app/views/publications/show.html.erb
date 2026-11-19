@@ -159,7 +159,7 @@
 <h3>Business items</h3>
 <% if @optional_extras.business_item_objects.any? %>
   <% @optional_extras.business_item_objects.each do |bi| %>
-    <%= bi.label %> (Note this will eventually be a link)
+    <%= link_to bi.label, business_items_for_a_week_and_house_path(id: bi.business_item_in_house, week_number: bi.week_number, year: bi.year) %>
   <% end %>
 <% else %>
   <p>We do not have any business items</p>

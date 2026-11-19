@@ -164,6 +164,8 @@ module Datagraphs
         oe["supersedes"] = oe["supersedes_ids"].zip(oe["supersedes_titles"], oe["supersedes_at"])
         oe["superseded_by"] = oe["superseded_by_ids"].zip(oe["superseded_by_titles"], oe["superseded_by_ats"])
 
+        oe["business_item_objects"] =  oe["business_item_objects"].map { |bio| bio.transform_keys!(&:underscore) }
+
         oe["withdrawal_periods"] = oe["wps"].map do |w|
           w.transform_keys!(&:underscore)
         end.sort_by { |oe| ["withdrawn_at"] }.reverse
