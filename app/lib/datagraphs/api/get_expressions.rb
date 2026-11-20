@@ -27,6 +27,17 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
+      EXPRESSION_TITLES_FOR = <<-Q.squish
+        MATCH (pw:PublicationWork)<-[eO:expressionOf]-(pe:PublicationExpression)
+        MATCH (pe)-[r5:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE pw.id='%{publication_work_id}'
+        RETURN
+                  pes.label AS status,
+                  pe.title AS expression_title,
+                  pe.id AS id
+        ORDER BY status DESC
+      Q
+
       STATUSES = <<-Q.squish
         MATCH p = (pw:PublicationWork)<-[e:expressionOf]-(b:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         WHERE pw.id = '%{publication_work_id}'
@@ -60,6 +71,15 @@ module Datagraphs
         expressions.each do |expression|
           expression.contributions = expression.people_ids.zip(expression.people_names).zip(expression.contribution_types).zip(expression.public).zip(expression.ordinalities)
         end
+      end
+
+      def for(publication_work_id:)
+        params = { query: EXPRESSION_TITLES_FOR % { publication_work_id: publication_work_id }}
+
+        response = call(params: params)
+
+        body = process_response(response.body)
+        body.map { |record| Hashie::Mash.new(record) }
       end
 
       def statuses(publication_work_id: 'urn:publications-data:PublicationWork:3549')
