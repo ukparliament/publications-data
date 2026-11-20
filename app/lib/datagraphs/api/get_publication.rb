@@ -41,6 +41,14 @@ module Datagraphs
                 COLLECT_LIST(DISTINCT splitIntoWork) AS split_to
       Q
 
+      PUBLICATION_RELATED_TO_AND_FROM = <<-Q.squish
+      MATCH (pw:PublicationWork)
+      OPTIONAL MATCH (pw:PublicationWork)-[e:relatedWork]->(relatedTo:PublicationWork)
+      OPTIONAL MATCH (pw:PublicationWork)<-[e2:relatedWork]-(relatedFrom:PublicationWork)
+      WHERE pw.id='%{publication_work_id}'
+      RETURN COALESCE(relatedTo , relatedFrom) AS publication_work
+      Q
+
       PUBLICATION_OPTIONAL_EXTRAS  = <<-Q.squish
         MATCH (pw:PublicationWork)
         OPTIONAL MATCH (pw)-[r7:subject]->(c:Concept)
@@ -171,6 +179,14 @@ module Datagraphs
         end.sort_by { |oe| ["withdrawn_at"] }.reverse
 
         Hashie::Mash.new(oe)
+      end
+
+      def and_related_works(publication_work_id:)
+        params = { query: PUBLICATION_RELATED_TO_AND_FROM % { publication_work_id: publication_work_id }}
+        response = call(params: params)
+        oe = process_response(response.body)
+
+        oe.map { |record| Hashie::Mash.new(record["publication_work"]) }
       end
 
       def and_merged_and_split_details(publication_work_id:)

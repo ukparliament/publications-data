@@ -183,6 +183,17 @@
   <p>We do not have any contributors in our records for this publication.</p>
 <% end %>
 
+<h3>Related works</h3>
+<% if @related_works.any? %>
+  <ul>
+    <% @related_works.each do |related_work| %>
+      <li><%= link_to related_work.title, publication_path(related_work.id) %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>We do not have any related works for this publication.</p>
+<% end %>
+
 <h3>Related links</h3>
 <% if @related_links.any? %>
   <ul>

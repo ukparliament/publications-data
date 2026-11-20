@@ -60,6 +60,7 @@ class PublicationsController < AuthenticatedController
     @summary = expression_details.summary
 
     @optional_extras = get_publication.and_optional_extras(publication_work_id: @publication_work_id)
+    @related_works = get_publication.and_related_works(publication_work_id: @publication_work_id)
     @related_links = get_publication.and_related_links(publication_work_id: @publication_work_id)
     @merged_and_split_details = get_publication.and_merged_and_split_details(publication_work_id: @publication_work_id)
 
