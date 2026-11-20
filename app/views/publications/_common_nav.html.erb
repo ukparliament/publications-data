@@ -1,0 +1,20 @@
+<%# locals: (query: :'') %>
+
+<div class="block">
+  <%= render 'layouts/search_form', query: query if show_search? %>
+
+  <div class="tabs">
+    <ul class="nav-tabs" role="tablist">
+      <li role="presentation"><%= link_to 'Published', publications_path, role: "tab", class: class_names(active: current_page?(publications_path)) %></li>
+      <li role="presentation"><%= link_to 'Unpublished', unpublished_publications_path, role: "tab", class: class_names(active: current_page?(unpublished_publications_path)) %></li>
+      <li role="presentation"><%= link_to 'Withdrawn', withdrawn_publications_path, role: "tab", class: class_names(active: current_page?(withdrawn_publications_path)) %></li>
+
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane active" role="tabpanel">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+</div>

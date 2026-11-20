@@ -35,6 +35,23 @@ class PublicationsController < AuthenticatedController
     @crumb << { label: 'Unpublished', url: nil }
   end
 
+  def withdrawn
+    get_withdrawn_publications = Datagraphs::Api::GetWithdrawnPublications.new
+    @total_count = get_withdrawn_publications.total
+
+    @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
+
+    @publications = get_withdrawn_publications.all(
+      skip: @pagy.offset,
+      limit: @pagy.limit
+    )
+
+    @page_title = MAIN_PAGE_TITLE
+
+    @crumb << { label: MAIN_PAGE_TITLE, url: publications_path }
+    @crumb << { label: 'Withdrawn', url: nil }
+  end
+
   def show
     @publication_work_id = params[:id]
     get_publication = Datagraphs::Api::GetPublication.new
