@@ -36,6 +36,17 @@ class ConceptsController < AuthenticatedController
     @page_title = "Promoted concepts"
   end
 
+  def legislative
+    @total_count = Datagraphs::Api::GetConcepts.new.count_with_legislation
+    @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 99)
+
+    @concepts = Datagraphs::Api::GetConcepts.new.with_legislation(skip: @pagy.offset, limit: @pagy.limit)
+
+    @crumb << { label: MAIN_PAGE_TITLE, url: concepts_path }
+    @crumb << { label: "Legislative", url: nil }
+    @page_title = "Legislative concepts"
+  end
+
   def publications
     concept_id = params[:id]
     @concept = Datagraphs::Api::GetConcept.new.details_for(concept_id: concept_id)

@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     end
     collection do
       get 'promoted'
+      get 'legislative'
     end
   end
 
