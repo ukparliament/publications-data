@@ -257,13 +257,18 @@
       <p>We do not have any file resources linked to this publication</p>
     <% end %>
   </div>
+
+  <h2>Expressions of this publication</h2>
+  <%= link_to "Expressions/Versions of this publication", publication_expressions_path(@publication_work_id) %>
+
 <% else %>
-  <p><b>There are no published expressions for this work</b></p>
-  <ul>
-    <% @expression_titles.each do |expression_title| %>
-      <li><%= link_to "#{expression_title.expression_title} - #{expression_title.status}", publication_expression_path(@publication_work_id, expression_title.id) %></li>
-    <% end %>
-  </ul>
+  <div class="highlight highlight-error">
+    <p><b>There are no published expressions for this work</b></p>
+    <p>You can see all expression or versions <%= link_to "here", publication_expressions_path(@publication_work_id) %> including:</p>
+    <ul>
+      <% @expression_titles.each do |expression_title| %>
+        <li><%= link_to "#{expression_title.expression_title} - #{expression_title.status}", publication_expression_path(@publication_work_id, expression_title.id) %></li>
+      <% end %>
+    </ul>
+  </div>
 <% end %>
-<h2>Expressions of this publication</h2>
-<%= link_to "Expressions/Versions of this publication", publication_expressions_path(@publication_work_id) %>
