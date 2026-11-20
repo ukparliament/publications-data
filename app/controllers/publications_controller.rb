@@ -88,8 +88,6 @@ class PublicationsController < AuthenticatedController
     @contributions = get_publication.and_contributors(publication_work_id: @publication_work_id)
 
     resources = get_publication.and_resources(publication_work_id: @publication_work_id)
-    @resources = resources.select { |resource| resource.file_title.present? }
-
-    @grouped_resources = @resources.group_by(&:resource_type)
+    @grouped_resources = resources.select { |resource| resource.file_title.present? }.group_by(&:resource_type)
   end
 end

@@ -130,7 +130,7 @@ module Datagraphs
         OPTIONAL MATCH (resourceFile)-[hrft:hasResourceFileType]->(resourceFileType:ResourceFileType)
         WHERE pubWork.id = '%{publication_work_id}'
         AND pes.label = 'Published'
-        RETURN resourceFileLink, resourceFile, resourceFileType,
+        RETURN
               resourceFileLink.title        AS file_title,
               resourceFile.label            AS file_label,
               resourceFile.mimeType         AS mime_type,
@@ -219,10 +219,7 @@ module Datagraphs
 
         response = call(params: params)
         body = process_response(response.body)
-        body.map do |resource|
-          resource.deep_transform_keys!(&:underscore)
-          Hashie::Mash.new(resource)
-        end
+        body.map { |resource| Hashie::Mash.new(resource) }
       end
 
       def and_related_links(publication_work_id: 'urn:publications-data:PublicationWork:7809')
