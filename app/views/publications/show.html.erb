@@ -1,258 +1,261 @@
-<% if @optional_extras.geographic_areas.any? %>
-  <div class="highlight highlight-warning">
-    This work is geographically covers: <%= geographic_area_links_from_array(@optional_extras.geographic_areas) %>
-  </div>
-<% end %>
 
-<% if  @optional_extras.superseded_by.any? %>
-  <div class="highlight highlight-warning">
-    This work is superseded by:
+<p><strong>From the publication work</strong></p>
+<div class="border mb-4 p-3">
 
-    <% @optional_extras.superseded_by.each do |id, title, date| %>
-      <%= link_to title, publication_path(id) %>
-      <% if date %>
-        on <%= nice_date_time(date) %>
-      <% end %>
-    <% end %>
-  </div>
-<% end %>
-
-<p>
-  <% if @publication.research_service_id %>
-    Published by the <b><%= link_to @publication.research_service_name, research_service_path(@publication.research_service_id) %></b>
-  <% else %>
-    We do not have information about who was to have published this publication.
-  <% end %>
-</p>
-
-<p><i><%= @teaser_text %></i></p>
-
-<% if @optional_extras.collections.any? %>
-  <p>Is part of these collections:</p>
-  <ul>
-    <% @optional_extras.collections.each do |id, name| %>
-      <li><%= link_to name, collection_path(id) %></li>
-    <% end %>
-  </ul>
-<% end %>
-
-<% if @optional_extras.lead_member_for_collections.any? %>
-  <p>Is lead member for these collections:</p>
-  <ul>
-    <% @optional_extras.lead_member_for_collections.each do |id, name| %>
-      <li><%= link_to name, collection_path(id) %></li>
-    <% end %>
-  </ul>
-<% end %>
-
-<p>
-  <% if @publication.includes_power_bi_data_dashboard %>
-    Includes a <%= link_to 'Power BI Data Dashboard', power_bi_data_dashboards_path %>
-  <% else %>
-    Does not include a Power BI Data Dashboard
-  <% end %>
-</p>
-
-<p>
-  <% if @publication.includes_shiny_data_dashboard %>
-    Includes a <%= link_to 'Shiny Data Dashboard', shiny_data_dashboards_path %>
-  <% else %>
-  Does not include a Shiny Data Dashboard
-  <% end %>
-</p>
-
-<% if @withdrawal_periods.any? %>
-  <% @withdrawal_periods.each do |wp| %>
-    <%= tag.div class: class_names(
-      "highlight",
-      "highlight-error": wp.reinstated_at.blank?,
-      "highlight-info": wp.reinstated_at.present?
-    ) do %>
-      <p>
-        <b>Withdrawn from <%= nice_date_time(wp.withdrawn_at) %></b>
-        <% if wp.reinstated_at %>
-          - re-instated at: <b><%= nice_date_time(wp.reinstated_at) %></b>
-        <% end %>
-      </p>
-    <% end %>
-  <% end %>
-<% else %>
-  <p>No withdrawal periods</p>
-<% end %>
-
-<% if @disclaimers.any? %>
-  <% @disclaimers.each do |id, label, date| %>
+  <% if @optional_extras.geographic_areas.any? %>
     <div class="highlight highlight-warning">
-      <p>
-        <%= link_to label, disclaimer_path(id) %>
-        <% if date %>
-          Applicable from: <%= nice_date(date) %>
-        <% end %>
-      </p>
+      This work is geographically covers: <%= geographic_area_links_from_array(@optional_extras.geographic_areas) %>
     </div>
   <% end %>
-<% else %>
-  <p>No disclaimers</p>
-<% end %>
+  <% if  @optional_extras.superseded_by.any? %>
+    <div class="highlight highlight-warning">
+      This work is superseded by:
 
-<p>Reference: <b><%= @publication.ref.presence || "We do not have a reference for this publication." %></b></p>
-<p>DOI:
-  <% if @publication.doi.presence %>
-    <%= link_to @publication.doi, "https://doi.org/#{@publication.doi}" %>
-  <% else %>
-    We do not have a DOI for this publication.
+      <% @optional_extras.superseded_by.each do |id, title, date| %>
+        <%= link_to title, publication_path(id) %>
+        <% if date %>
+          on <%= nice_date_time(date) %>
+        <% end %>
+      <% end %>
+    </div>
   <% end %>
-</p>
-<p>Created on: <b><%= nice_date_time @publication.created_at %></b></p>
-<p>Updated on: <b><%= nice_date_time @publication.updated_at %></b></p>
-<p>Version: <b><%= @publication.version_number %></b></p>
+  <p>
+    <% if @publication.research_service_id %>
+      Published by the <b><%= link_to @publication.research_service_name, research_service_path(@publication.research_service_id) %></b>
+    <% else %>
+      We do not have information about who was to have published this publication.
+    <% end %>
+  </p>
+  <% if @optional_extras.collections.any? %>
+    <p>Is part of these collections:</p>
+    <ul>
+      <% @optional_extras.collections.each do |id, name| %>
+        <li><%= link_to name, collection_path(id) %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% if @optional_extras.lead_member_for_collections.any? %>
+    <p>Is lead member for these collections:</p>
+    <ul>
+      <% @optional_extras.lead_member_for_collections.each do |id, name| %>
+        <li><%= link_to name, collection_path(id) %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <p>
+    <% if @publication.includes_power_bi_data_dashboard %>
+      Includes a <%= link_to 'Power BI Data Dashboard', power_bi_data_dashboards_path %>
+    <% else %>
+      Does not include a Power BI Data Dashboard
+    <% end %>
+  </p>
 
-<% if @optional_extras.supersedes.any? %>
-  <div class="highlight highlight-info">
-    This work supersedes:
+  <p>
+    <% if @publication.includes_shiny_data_dashboard %>
+      Includes a <%= link_to 'Shiny Data Dashboard', shiny_data_dashboards_path %>
+    <% else %>
+    Does not include a Shiny Data Dashboard
+    <% end %>
+  </p>
 
-    <% @optional_extras.supersedes.each do |id, title, date| %>
-      <%= link_to title, publication_path(id) %>
-      <% if date %>
-        on <%= nice_date_time(date) %>
+  <% if @withdrawal_periods.any? %>
+    <% @withdrawal_periods.each do |wp| %>
+      <%= tag.div class: class_names(
+        "highlight",
+        "highlight-error": wp.reinstated_at.blank?,
+        "highlight-info": wp.reinstated_at.present?
+      ) do %>
+        <p>
+          <b>Withdrawn from <%= nice_date_time(wp.withdrawn_at) %></b>
+          <% if wp.reinstated_at %>
+            - re-instated at: <b><%= nice_date_time(wp.reinstated_at) %></b>
+          <% end %>
+        </p>
       <% end %>
     <% end %>
-  </div>
-<% end %>
-
-<% if @merged_and_split_details.merged_from.any? %>
-  <div class="highlight highlight-info">
-    This work is merged from: <%= publication_links_from_array_of_objects(@merged_and_split_details.merged_from) %>
-    <% if @merged_and_split_details.merged_from_dates %>
-      on: <%= @merged_and_split_details.merged_from_dates.map { |d| nice_date_time(d) }.join(', ') %>
-    <% end %>
-  </div>
-<% end %>
-
-<% if @merged_and_split_details.merged_into.any? %>
-  <div class="highlight highlight-info">
-    This work is merged into: <%= publication_links_from_array_of_objects(@merged_and_split_details.merged_into) %>
-    <% if @merged_and_split_details.merged_into_dates %>
-      on: <%= @merged_and_split_details.merged_into_dates.map { |d| nice_date_time(d) }.join(', ') %>
-    <% end %>
-  </div>
-<% end %>
-
-<% if @merged_and_split_details.split_from.any? %>
-  <div class="highlight highlight-info">
-    This work is split from: <%= publication_links_from_array_of_objects(@merged_and_split_details.split_from) %>
-    <% if @merged_and_split_details.split_from_dates %>
-      on: <%= @merged_and_split_details.split_from_dates.map { |d| nice_date_time(d) }.join(', ') %>
-    <% end %>
-  </div>
-<% end %>
-
-<% if @merged_and_split_details.split_to.any? %>
-  <div class="highlight highlight-info">
-    This work is split into: <%= publication_links_from_array_of_objects(@merged_and_split_details.split_to) %>
-    <% if @merged_and_split_details.split_to_dates %>
-      on: <%= @merged_and_split_details.split_to_dates.map { |d| nice_date_time(d) }.join(', ') %>
-    <% end %>
-  </div>
-<% end %>
-
-<h3>Business items</h3>
-<% if @optional_extras.business_item_objects.any? %>
-  <% @optional_extras.business_item_objects.each do |bi| %>
-    <%= link_to bi.label, business_items_for_a_week_and_house_path(id: bi.business_item_in_house, week_number: bi.week_number, year: bi.year) %>
+  <% else %>
+    <p>No withdrawal periods</p>
   <% end %>
-<% else %>
-  <p>We do not have any business items</p>
-<% end %>
 
-<h3>Associated concepts</h3>
-<% if @optional_extras.concepts.any? %>
-  <% @optional_extras.concepts.each do |c| %>
-    <span class="badge badge-primary"><%= link_to c.label, concept_path(c.id), class: "text-white" %></span>
-  <% end %>
-<% else %>
-  <p>We do not have any associated concepts for this publication</p>
-<% end %>
-
-<h3>Contributions</h3>
-<% if @contributions.any? %>
-  <% @contributions.each do |contribution| %>
-    <p><%= link_to contribution.person_name, person_path(contribution.person_id ) %> as <%= contribution.contribution_type %> - a <%= contribution.is_contribution_public ? "public" : "private" %> contribution</p>
-  <% end %>
-<% else %>
-  <p>We do not have any contributors in our records for this publication.</p>
-<% end %>
-
-<h3>Related works</h3>
-<% if @related_works.any? %>
-  <ul>
-    <% @related_works.each do |related_work| %>
-      <li><%= link_to related_work.title, publication_path(related_work.id) %></li>
+  <% if @disclaimers.any? %>
+    <% @disclaimers.each do |id, label, date| %>
+      <div class="highlight highlight-warning">
+        <p>
+          <%= link_to label, disclaimer_path(id) %>
+          <% if date %>
+            Applicable from: <%= nice_date(date) %>
+          <% end %>
+        </p>
+      </div>
     <% end %>
-  </ul>
-<% else %>
-  <p>We do not have any related works for this publication.</p>
-<% end %>
+  <% else %>
+    <p>No disclaimers</p>
+  <% end %>
 
-<h3>Related links</h3>
-<% if @related_links.any? %>
-  <ul>
-    <% @related_links.each do |related_link| %>
-      <li><%= link_to related_link.title, related_link.url %></li>
+  <p>Reference: <b><%= @publication.ref.presence || "We do not have a reference for this publication." %></b></p>
+  <p>DOI:
+    <% if @publication.doi.presence %>
+      <%= link_to @publication.doi, "https://doi.org/#{@publication.doi}" %>
+    <% else %>
+      We do not have a DOI for this publication.
     <% end %>
-  </ul>
-<% else %>
-  <p>We do not have any related links for this expression.</p>
-<% end %>
+  </p>
 
-<% if @grouped_resources.any? %>
-  <% @grouped_resources.each do |type, resources| %>
-    <h3><%= type.pluralize %></h3>
-    <% resources.each do |resource| %>
-      <%= link_to resource.public_url, class: "card" do %>
-        <div class="card-inner">
-          <div class="content">
-            <div class="primary-info"><%= resource.file_title %></div>
-            <div class="secondary-info">Label: <%= resource.file_label %></div>
-            <div class="tertiary-info">Private URL: <%= resource.private_url %></div>
-            <div class="tertiary-info">
-              <% if resource.mime_type == "application/pdf" && resource.public_url %>
-                <details>
-                  <summary>Show preview of PDF</summary>
-                  <iframe src="<%= resource.public_url %>" width="80%" height="300px" type="application/pdf" title="Embedded PDF">
-                    <p>Your browser doesn't support PDF preview. <a href="<%= @pdf_url %>">Download it instead.</a></p>
-                  </iframe>
-                </details>
-              <% end %>
-              <% if type.downcase == "image" && resource.public_url %>
-                <details>
-                  <summary>Show image</summary>
-                  <%= image_tag(resource.public_url, alt: "Embededded image") %>
-                </details>
-              <% end %>
-            </div>
-          </div>
+  <% if @optional_extras.supersedes.any? %>
+    <div class="highlight highlight-info">
+      This work supersedes:
 
-          <div class="info">
-            <div class="info-inner">
-              <div class="indicators-left">
-                <div class="indicator indicator-label"><%= resource.mime_type %></div>
+      <% @optional_extras.supersedes.each do |id, title, date| %>
+        <%= link_to title, publication_path(id) %>
+        <% if date %>
+          on <%= nice_date_time(date) %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @merged_and_split_details.merged_from.any? %>
+    <div class="highlight highlight-info">
+      This work is merged from: <%= publication_links_from_array_of_objects(@merged_and_split_details.merged_from) %>
+      <% if @merged_and_split_details.merged_from_dates %>
+        on: <%= @merged_and_split_details.merged_from_dates.map { |d| nice_date_time(d) }.join(', ') %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @merged_and_split_details.merged_into.any? %>
+    <div class="highlight highlight-info">
+      This work is merged into: <%= publication_links_from_array_of_objects(@merged_and_split_details.merged_into) %>
+      <% if @merged_and_split_details.merged_into_dates %>
+        on: <%= @merged_and_split_details.merged_into_dates.map { |d| nice_date_time(d) }.join(', ') %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @merged_and_split_details.split_from.any? %>
+    <div class="highlight highlight-info">
+      This work is split from: <%= publication_links_from_array_of_objects(@merged_and_split_details.split_from) %>
+      <% if @merged_and_split_details.split_from_dates %>
+        on: <%= @merged_and_split_details.split_from_dates.map { |d| nice_date_time(d) }.join(', ') %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @merged_and_split_details.split_to.any? %>
+    <div class="highlight highlight-info">
+      This work is split into: <%= publication_links_from_array_of_objects(@merged_and_split_details.split_to) %>
+      <% if @merged_and_split_details.split_to_dates %>
+        on: <%= @merged_and_split_details.split_to_dates.map { |d| nice_date_time(d) }.join(', ') %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <h3>Business items</h3>
+  <% if @optional_extras.business_item_objects.any? %>
+    <% @optional_extras.business_item_objects.each do |bi| %>
+      <%= link_to bi.label, business_items_for_a_week_and_house_path(id: bi.business_item_in_house, week_number: bi.week_number, year: bi.year) %>
+    <% end %>
+  <% else %>
+    <p>We do not have any business items</p>
+  <% end %>
+
+  <h3>Associated concepts</h3>
+  <% if @optional_extras.concepts.any? %>
+    <% @optional_extras.concepts.each do |c| %>
+      <span class="badge badge-primary"><%= link_to c.label, concept_path(c.id), class: "text-white" %></span>
+    <% end %>
+  <% else %>
+    <p>We do not have any associated concepts for this publication</p>
+  <% end %>
+
+  <h3>Related works</h3>
+  <% if @related_works.any? %>
+    <ul>
+      <% @related_works.each do |related_work| %>
+        <li><%= link_to related_work.title, publication_path(related_work.id) %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>We do not have any related works for this publication.</p>
+  <% end %>
+</div>
+
+<p><strong>From the published expression</strong></p>
+<div class="border mb-4 p-3">
+  <p><i><%= @teaser_text %></i></p>
+  <p>Created on: <b><%= nice_date_time @publication.created_at %></b></p>
+  <p>Updated on: <b><%= nice_date_time @publication.updated_at %></b></p>
+  <p>Version: <b><%= @publication.version_number %></b></p>
+
+  <h3>Contributions</h3>
+  <% if @contributions.any? %>
+    <% @contributions.each do |contribution| %>
+      <p><%= link_to contribution.person_name, person_path(contribution.person_id ) %> as <%= contribution.contribution_type %> - a <%= contribution.is_contribution_public ? "public" : "private" %> contribution</p>
+    <% end %>
+  <% else %>
+    <p>We do not have any contributors in our records for this publication.</p>
+  <% end %>
+
+  <h3>Related links</h3>
+  <% if @related_links.any? %>
+    <ul>
+      <% @related_links.each do |related_link| %>
+        <li><%= link_to related_link.title, related_link.url %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>We do not have any related links for this expression.</p>
+  <% end %>
+
+  <% if @grouped_resources.any? %>
+    <% @grouped_resources.each do |type, resources| %>
+      <h3><%= type.pluralize %></h3>
+      <% resources.each do |resource| %>
+        <%= link_to resource.public_url, class: "card" do %>
+          <div class="card-inner">
+            <div class="content">
+              <div class="primary-info"><%= resource.file_title %></div>
+              <div class="secondary-info">Label: <%= resource.file_label %></div>
+              <div class="tertiary-info">Private URL: <%= resource.private_url %></div>
+              <div class="tertiary-info">
+                <% if resource.mime_type == "application/pdf" && resource.public_url %>
+                  <details>
+                    <summary>Show preview of PDF</summary>
+                    <iframe src="<%= resource.public_url %>" width="80%" height="300px" type="application/pdf" title="Embedded PDF">
+                      <p>Your browser doesn't support PDF preview. <a href="<%= @pdf_url %>">Download it instead.</a></p>
+                    </iframe>
+                  </details>
+                <% end %>
+                <% if type.downcase == "image" && resource.public_url %>
+                  <details>
+                    <summary>Show image</summary>
+                    <%= image_tag(resource.public_url, alt: "Embededded image") %>
+                  </details>
+                <% end %>
               </div>
-              <div class="indicators-right">
-                <div class="indicator">
-                  <i class="fas fa-hdd"></i>
-                  <%= number_to_human_size resource.file_size_in_bytes %>
+            </div>
+
+            <div class="info">
+              <div class="info-inner">
+                <div class="indicators-left">
+                  <div class="indicator indicator-label"><%= resource.mime_type %></div>
+                </div>
+                <div class="indicators-right">
+                  <div class="indicator">
+                    <i class="fas fa-hdd"></i>
+                    <%= number_to_human_size resource.file_size_in_bytes %>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        <% end %>
       <% end %>
     <% end %>
+  <% else %>
+    <p>We do not have any file resources linked to this publication</p>
   <% end %>
-<% else %>
-  <p>We do not have any file resources linked to this publication</p>
-<% end %>
+</div>
 
 <h2>Expressions of this publication</h2>
 <%= link_to "Expressions/Versions of this publication", publication_expressions_path(@publication_work_id) %>
