@@ -180,82 +180,90 @@
   <% end %>
 </div>
 
-<p><strong>From the published expression</strong></p>
-<div class="border mb-4 p-3">
-  <p><i><%= @teaser_text %></i></p>
-  <p>Created on: <b><%= nice_date_time @publication.created_at %></b></p>
-  <p>Updated on: <b><%= nice_date_time @publication.updated_at %></b></p>
-  <p>Version: <b><%= @publication.version_number %></b></p>
+<% if @publication.published_expression_id %>
+  <p><b>From the published expression</b></p>
+  <div class="border mb-4 p-3">
+    <p><i><%= @teaser_text %></i></p>
+    <p>Created on: <b><%= nice_date_time @publication.created_at %></b></p>
+    <p>Updated on: <b><%= nice_date_time @publication.updated_at %></b></p>
+    <p>Version: <b><%= @publication.version_number %></b></p>
 
-  <h3>Contributions</h3>
-  <% if @contributions.any? %>
-    <% @contributions.each do |contribution| %>
-      <p><%= link_to contribution.person_name, person_path(contribution.person_id ) %> as <%= contribution.contribution_type %> - a <%= contribution.is_contribution_public ? "public" : "private" %> contribution</p>
-    <% end %>
-  <% else %>
-    <p>We do not have any contributors in our records for this publication.</p>
-  <% end %>
-
-  <h3>Related links</h3>
-  <% if @related_links.any? %>
-    <ul>
-      <% @related_links.each do |related_link| %>
-        <li><%= link_to related_link.title, related_link.url %></li>
+    <h3>Contributions</h3>
+    <% if @contributions.any? %>
+      <% @contributions.each do |contribution| %>
+        <p><%= link_to contribution.person_name, person_path(contribution.person_id ) %> as <%= contribution.contribution_type %> - a <%= contribution.is_contribution_public ? "public" : "private" %> contribution</p>
       <% end %>
-    </ul>
-  <% else %>
-    <p>We do not have any related links for this expression.</p>
-  <% end %>
+    <% else %>
+      <p>We do not have any contributors in our records for this publication.</p>
+    <% end %>
 
-  <% if @grouped_resources.any? %>
-    <% @grouped_resources.each do |type, resources| %>
-      <h3><%= type.pluralize %></h3>
-      <% resources.each do |resource| %>
-        <%= link_to resource.public_url, class: "card" do %>
-          <div class="card-inner">
-            <div class="content">
-              <div class="primary-info"><%= resource.file_title %></div>
-              <div class="secondary-info">Label: <%= resource.file_label %></div>
-              <div class="tertiary-info">Private URL: <%= resource.private_url %></div>
-              <div class="tertiary-info">
-                <% if resource.mime_type == "application/pdf" && resource.public_url %>
-                  <details>
-                    <summary>Show preview of PDF</summary>
-                    <iframe src="<%= resource.public_url %>" width="80%" height="300px" type="application/pdf" title="Embedded PDF">
-                      <p>Your browser doesn't support PDF preview. <a href="<%= @pdf_url %>">Download it instead.</a></p>
-                    </iframe>
-                  </details>
-                <% end %>
-                <% if type.downcase == "image" && resource.public_url %>
-                  <details>
-                    <summary>Show image</summary>
-                    <%= image_tag(resource.public_url, alt: "Embededded image") %>
-                  </details>
-                <% end %>
-              </div>
-            </div>
+    <h3>Related links</h3>
+    <% if @related_links.any? %>
+      <ul>
+        <% @related_links.each do |related_link| %>
+          <li><%= link_to related_link.title, related_link.url %></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>We do not have any related links for this expression.</p>
+    <% end %>
 
-            <div class="info">
-              <div class="info-inner">
-                <div class="indicators-left">
-                  <div class="indicator indicator-label"><%= resource.mime_type %></div>
+    <% if @grouped_resources.any? %>
+      <% @grouped_resources.each do |type, resources| %>
+        <h3><%= type.pluralize %></h3>
+        <% resources.each do |resource| %>
+          <%= link_to resource.public_url, class: "card" do %>
+            <div class="card-inner">
+              <div class="content">
+                <div class="primary-info"><%= resource.file_title %></div>
+                <div class="secondary-info">Label: <%= resource.file_label %></div>
+                <div class="tertiary-info">Private URL: <%= resource.private_url %></div>
+                <div class="tertiary-info">
+                  <% if resource.mime_type == "application/pdf" && resource.public_url %>
+                    <details>
+                      <summary>Show preview of PDF</summary>
+                      <iframe src="<%= resource.public_url %>" width="80%" height="300px" type="application/pdf" title="Embedded PDF">
+                        <p>Your browser doesn't support PDF preview. <a href="<%= @pdf_url %>">Download it instead.</a></p>
+                      </iframe>
+                    </details>
+                  <% end %>
+                  <% if type.downcase == "image" && resource.public_url %>
+                    <details>
+                      <summary>Show image</summary>
+                      <%= image_tag(resource.public_url, alt: "Embededded image") %>
+                    </details>
+                  <% end %>
                 </div>
-                <div class="indicators-right">
-                  <div class="indicator">
-                    <i class="fas fa-hdd"></i>
-                    <%= number_to_human_size resource.file_size_in_bytes %>
+              </div>
+
+              <div class="info">
+                <div class="info-inner">
+                  <div class="indicators-left">
+                    <div class="indicator indicator-label"><%= resource.mime_type %></div>
+                  </div>
+                  <div class="indicators-right">
+                    <div class="indicator">
+                      <i class="fas fa-hdd"></i>
+                      <%= number_to_human_size resource.file_size_in_bytes %>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          <% end %>
         <% end %>
       <% end %>
+    <% else %>
+      <p>We do not have any file resources linked to this publication</p>
     <% end %>
-  <% else %>
-    <p>We do not have any file resources linked to this publication</p>
-  <% end %>
-</div>
-
+  </div>
+<% else %>
+  <p><b>There are no published expressions for this work</b></p>
+  <ul>
+    <% @expression_titles.each do |expression_title| %>
+      <li><%= link_to "#{expression_title.expression_title} - #{expression_title.status}", publication_expression_path(@publication_work_id, expression_title.id) %></li>
+    <% end %>
+  </ul>
+<% end %>
 <h2>Expressions of this publication</h2>
 <%= link_to "Expressions/Versions of this publication", publication_expressions_path(@publication_work_id) %>

@@ -57,9 +57,17 @@ class PublicationsController < AuthenticatedController
     get_publication = Datagraphs::Api::GetPublication.new
 
     @publication = get_publication.and_published_publication_details(publication_work_id: @publication_work_id)
-    title = @publication.title
+
+
+          # [{"status" => "Draft",
+          #   "expression_title" => "Ownership of the water sector",
+          #   "id" => "urn:publications-data:PublicationExpression:73644"}]
 
     sort_out_publication_details(get_publication)
+
+    title = @publication.title || @expression_titles.first["expression_title"]
+
+
 
     @crumb << { label: MAIN_PAGE_TITLE, url: publications_path }
     @crumb << { label: title, url: nil }
@@ -71,6 +79,10 @@ class PublicationsController < AuthenticatedController
   def sort_out_publication_details(get_publication = Datagraphs::Api::GetPublication.new)
     published_expression_id = @publication.published_expression_id
     expression_details = Datagraphs::Api::GetExpressionDetails.new.for(publication_expression_id: published_expression_id)
+
+    if published_expression_id.blank?
+      @expression_titles = Datagraphs::Api::GetExpressions.new.for(publication_work_id: @publication_work_id)
+    end
 
     @teaser_text = expression_details.teaser_text
     @summary = expression_details.summary
