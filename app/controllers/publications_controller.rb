@@ -58,16 +58,9 @@ class PublicationsController < AuthenticatedController
 
     @publication = get_publication.and_published_publication_details(publication_work_id: @publication_work_id)
 
-
-          # [{"status" => "Draft",
-          #   "expression_title" => "Ownership of the water sector",
-          #   "id" => "urn:publications-data:PublicationExpression:73644"}]
-
     sort_out_publication_details(get_publication)
 
-    title = @publication.title || @expression_titles.first["expression_title"]
-
-
+    title = @publication.title || @expression_titles.first.expression_title
 
     @crumb << { label: MAIN_PAGE_TITLE, url: publications_path }
     @crumb << { label: title, url: nil }
