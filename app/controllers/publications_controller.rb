@@ -69,7 +69,6 @@ class PublicationsController < AuthenticatedController
   private
 
   def sort_out_publication_details(get_publication = Datagraphs::Api::GetPublication.new)
-
     published_expression_id = @publication.published_expression_id
     expression_details = Datagraphs::Api::GetExpressionDetails.new.for(publication_expression_id: published_expression_id)
 
@@ -89,6 +88,6 @@ class PublicationsController < AuthenticatedController
     @contributions = get_publication.and_contributors(publication_work_id: @publication_work_id)
 
     resources = get_publication.and_resources(publication_work_id: @publication_work_id)
-    @resources = resources.select { |resource| resource.file_title.present? }
+    @grouped_resources = resources.select { |resource| resource.file_title.present? }.group_by(&:resource_type)
   end
 end
