@@ -16,6 +16,24 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
+      LEGISLATIVE = <<-Q.squish
+        MATCH (concept:Concept)
+        OPTIONAL MATCH (concept)<-[s:subject]-(pw:PublicationWork)<-[r3:expressionOf]-(pe:PublicationExpression)-[r4:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE concept.isLegislationBeforeParliament = True
+        AND pes.label = 'Published'
+          RETURN  DISTINCT(concept.id) AS id,
+                  concept.label AS concept_name,
+                  concept.isLegislationBeforeParliament AS is_legislation_before_parliament,
+                  COUNT(DISTINCT pw.id) AS publications_count
+                  ORDER BY concept_name ASC
+      Q
+
+      COUNT_WITH_LEGISLATION = <<-Q.squish
+        MATCH (concept:Concept)
+        WHERE concept.isLegislationBeforeParliament = True
+        RETURN COUNT(concept) AS total
+      Q
+
       PROMOTED_BY = <<-Q.squish
         MATCH (concept)<-[e:conceptPromotionOf]-(b:ConceptPromotion)-[f:conceptPromotionBy]->(rs:ResearchService)
         WHERE rs.id = '%{research_service_id}'
@@ -122,6 +140,18 @@ module Datagraphs
 
       def promoted_by(research_service_id:, skip: 0, limit: 25)
         params = { query: PROMOTED_BY % { skip: skip, limit: limit, research_service_id: research_service_id }}
+        response = call(params: params)
+        body = process_response(response.body)
+        body.map { |concept| Hashie::Mash.new(concept) }
+      end
+
+      def count_with_legislation
+        params = { query: COUNT_WITH_LEGISLATION }
+        generic_count(params: params)
+      end
+
+      def with_legislation(skip: 0, limit: 25)
+        params = { query: LEGISLATIVE % { skip: skip, limit: limit }}
         response = call(params: params)
         body = process_response(response.body)
         body.map { |concept| Hashie::Mash.new(concept) }

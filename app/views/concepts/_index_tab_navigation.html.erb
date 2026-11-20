@@ -1,0 +1,26 @@
+<div class="block">
+  <div class="tabs">
+    <ul class="nav-tabs" role="tablist">
+      <li role="presentation">
+        <%= link_to concepts_path, role: "tab", class: class_names(active: current_page?(concepts_path)) do %>
+          All concepts
+        <% end %>
+      </li>
+      <li role="presentation">
+        <%= link_to promoted_concepts_path, role: "tab", class: class_names(active: current_page?(promoted_concepts_path)) do %>
+          Promoted
+        <% end %>
+      </li>
+      <li role="presentation">
+        <%= link_to legislative_concepts_path, role: "tab", class: class_names(active: current_page?(legislative_concepts_path)) do %>
+          Leglislative
+        <% end %>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" role="tabpanel">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+</div>
