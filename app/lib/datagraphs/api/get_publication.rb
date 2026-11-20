@@ -186,7 +186,7 @@ module Datagraphs
         response = call(params: params)
         oe = process_response(response.body)
 
-        oe.map { |record| Hashie::Mash.new(record["publication_work"]) }
+        oe.map { |record| Hashie::Mash.new(record["publication_work"]) if record["publication_work"] }
       end
 
       def and_merged_and_split_details(publication_work_id:)
