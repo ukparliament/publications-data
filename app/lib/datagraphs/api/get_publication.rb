@@ -126,16 +126,18 @@ module Datagraphs
 
       RESOURCES_ONLY = <<-Q.squish
         MATCH (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        OPTIONAL MATCH (pubExp)<-[r:forPublicationExpression]-(resFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
+        OPTIONAL MATCH (pubExp)<-[r:forPublicationExpression]-(resourceFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
+        OPTIONAL MATCH (resourceFile)-[hrft:hasResourceFileType]->(resourceFileType:ResourceFileType)
         WHERE pubWork.id = '%{publication_work_id}'
         AND pes.label = 'Published'
-        RETURN
-              resFileLink.title as file_title,
-              resourceFile.label as file_label,
-              resourceFile.mimeType as mime_type,
-              resourceFile.fileSizeInBytes as file_size_in_bytes,
-              resourceFile.publicUrl as public_url,
-              resourceFile.privateUrl as private_url
+        RETURN resourceFileLink, resourceFile, resourceFileType,
+              resourceFileLink.title        AS file_title,
+              resourceFile.label            AS file_label,
+              resourceFile.mimeType         AS mime_type,
+              resourceFile.fileSizeInBytes  AS file_size_in_bytes,
+              resourceFile.publicUrl        AS public_url,
+              resourceFile.privateUrl       AS private_url,
+              resourceFileType.label        AS resource_type
       Q
 
       RELATED_LINKS_ONLY  = <<-Q.squish
@@ -217,7 +219,10 @@ module Datagraphs
 
         response = call(params: params)
         body = process_response(response.body)
-        body.map { |resource| Hashie::Mash.new(resource) }
+        body.map do |resource|
+          resource.deep_transform_keys!(&:underscore)
+          Hashie::Mash.new(resource)
+        end
       end
 
       def and_related_links(publication_work_id: 'urn:publications-data:PublicationWork:7809')

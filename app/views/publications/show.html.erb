@@ -205,41 +205,49 @@
   <p>We do not have any related links for this expression.</p>
 <% end %>
 
-<h3>Resources</h3>
-<% if @resources.any? %>
-  <% @resources.each do |resource| %>
-    <%= link_to resource.public_url, class: "card" do %>
-      <div class="card-inner">
-        <div class="content">
-          <div class="primary-info"><%= resource.file_title %></div>
-          <div class="secondary-info">Label: <%= resource.file_label %></div>
-          <div class="tertiary-info">Private URL: <%= resource.private_url %></div>
-          <div class="tertiary-info">
-            <% if resource.mime_type == "application/pdf" && resource.public_url %>
-              <details>
-                <summary>Show preview of PDF</summary>
-                <iframe src="<%= resource.public_url %>" width="80%" height="300px" type="application/pdf" title="Embedded PDF">
-                  <p>Your browser doesn't support PDF preview. <a href="<%= @pdf_url %>">Download it instead.</a></p>
-                </iframe>
-              </details>
-            <% end %>
-          </div>
-        </div>
-
-        <div class="info">
-          <div class="info-inner">
-            <div class="indicators-left">
-              <div class="indicator indicator-label"><%= resource.mime_type %></div>
+<% if @grouped_resources.any? %>
+  <% @grouped_resources.each do |type, resources| %>
+    <h3><%= type.pluralize %></h3>
+    <% resources.each do |resource| %>
+      <%= link_to resource.public_url, class: "card" do %>
+        <div class="card-inner">
+          <div class="content">
+            <div class="primary-info"><%= resource.file_title %></div>
+            <div class="secondary-info">Label: <%= resource.file_label %></div>
+            <div class="tertiary-info">Private URL: <%= resource.private_url %></div>
+            <div class="tertiary-info">
+              <% if resource.mime_type == "application/pdf" && resource.public_url %>
+                <details>
+                  <summary>Show preview of PDF</summary>
+                  <iframe src="<%= resource.public_url %>" width="80%" height="300px" type="application/pdf" title="Embedded PDF">
+                    <p>Your browser doesn't support PDF preview. <a href="<%= @pdf_url %>">Download it instead.</a></p>
+                  </iframe>
+                </details>
+              <% end %>
+              <% if type.downcase == "image" && resource.public_url %>
+                <details>
+                  <summary>Show image</summary>
+                  <%= image_tag(resource.public_url, alt: "Embededded image") %>
+                </details>
+              <% end %>
             </div>
-            <div class="indicators-right">
-              <div class="indicator">
-                <i class="fas fa-hdd"></i>
-                <%= number_to_human_size resource.file_size_in_bytes %>
+          </div>
+
+          <div class="info">
+            <div class="info-inner">
+              <div class="indicators-left">
+                <div class="indicator indicator-label"><%= resource.mime_type %></div>
+              </div>
+              <div class="indicators-right">
+                <div class="indicator">
+                  <i class="fas fa-hdd"></i>
+                  <%= number_to_human_size resource.file_size_in_bytes %>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
   <% end %>
 <% else %>
