@@ -79,7 +79,7 @@ module Datagraphs
       end
 
       def fields
-        "type,title,createdOn,reference,publishedBy.id, publishedBy.name"
+        "type,title,createdOn,reference,publishedBy.id, publishedBy.name,updatedAt"
       end
 
       def process_response(response)

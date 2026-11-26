@@ -56,7 +56,8 @@ class SearchController < AuthenticatedController
       @pagy, _ = pagy( :offset, [], count: @total_count, page: page_number, limit: page_size )
 
       # We create the results object.
-      @results = results.results.map { |result| Hashie::Mash.new(result) }
+      #
+      @results = results.results.sort_by { |res| res["updatedAt"] }.reverse.map { |result| Hashie::Mash.new(result) }
     # Otherwise, if no query has been passed ...
     else
 
