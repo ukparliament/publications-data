@@ -210,7 +210,7 @@
 
     <% if @grouped_resources.any? %>
       <% @grouped_resources.each do |type, resources| %>
-        <h3><%= type.pluralize %></h3>
+        <h3><%= type.pluralize(resources.size) %></h3>
         <% resources.each do |resource| %>
           <%= link_to resource.public_url, class: "card" do %>
             <div class="card-inner">
