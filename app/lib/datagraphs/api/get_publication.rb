@@ -126,8 +126,7 @@ module Datagraphs
 
       RESOURCES_ONLY = <<-Q.squish
         MATCH (pubWork:PublicationWork)<-[eO:expressionOf]-(pubExp:PublicationExpression)-[t:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
-        OPTIONAL MATCH (pubExp)<-[r:forPublicationExpression]-(resourceFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)
-        OPTIONAL MATCH (resourceFile)-[hrft:hasResourceFileType]->(resourceFileType:ResourceFileType)
+        MATCH (pubExp)<-[r:forPublicationExpression]-(resourceFileLink:ResourceFileLink)-[s:forResourceFile]->(resourceFile:ResourceFile)-[hrft:hasResourceFileType]->(resourceFileType:ResourceFileType)
         WHERE pubWork.id = '%{publication_work_id}'
         AND pes.label = 'Published'
         RETURN
@@ -137,7 +136,9 @@ module Datagraphs
               resourceFile.fileSizeInBytes  AS file_size_in_bytes,
               resourceFile.publicUrl        AS public_url,
               resourceFile.privateUrl       AS private_url,
-              resourceFileType.label        AS resource_type
+              resourceFileType.label        AS resource_type,
+              resourceFileType.displayOrder AS display_order
+        ORDER BY resourceFileType.displayOrder
       Q
 
       RELATED_LINKS_ONLY  = <<-Q.squish
