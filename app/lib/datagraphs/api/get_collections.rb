@@ -7,11 +7,14 @@ module Datagraphs
         MATCH (pe:PublicationExpression)-[r3:expressionOf]->(pw:PublicationWork)-[r4:publishedBy]->(rs:ResearchService)
         MATCH (pe)-[r7:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         OPTIONAL MATCH (person:Person)<-[r5:contributionBy]-(cont:Contribution)-[r6:contributionTo]->(pe)
+        OPTIONAL MATCH (c:Collection)<-[e:collectionPromotionOf]-(b:CollectionPromotion)-[r:collectionPromotionBy]->(promotedBy:ResearchService)
         WHERE pes.label = 'Published'
         RETURN c.name AS name,
                c.id AS id,
                leadPublicationWork.id AS lead_publication_work_id,
                leadPublicationWork.title AS lead_publication_work_name,
+               promotedBy.id AS promoted_by_id,
+               promotedBy.name AS promoted_by_name,
                COUNT(pw) AS pw_count
         ORDER BY name
       Q
