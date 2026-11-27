@@ -79,6 +79,8 @@ class PublicationsController < AuthenticatedController
 
     @teaser_text = expression_details.teaser_text
     @summary = expression_details.summary
+    @summary_word_count = ActionView::Base.full_sanitizer.sanitize(@summary).split(/\s+/).count
+    @summary_reading_time = [(@summary_word_count / 200.0).ceil, 1].max
 
     @optional_extras = get_publication.and_optional_extras(publication_work_id: @publication_work_id)
     @related_works = get_publication.and_related_works(publication_work_id: @publication_work_id)

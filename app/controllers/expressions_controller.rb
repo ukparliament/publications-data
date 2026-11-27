@@ -37,6 +37,8 @@ class ExpressionsController < AuthenticatedController
 
     @teaser_text = expression_details.teaser_text
     @summary = expression_details.summary
+    @summary_word_count = ActionView::Base.full_sanitizer.sanitize(@summary).split(/\s+/).count
+    @summary_reading_time = [(@summary_word_count / 200.0).ceil, 1].max
 
     @crumb << { label: "Publications", url: publications_path }
     @crumb << { label: @page_title, url: publication_path(@publication.id) }
