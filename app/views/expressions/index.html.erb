@@ -2,7 +2,7 @@
 <p><b>Reference:</b> <%= @publication.ref %></p>
 <p><b>Published:</b> <%= nice_date_time @publication.published_at %></p>
 <p><b>Summary word count:</b> <%= @summary_word_count %></p>
-<p><b>Summary reading time:</b> <%= @summary_reading_time %> minutes</p>
+<p><b>Summary reading time:</b> <%= pluralize(@summary_reading_time, 'minute') %></p>
 
 <%= form_for(:expressions, method: :get, include_hidden: false) do |f| %>
   <fieldset class="p-form__fieldset">

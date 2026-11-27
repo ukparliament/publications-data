@@ -188,7 +188,7 @@
     <p>Updated on: <b><%= nice_date_time @publication.updated_at %></b></p>
     <p>Version: <b><%= @publication.version_number %></b></p>
     <p><b>Summary word count:</b> <%= @summary_word_count %></p>
-    <p><b>Summary reading time:</b> <%= @summary_reading_time %> minutes</p>
+    <p><b>Summary reading time:</b> <%= pluralize(@summary_reading_time, 'minute') %></p>
 
     <h3>Contributions</h3>
     <% if @contributions.any? %>
