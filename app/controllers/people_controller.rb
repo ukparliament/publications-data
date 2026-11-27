@@ -18,7 +18,7 @@ class PeopleController < AuthenticatedController
     @page_title = MAIN_PAGE_TITLE
   end
 
-  def show
+  def publications
     person_id = params[:id]
     @person = Datagraphs::Api::GetPerson.new.details(person_id: person_id)
 
@@ -30,7 +30,31 @@ class PeopleController < AuthenticatedController
     @publications = get_person_and_publications.all(person_id: person_id, skip: @pagy.offset, limit: @pagy.limit)
 
     @crumb << { label: MAIN_PAGE_TITLE, url: people_path }
-    @crumb << { label: @person.name, url: nil }
+    @crumb << { label: @person.name, url: person_path(person_id) }
+    @crumb << { label: "Publications", url: nil }
+
     @page_title = @person.name
+  end
+
+  def unpublished
+    person_id = params[:id]
+    @person = Datagraphs::Api::GetPerson.new.details(person_id: person_id)
+
+    get_person_and_publications = Datagraphs::Api::GetPublicationDataForAPerson.new
+
+    @total_count = get_person_and_publications.total_count_for(person_id: person_id)
+    @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
+
+    @publications = get_person_and_publications.all(person_id: person_id, skip: @pagy.offset, limit: @pagy.limit)
+
+    @crumb << { label: MAIN_PAGE_TITLE, url: people_path }
+    @crumb << { label: @person.name, url: person_path(person_id) }
+    @crumb << { label: "Publications", url: nil }
+
+    @page_title = @person.name
+  end
+
+  def show
+    redirect_to publications_person_path(params[:id])
   end
 end
