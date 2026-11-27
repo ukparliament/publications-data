@@ -63,23 +63,56 @@ module Datagraphs
         WHERE s.id = '%{section_id}'
       Q
 
-      UNPUBLISHED_FOR_A_PERSON_SUB_QUERY =  <<-Q.squish
+      UNPUBLISHED_FOR_A_PERSON_SUB_QUERY = <<-Q.squish
         MATCH (p:Person)<-[cB:contributionBy]-(c:Contribution)-[cT:contributionTo]->(pe:PublicationExpression)
         WHERE p.id = '%{person_id}'
       Q
 
-      UNPUBLISHED_FOR_A_PERSON  =  <<-Q.squish
-
-        MATCH (p:Person)<-[cB:contributionBy]-(c:Contribution)-[cT:contributionTo]->(pe:PublicationExpression)-[e:expressionOf]->(pw:PublicationWork)
-        MATCH (pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+      UNPUBLISHED_COUNT_FOR_A_PERSON = <<-Q.squish
+        MATCH (p:Person)<-[:contributionBy]-(:Contribution)-[:contributionTo]->(:PublicationExpression)-[:expressionOf]->(pw:PublicationWork)
         WHERE p.id = '%{person_id}'
-        AND pes.label = 'Published'
-        RETURN pw, count(pe) AS expression_count
-        NEXT YIELD pw, expression_count
-        FILTER expression_count = 0
-        MATCH (pw:PublicationWork)
-        RETURN pw
+        RETURN DISTINCT pw
+        NEXT YIELD pw
+        MATCH (pw)<-[:expressionOf]-(pe:PublicationExpression)
+        OPTIONAL MATCH (pe)-[:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus {label: 'Published'})
+        RETURN pw, COUNT(pes) AS published_count
+        NEXT YIELD pw, published_count
+        FILTER published_count = 0
+        MATCH (pw)
+        OPTIONAL MATCH (pw)<-[:expressionOf]-(pe2)-[:hasPublicationExpressionStatus]->(pes2)
+        OPTIONAL MATCH (pw)-[r6:publishedBy]->(rs:ResearchService)
+        OPTIONAL MATCH (person:Person)<-[:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe2)
+        OPTIONAL MATCH (cont:Contribution)-[:hasContributionType]->(ct:ContributionType)
+        RETURN COUNT(DISTINCT pw) AS total
+      Q
 
+      UNPUBLISHED_FOR_A_PERSON = <<-Q.squish
+        MATCH (p:Person)<-[:contributionBy]-(:Contribution)-[:contributionTo]->(:PublicationExpression)-[:expressionOf]->(pw:PublicationWork)
+        WHERE p.id = '%{person_id}'
+        RETURN DISTINCT pw
+        NEXT YIELD pw
+        MATCH (pw)<-[:expressionOf]-(pe:PublicationExpression)
+        OPTIONAL MATCH (pe)-[:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus {label: 'Published'})
+        RETURN pw, COUNT(pes) AS published_count
+        NEXT YIELD pw, published_count
+        FILTER published_count = 0
+        MATCH (pw)
+        OPTIONAL MATCH (pw)<-[:expressionOf]-(pe2)-[:hasPublicationExpressionStatus]->(pes2)
+        OPTIONAL MATCH (pw)-[r6:publishedBy]->(rs:ResearchService)
+        OPTIONAL MATCH (person:Person)<-[:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe2)
+        OPTIONAL MATCH (cont:Contribution)-[:hasContributionType]->(ct:ContributionType)
+        RETURN
+               pw.id as publication_work_id,
+               COLLECT_LIST(DISTINCT pe2.title) as title,
+               pes.label as status,
+               pw.createdOn as created_at,
+               COLLECT_LIST (DISTINCT pe2.updatedAt) AS updated_at,
+               rs.shortName AS short_research_service_name,
+               rs.id AS research_service_id,
+               COLLECT_LIST(DISTINCT ct.label) AS contribution_type,
+               COLLECT_LIST(DISTINCT person.id) AS contributor_ids,
+               COLLECT_LIST(DISTINCT person.displayName) AS contributor_names
+        ORDER BY created_at DESC
       Q
 
       UNPUBLISHED_FOR_A_GENERIC = <<-Q.squish
@@ -91,7 +124,6 @@ module Datagraphs
         FILTER expression_count = 0
         MATCH (pw:PublicationWork)<-[e:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         OPTIONAL MATCH (pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
-        OPTIONAL MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe)
         RETURN pe.id as publication_expression_id,
                pw.id as publication_work_id,
                pe.title as title,
@@ -144,16 +176,17 @@ module Datagraphs
         unpublished_for_a_generic(sub_query: sub_query, skip: skip, limit: 25)
       end
 
-      def for_a_person(person_id:, skip: 0, limit: 25)
-
+      def for_a_person(person_id:, skip: 0, limit: 100)
         params = { query: UNPUBLISHED_FOR_A_PERSON % { person_id: person_id, skip: skip, limit: limit }}
-        response = call(params: params)
-        process_response(response.body)
-
+        process_unpublished(params)
       end
 
-      def unpublished_for_a_generic(sub_query:, skip:0, limit: 25)
-        params = { query: UNPUBLISHED_FOR_A_GENERIC % { sub_query: sub_query, skip: skip, limit: limit }}
+      def for_a_person_count(person_id:)
+        params = { query: UNPUBLISHED_COUNT_FOR_A_PERSON % { person_id: person_id }}
+        generic_count(params: params)
+      end
+
+      def process_unpublished(params)
         response = call(params: params)
 
         publications = process_response(response.body)
@@ -167,6 +200,11 @@ module Datagraphs
         end
 
         publications.map { |publication| Hashie::Mash.new(publication) }
+      end
+
+      def unpublished_for_a_generic(sub_query:, skip:0, limit: 25)
+        params = { query: UNPUBLISHED_FOR_A_GENERIC % { sub_query: sub_query, skip: skip, limit: limit }}
+        process_unpublished(params)
       end
 
       def for_a_house_count(house_id:)

@@ -39,13 +39,13 @@ class PeopleController < AuthenticatedController
   def unpublished
     person_id = params[:id]
     @person = Datagraphs::Api::GetPerson.new.details(person_id: person_id)
+    get_unpublished = Datagraphs::Api::GetUnpublishedPublications.new
 
-    get_person_and_publications = Datagraphs::Api::GetPublicationDataForAPerson.new
-
-    @total_count = get_person_and_publications.total_count_for(person_id: person_id)
+    @total_count = get_unpublished.for_a_person_count(person_id: person_id)
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    @publications = get_person_and_publications.all(person_id: person_id, skip: @pagy.offset, limit: @pagy.limit)
+  #  @publications = get_person_and_publications.all(person_id: person_id, skip: @pagy.offset, limit: @pagy.limit)
+@publications = get_unpublished.for_a_person(person_id: person_id)
 
     @crumb << { label: MAIN_PAGE_TITLE, url: people_path }
     @crumb << { label: @person.name, url: person_path(person_id) }
