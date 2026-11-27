@@ -63,7 +63,13 @@ Rails.application.routes.draw do
     resources :expressions, only: [:index, :show]
   end
 
-  resources :people, only: [:index, :show]
+  resources :people, only: [:index, :show] do
+    member do
+      get 'unpublished'
+      get 'publications'
+    end
+  end
+
   resources :geographic_areas, only: [:index, :show]
 
 

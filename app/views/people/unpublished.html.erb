@@ -1,0 +1,41 @@
+<p>
+  <% if @person.orcid %>
+    Orcid: <%= link_to @person.orcid, "https://orcid.org/#{@person.orcid}" %>
+  <% else %>
+    Orcid: No Orcid set
+  <% end %>
+</p>
+
+<%= render 'people/tab_nav', person: @person do %>
+  <% if @publications.any? %>
+    <p>Total published publications: <%= @total_count %></p>
+    <% if @total_count > @publications.count %>
+      <%== @pagy.series_nav(:bootstrap) %>
+    <% end %>
+
+     <table class="table table-bordered table-sm">
+        <thead>
+          <tr>
+            <th scope="col" class="col-4">Title</th>
+            <th scope="col">Contribution type</th>
+            <th scope="col">Public contribution</th>
+            <th scope="col">Created at</th>
+            <th scope="col">Updated at</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @publications.each do |publication| %>
+            <tr>
+              <td><%= link_to publication.title.first, publication_path(publication.publication_work_id.first) %></td>
+              <td><%= publication.contribution_type.join(', ') %></td>
+              <td><%= publication.is_public ? "Yes" : "No" %></td>
+              <td><%= nice_date(publication.created_at) %></td>
+              <td><%= nice_date_time(publication.updated_at.first) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+  <% else %>
+    <h2>No publications</h2>
+  <% end %>
+<% end %>

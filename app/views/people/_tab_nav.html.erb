@@ -1,0 +1,19 @@
+<%# locals: (person:) %>
+
+<div class="block">
+  <div class="tabs">
+    <ul class="nav-tabs" role="tablist">
+      <li role="presentation">
+        <%= link_to 'Published', publications_person_path(person.id), role: "tab", class: class_names(active: current_page?(publications_person_path(person.id))) %>
+      </li>
+      <li role="presentation">
+        <%= link_to 'Unpublished', unpublished_person_path(person.id), role: "tab", class: class_names(active: current_page?(unpublished_person_path(person.id))) %>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" role="tabpanel">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+</div>

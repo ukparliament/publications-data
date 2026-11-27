@@ -71,16 +71,17 @@ class PublicationsController < AuthenticatedController
 
   def sort_out_publication_details(get_publication = Datagraphs::Api::GetPublication.new)
     published_expression_id = @publication.published_expression_id
-    expression_details = Datagraphs::Api::GetExpressionDetails.new.for(publication_expression_id: published_expression_id)
 
     if published_expression_id.blank?
       @expression_titles = Datagraphs::Api::GetExpressions.new.for(publication_work_id: @publication_work_id)
-    end
+    else
+      expression_details = Datagraphs::Api::GetExpressionDetails.new.for(publication_expression_id: published_expression_id)
 
-    @teaser_text = expression_details.teaser_text
-    @summary = expression_details.summary
-    @summary_word_count = ActionView::Base.full_sanitizer.sanitize(@summary).split(/\s+/).count
-    @summary_reading_time = [(@summary_word_count / 200.0).ceil, 1].max
+      @teaser_text = expression_details.teaser_text
+      @summary = expression_details.summary
+      @summary_word_count = ActionView::Base.full_sanitizer.sanitize(@summary).split(/\s+/).count
+      @summary_reading_time = [(@summary_word_count / 200.0).ceil, 1].max
+    end
 
     @optional_extras = get_publication.and_optional_extras(publication_work_id: @publication_work_id)
     @related_works = get_publication.and_related_works(publication_work_id: @publication_work_id)
