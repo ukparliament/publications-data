@@ -70,20 +70,38 @@ module Datagraphs
 
       UNPUBLISHED_COUNT_FOR_A_PERSON = <<-Q.squish
         MATCH (p:Person)<-[:contributionBy]-(:Contribution)-[:contributionTo]->(:PublicationExpression)-[:expressionOf]->(pw:PublicationWork)
-        WHERE p.id = '%{person_id}'
-        RETURN DISTINCT pw
-        NEXT YIELD pw
+          WHERE p.id = '%{person_id}'
+          RETURN DISTINCT pw
+          NEXT YIELD pw
         MATCH (pw)<-[:expressionOf]-(pe:PublicationExpression)
         OPTIONAL MATCH (pe)-[:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus {label: 'Published'})
-        RETURN pw, COUNT(pes) AS published_count
-        NEXT YIELD pw, published_count
-        FILTER published_count = 0
+          RETURN pw, COUNT(pes) AS published_count
+          NEXT YIELD pw, published_count
+          FILTER published_count = 0
         MATCH (pw)
         OPTIONAL MATCH (pw)<-[:expressionOf]-(pe2)-[:hasPublicationExpressionStatus]->(pes2)
         OPTIONAL MATCH (pw)-[r6:publishedBy]->(rs:ResearchService)
         OPTIONAL MATCH (person:Person)<-[:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe2)
         OPTIONAL MATCH (cont:Contribution)-[:hasContributionType]->(ct:ContributionType)
         RETURN COUNT(DISTINCT pw) AS total
+      Q
+
+      UNPUBLISHED_COUNT_FOR_A_SECTION = <<-Q.squish
+        MATCH (s:Section)<-[scb:sectionContributionBy]-(sc:SectionContribution)-[sct:sectionContributionTo]->(pe:PublicationExpression)-[:expressionOf]->(pw:PublicationWork)
+          WHERE s.id = '%{section_id}'
+          RETURN DISTINCT pw
+          NEXT YIELD pw
+        MATCH (pw)<-[:expressionOf]-(pe:PublicationExpression)
+        OPTIONAL MATCH (pe)-[:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus {label: 'Published'})
+          RETURN pw, COUNT(pes) AS published_count
+          NEXT YIELD pw, published_count
+          FILTER published_count = 0
+        MATCH (pw)
+        OPTIONAL MATCH (pw)<-[:expressionOf]-(pe2)-[:hasPublicationExpressionStatus]->(pes2)
+        OPTIONAL MATCH (pw)-[r6:publishedBy]->(rs:ResearchService)
+        OPTIONAL MATCH (person:Person)<-[:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe2)
+        OPTIONAL MATCH (cont:Contribution)-[:hasContributionType]->(ct:ContributionType)
+          RETURN COUNT(DISTINCT pw) AS total
       Q
 
       UNPUBLISHED_FOR_A_PERSON = <<-Q.squish
@@ -113,6 +131,8 @@ module Datagraphs
                COLLECT_LIST(DISTINCT person.id) AS contributor_ids,
                COLLECT_LIST(DISTINCT person.displayName) AS contributor_names
         ORDER BY created_at DESC
+        SKIP %{skip}
+        LIMIT %{limit}
       Q
 
       UNPUBLISHED_FOR_A_SECTION = <<-Q.squish
@@ -142,6 +162,8 @@ module Datagraphs
                COLLECT_LIST(DISTINCT person.id) AS contributor_ids,
                COLLECT_LIST(DISTINCT person.displayName) AS contributor_names
         ORDER BY created_at DESC
+        SKIP %{skip}
+        LIMIT %{limit}
       Q
 
       UNPUBLISHED_FOR_A_GENERIC = <<-Q.squish
@@ -201,6 +223,11 @@ module Datagraphs
         process_unpublished(params)
       end
 
+      def for_a_section_count(section_id:)
+        params = { query: UNPUBLISHED_COUNT_FOR_A_SECTION % { section_id: section_id }}
+        generic_count(params: params)
+      end
+
       def for_a_research_service(research_service_id:, skip: 0, limit: 25)
         sub_query = UNPUBLISHED_FOR_A_RESEARCH_SERVICE_SUB_QUERY % { research_service_id: research_service_id }
         unpublished_for_a_generic(sub_query: sub_query, skip: skip, limit: 25)
@@ -243,10 +270,6 @@ module Datagraphs
 
       def for_a_research_service_count(research_service_id:)
         for_a_generic_unpublished_count(sub_query: UNPUBLISHED_FOR_A_RESEARCH_SERVICE_SUB_QUERY % { research_service_id: research_service_id })
-      end
-
-      def for_a_section_count(section_id:)
-        for_a_generic_unpublished_count(sub_query: UNPUBLISHED_FOR_A_SECTION_SUB_QUERY % { section_id: section_id })
       end
 
       def for_a_generic_unpublished_count(sub_query:)

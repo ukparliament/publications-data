@@ -18,14 +18,12 @@ class SectionsController < AuthenticatedController
     section_id = params[:id]
     @section = Datagraphs::Api::GetSection.new.process(params[:id])
 
-    @total_count = Datagraphs::Api::GetPublications.new.for_a_section_count(section_id: section_id)
+    get_publications = Datagraphs::Api::GetPublications.new
+
+    @total_count = get_publications.for_a_section_count(section_id: section_id)
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    @publications = Datagraphs::Api::GetPublications.new.for_a_section(
-      section_id: section_id,
-      skip: @pagy.offset,
-      limit: @pagy.limit
-    )
+    @publications = get_publications.for_a_section(section_id: section_id, skip: @pagy.offset, limit: @pagy.limit)
 
     @page_title =  @section.name
 
@@ -38,10 +36,12 @@ class SectionsController < AuthenticatedController
     section_id = params[:id]
     @section = Datagraphs::Api::GetSection.new.process(section_id)
 
-    @total_count = Datagraphs::Api::GetUnpublishedPublications.new.for_a_section_count(section_id: section_id)
+    get_unpublished_publications = Datagraphs::Api::GetUnpublishedPublications.new
+
+    @total_count = get_unpublished_publications.for_a_section_count(section_id: section_id)
     @pagy, _ = pagy(:offset, [], count: @total_count, page: params[:page], limit: 25)
 
-    @publications = Datagraphs::Api::GetUnpublishedPublications.new.for_a_section(
+    @publications = get_unpublished_publications.for_a_section(
       section_id: section_id,
       skip: @pagy.offset,
       limit: @pagy.limit
@@ -51,6 +51,6 @@ class SectionsController < AuthenticatedController
 
     @crumb << { label: MAIN_PAGE_TITLE, url: sections_path }
     @crumb << { label: @page_title, url: section_path(section_id) }
-    @crumb << { label: "Publications", url: nil }
+    @crumb << { label: "Unpublished", url: nil }
   end
 end
