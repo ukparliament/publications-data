@@ -1,7 +1,7 @@
 module Datagraphs
   module Api
     class GetUnpublishedPublications < CypherQuery
-      QUERY = <<-Q
+      QUERY = <<-Q.squish
         OPTIONAL MATCH (pw:PublicationWork)<-[e:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH (pw:PublicationWork)-[s:publishedBy]->(d:ResearchService)-[f:for]->(h:House)
         WHERE pes.label = 'Published'
@@ -27,7 +27,7 @@ module Datagraphs
         LIMIT %{limit}
       Q
 
-      COUNT = <<-Q
+      COUNT = <<-Q.squish
         OPTIONAL MATCH (pw:PublicationWork)<-[e:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         MATCH (pw:PublicationWork)-[s:publishedBy]->(d:ResearchService)-[f:for]->(h:House)
         WHERE pes.label = 'Published'
@@ -61,6 +61,25 @@ module Datagraphs
       UNPUBLISHED_FOR_A_SECTION_SUB_QUERY =  <<-Q.squish
         MATCH (s:Section)<-[scb:sectionContributionBy]-(sc:SectionContribution)-[sct:sectionContributionTo]->(pe:PublicationExpression)
         WHERE s.id = '%{section_id}'
+      Q
+
+      UNPUBLISHED_FOR_A_PERSON_SUB_QUERY =  <<-Q.squish
+        MATCH (p:Person)<-[cB:contributionBy]-(c:Contribution)-[cT:contributionTo]->(pe:PublicationExpression)
+        WHERE p.id = '%{person_id}'
+      Q
+
+      UNPUBLISHED_FOR_A_PERSON  =  <<-Q.squish
+
+        MATCH (p:Person)<-[cB:contributionBy]-(c:Contribution)-[cT:contributionTo]->(pe:PublicationExpression)-[e:expressionOf]->(pw:PublicationWork)
+        MATCH (pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
+        WHERE p.id = '%{person_id}'
+        AND pes.label = 'Published'
+        RETURN pw, count(pe) AS expression_count
+        NEXT YIELD pw, expression_count
+        FILTER expression_count = 0
+        MATCH (pw:PublicationWork)
+        RETURN pw
+
       Q
 
       UNPUBLISHED_FOR_A_GENERIC = <<-Q.squish
@@ -123,6 +142,14 @@ module Datagraphs
       def for_a_research_service(research_service_id:, skip: 0, limit: 25)
         sub_query = UNPUBLISHED_FOR_A_RESEARCH_SERVICE_SUB_QUERY % { research_service_id: research_service_id }
         unpublished_for_a_generic(sub_query: sub_query, skip: skip, limit: 25)
+      end
+
+      def for_a_person(person_id:, skip: 0, limit: 25)
+
+        params = { query: UNPUBLISHED_FOR_A_PERSON % { person_id: person_id, skip: skip, limit: limit }}
+        response = call(params: params)
+        process_response(response.body)
+
       end
 
       def unpublished_for_a_generic(sub_query:, skip:0, limit: 25)
