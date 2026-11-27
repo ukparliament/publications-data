@@ -124,6 +124,7 @@ module Datagraphs
         FILTER expression_count = 0
         MATCH (pw:PublicationWork)<-[e:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         OPTIONAL MATCH (pw:PublicationWork)-[r6:publishedBy]->(rs:ResearchService)
+        OPTIONAL MATCH (person:Person)<-[r4:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe)
         RETURN pe.id as publication_expression_id,
                pw.id as publication_work_id,
                pe.title as title,
