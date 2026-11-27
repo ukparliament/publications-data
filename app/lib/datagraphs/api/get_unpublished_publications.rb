@@ -115,6 +115,35 @@ module Datagraphs
         ORDER BY created_at DESC
       Q
 
+      UNPUBLISHED_FOR_A_SECTION = <<-Q.squish
+        MATCH (s:Section)<-[scb:sectionContributionBy]-(sc:SectionContribution)-[sct:sectionContributionTo]->(pe:PublicationExpression)-[:expressionOf]->(pw:PublicationWork)
+        WHERE s.id = '%{section_id}'
+        RETURN DISTINCT pw
+        NEXT YIELD pw
+        MATCH (pw)<-[:expressionOf]-(pe:PublicationExpression)
+        OPTIONAL MATCH (pe)-[:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus {label: 'Published'})
+        RETURN pw, COUNT(pes) AS published_count
+        NEXT YIELD pw, published_count
+        FILTER published_count = 0
+        MATCH (pw)
+        OPTIONAL MATCH (pw)<-[:expressionOf]-(pe2)-[:hasPublicationExpressionStatus]->(pes2)
+        OPTIONAL MATCH (pw)-[r6:publishedBy]->(rs:ResearchService)
+        OPTIONAL MATCH (person:Person)<-[:contributionBy]-(cont:Contribution)-[r5:contributionTo]->(pe2)
+        OPTIONAL MATCH (cont:Contribution)-[:hasContributionType]->(ct:ContributionType)
+        RETURN
+               pw.id as publication_work_id,
+               COLLECT_LIST(DISTINCT pe2.title) as title,
+               pes.label as status,
+               pw.createdOn as created_at,
+               COLLECT_LIST (DISTINCT pe2.updatedAt) AS updated_at,
+               rs.shortName AS short_research_service_name,
+               rs.id AS research_service_id,
+               COLLECT_LIST(DISTINCT ct.label) AS contribution_type,
+               COLLECT_LIST(DISTINCT person.id) AS contributor_ids,
+               COLLECT_LIST(DISTINCT person.displayName) AS contributor_names
+        ORDER BY created_at DESC
+      Q
+
       UNPUBLISHED_FOR_A_GENERIC = <<-Q.squish
         OPTIONAL MATCH (pw:PublicationWork)<-[e:expressionOf]-(pe:PublicationExpression)-[r:hasPublicationExpressionStatus]->(pes:PublicationExpressionStatus)
         %{sub_query}
@@ -168,8 +197,8 @@ module Datagraphs
       end
 
       def for_a_section(section_id:, skip: 0, limit: 25)
-        sub_query = UNPUBLISHED_FOR_A_SECTION_SUB_QUERY % { section_id: section_id }
-        unpublished_for_a_generic(sub_query: sub_query, skip: skip, limit: 25)
+        params = { query: UNPUBLISHED_FOR_A_SECTION % { section_id: section_id, skip: skip, limit: limit }}
+        process_unpublished(params)
       end
 
       def for_a_research_service(research_service_id:, skip: 0, limit: 25)
